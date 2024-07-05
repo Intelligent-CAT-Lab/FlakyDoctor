@@ -4,12 +4,14 @@ output_dir=$3 # output directory of project build logs
 save=$4 # csv to save build results
 
 TimeStamp=$(echo -n $(date "+%Y-%m-%d %H:%M:%S") | shasum | cut -f 1 -d " ")
-mkdir -p ./${output_dir}/${TimeStamp}/install_logs
-
 pwd_dir=$(pwd)
 main_dir=$(pwd)/${clone_dir}
 log_dir=$(pwd)/${output_dir}/${TimeStamp}/install_logs
 save_csv=$(pwd)/${save}
+
+mkdir -p ${main_dir}
+mkdir -p ${log_dir}
+
 echo project,sha,module,build_result,java_version > ${save_csv}
 
 exec 3>&1 4>&2
