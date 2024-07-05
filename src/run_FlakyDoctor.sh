@@ -1,15 +1,15 @@
 clone_dir=$1
 api_key=$2
 model=$3
-dir_name=$$4
+output_dir=$4
 flakies=$5
 flakiness_type=$6
-nondex_times=5
+nondex_times=3
 
 TimeStamp=$(echo -n $(date "+%Y-%m-%d %H:%M:%S") | shasum | cut -f 1 -d " ")
 
-mkdir -p ${dir_name}
-DIR=${dir_name}/ID_Results_${model}_${clone_dir}_${TimeStamp}
+mkdir -p ${output_dir}
+DIR=${output_dir}/ID_Results_${model}_${clone_dir}_${TimeStamp}
 mkdir -p ${DIR}
 
 
@@ -25,7 +25,7 @@ for file in "${flakies[@]}"; do
     result_csv=${DIR}/${model}_results_${SubTimeStamp}.csv
     result_json=${DIR}/${model}_results_${SubTimeStamp}.json
     save_dir=${DIR}
-    details_json=${DIR}/${model}_test_final_result_${SubTimeStamp}.json
+    details_json=${DIR}/${model}_test_details_${SubTimeStamp}.json
     python3 -u src/flakydoctor.py --input-tests-csv ${file} --projects ${clone_dir} --openai-key ${api_key} --model ${model} --nondex-times ${nondex_times} --output-dir ${save_dir} --output-result-csv ${result_csv} --output-result-json ${result_json} --output-details-json ${details_json} --flakiness-type ${flakiness_type}
 done
 

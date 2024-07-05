@@ -2,7 +2,7 @@ import argparse
 import os
 import openai
 import sys
-import repair_flakiness
+import repair_ID
 
 def parse_args():
     parser = argparse.ArgumentParser(description="""
@@ -48,4 +48,4 @@ if __name__ == "__main__":
     openai.organization = os.getenv("OPENAI_ORGANIZATION")
     
     if flakiness_type == "ID":
-        repair_flakiness.main(input_flakies_csv, projects_dir, details_json, model, nondex_times,result_csv,result_json, output_dir)
+        repair_ID.main(input_flakies_csv, projects_dir, details_json, model, nondex_times,result_csv,result_json, output_dir)
