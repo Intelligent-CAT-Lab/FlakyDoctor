@@ -1,20 +1,20 @@
-INPUT_CSV=$1 # input csv of [project,sha,module]
-CLONE_DIR=$2 # directory to clone all projects
-OUTPUT_DIR=$3 # output directory of project build logs
-SAVE=$4 # csv to save build results
+input_csv=$1 # input csv of [project,sha,module]
+clone_dir=$2 # directory to clone all projects
+output_dir=$3 # output directory of project build logs
+save=$4 # csv to save build results
 
 TimeStamp=$(echo -n $(date "+%Y-%m-%d %H:%M:%S") | shasum | cut -f 1 -d " ")
-mkdir -p ./${OUTPUT_DIR}/${TimeStamp}/install_logs
+mkdir -p ./${output_dir}/${TimeStamp}/install_logs
 
-PWD_DIR=$(pwd)
-MAIN_DIR=$(pwd)/${CLONE_DIR}
-LOG_DIR=$(pwd)/${OUTPUT_DIR}/${TimeStamp}/install_logs
-SAVE_CSV=$(pwd)/${SAVE}
-echo project,sha,module,build_result,java_version > ${SAVE_CSV}
+pwd_dir=$(pwd)
+main_dir=$(pwd)/${clone_dir}
+log_dir=$(pwd)/${output_dir}/${TimeStamp}/install_logs
+save_csv=$(pwd)/${save}
+echo project,sha,module,build_result,java_version > ${save_csv}
 
 exec 3>&1 4>&2
 trap $(exec 2>&4 1>&3) 0 1 2 3
-exec 1>${LOG_DIR}/${TimeStamp}.log 2>&1
+exec 1>${log_dir}/${TimeStamp}.log 2>&1
 
 echo "* "STARTING at $(date) 
 echo "* "REPO VERSION $(git rev-parse HEAD)
@@ -25,7 +25,7 @@ install(){
     export PATH=$JAVA_HOME/bin:$PATH
 
     t=$(echo -n $(date "+%Y-%m-%d %H:%M:%S") | shasum | cut -f 1 -d " ")
-    install_log=${MAIN_DIR}/${sha}/${project}/install_${project}_${t}.log
+    install_log=${main_dir}/${sha}/${project}/install_${project}_${t}.log
     mvn install -pl ${module} -am -DskipTests -Dfindbugs.skip=true -Dbasepom.check.skip-prettier -Dgpg.skip -Drat.skip -Dskip.npm -Dskip.yarn -Dskip.bower -Dskip.grunt -Dskip.gulp -Dskip.jspm -Dskip.karma -Dskip.webpack -Dcheckstyle.skip -Denforcer.skip=true -Dspotbugs.skip -Dmaven.test.failure.ignore=true -Djacoco.skip -Danimal.sniffer.skip -Dmaven.antrun.skip -Dfmt.skip -Dskip.npm -Dlicense.skipCheckLicense -Dlicense.skipAddThirdParty=true -Dfindbugs.skip -Dlicense.skip -DskipDockerBuild -DskipDockerTag -DskipDockerPush -DskipDocker -Denforcer.skip -Ddependency-check.skip > ${install_log}
     res="$(grep 'BUILD ' ${install_log})"
 
@@ -39,7 +39,7 @@ install(){
     fi
 
     echo "build-result:" ${project} ${sha} ${module} ${build_result}
-    echo "${project},${sha},${module},${build_result},8" >> ${SAVE_CSV}
+    echo "${project},${sha},${module},${build_result},8" >> ${save_csv}
     
     if [[ ${build_result} == "BUILD FAILURE" ]]; then
         echo "Java version 11"
@@ -47,7 +47,7 @@ install(){
         export PATH=$JAVA_HOME/bin:$PATH
 
         t=$(echo -n $(date "+%Y-%m-%d %H:%M:%S") | shasum | cut -f 1 -d " ")
-        install_log=${MAIN_DIR}/${sha}/${project}/install_${project}_${module}_${t}.log
+        install_log=${main_dir}/${sha}/${project}/install_${project}_${module}_${t}.log
         mvn install -pl ${module} -am -DskipTests -Dfindbugs.skip=true -Dbasepom.check.skip-prettier -Dgpg.skip -Drat.skip -Dskip.npm -Dskip.yarn -Dskip.bower -Dskip.grunt -Dskip.gulp -Dskip.jspm -Dskip.karma -Dskip.webpack -Dcheckstyle.skip -Denforcer.skip=true -Dspotbugs.skip -Dmaven.test.failure.ignore=true -Djacoco.skip -Danimal.sniffer.skip -Dmaven.antrun.skip -Dfmt.skip -Dskip.npm -Dlicense.skipCheckLicense -Dlicense.skipAddThirdParty=true -Dfindbugs.skip -Dlicense.skip -DskipDockerBuild -DskipDockerTag -DskipDockerPush -DskipDocker -Denforcer.skip -Ddependency-check.skip > ${install_log}
         res="$(grep 'BUILD ' ${install_log})"
 
@@ -60,11 +60,11 @@ install(){
             build_result="BUILD SUCCESS"
         fi
         echo "build-result:" ${project} ${sha} ${module} ${build_result}
-        echo "${project},${sha},${module},${build_result},11" >> ${SAVE_CSV}
+        echo "${project},${sha},${module},${build_result},11" >> ${save_csv}
     fi
 }
 
-for info in $(cat ${INPUT_CSV}); do
+for info in $(cat ${input_csv}); do
     URL=$(echo $info | cut -d, -f1)
     SHA=$(echo $info | cut -d, -f2)
     MODULE=$(echo $info | cut -d, -f3)
@@ -74,16 +74,16 @@ for info in $(cat ${INPUT_CSV}); do
     module=${MODULE/$'\r'/}
     project=${url##*/}
 
-    cd ${MAIN_DIR}
+    cd ${main_dir}
 
     if [[ ! -d ${sha} ]]; then
-        echo Directory ${sha} does not exist in ${MAIN_DIR}
+        echo Directory ${sha} does not exist in ${main_dir}
         mkdir -p ${sha}
     fi
     cd ${sha}
 
     if [[ ! -d ${project} ]]; then
-        echo Directory ${project} does not exist in ${MAIN_DIR}/${sha}
+        echo Directory ${project} does not exist in ${main_dir}/${sha}
         git clone ${url}
     fi
     cd ${project}
@@ -94,5 +94,5 @@ for info in $(cat ${INPUT_CSV}); do
     install
     done
 
-cd ${PWD_DIR}
+cd ${pwd_dir}
 echo "* "ENDING at $(date)
