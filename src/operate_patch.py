@@ -54,9 +54,8 @@ def write_patch(save_dir, project_url, sha, module, test, patch, original_test_m
     patch_file = os.path.join(patch_dir,str(round) + ".patch")
 
     file = open(patch_file, 'w')
-    content = """Test File Path: {}\n
-    Original Test Method:\n {}
-    """.format(file_path, original_test_method)
+    content = """Test File Path: {}\nOriginal Test Method:\n {}Patch:\n""".\
+        format(file_path, original_test_method)
 
     file.write(content)
     file.close()
@@ -153,9 +152,8 @@ def dump_all_rounds_patch(info, test, file_path, save_dir, project_url, sha, mod
     Path(patch_dir).mkdir(parents=True, exist_ok=True)
     patch_file = os.path.join(patch_dir,str(round) + ".patch")
 
-    content = """Test File Path: {}\n
-    Original Test Method:\n {}
-    """.format(file_path, original_test_method)
+    content = """Test File Path: {}\nOriginal Test Method:\n {}""".\
+        format(file_path, original_test_method)
 
     file = open(patch_file, 'w')
     file.write(content)
@@ -165,27 +163,24 @@ def dump_all_rounds_patch(info, test, file_path, save_dir, project_url, sha, mod
 
     for r in range(1, round+1):
         if r in info["patches_before_stitching"]:
-            patch_content += """
-            ROUND {}:\n
-            Before stitching: \n
-            test_code:\n
-            {}\n
-            import:\n
-            {}\n
-            pom:\n
-            {}\n
-            """.format(r, info["patches_before_stitching"][r]["test_code"], \
+            patch_content += """ROUND {}:\n
+Before stitching: \n
+test_code:\n
+{}\n
+import:\n
+{}\n
+pom:\n
+{}\n""".format(r, info["patches_before_stitching"][r]["test_code"], \
             info["patches_before_stitching"][r]["import"], info["patches_before_stitching"][r]["pom"])
         if r in info["patches_after_stitching"]:
             patch_content += """\n
-            After stitching: \n
-            test_code:\n
-            {}\n
-            import:\n
-            {}\n
-            pom:\n
-            {}\n
-            """.format(info["patches_after_stitching"][r]["test_code"], \
+After stitching: \n
+test_code:\n
+{}\n
+import:\n
+{}\n
+pom:\n
+{}\n""".format(info["patches_after_stitching"][r]["test_code"], \
             info["patches_after_stitching"][r]["import"], info["patches_after_stitching"][r]["pom"])
     
     file = open(patch_file, 'a')

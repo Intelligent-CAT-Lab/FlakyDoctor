@@ -25,10 +25,6 @@ model_load_path = {
     "MagicCoder": os.getenv("MagiCoder_LOAD_PATH"),
 }
 
-test_file_info_heads = ["project", "project_name", "sha", "module", "test_type", 
-    "test", "method_name", "status", "PR_link", "notes", 
-    "file_path", "patch_file", "test_results", "if_flaky", "Exceptions", "time"]
-
 result_csv_heads = ["project", "sha", "module", "test_type", "test", 
     "method_name", "status", "PR_link", "notes", "file_path", 
     "patch_file", "test_results", "jdk", "build_results", "Exceptions", 
@@ -49,8 +45,20 @@ def initialize_test_info(project, project_name, sha, module, test_type, test, st
             "test_results":{}, "test_logs":{},
             "err_msg":{}, "err_code":{}, "build_results": {}
         }
+    
+def locate_test_file(project_dir, test_class_short_name, module, test_path):
+    potential_file_paths = []
+    for root, dirs, files in os.walk(project_dir):
+        for file in files:
+            if not file.endswith(test_class_short_name + ".java"):
+                continue
+            file_path = os.path.join(root, file)
+            if test_path in file_path and module in file_path \
+                and "/test-classes/" not in file_path and "/test/" in file_path:
+                    potential_file_paths.append(file_path)
+    return potential_file_paths
 
-def main(pr_csv, projects_dir, test_file_info, model, nondex_times, result_csv, result_json, save_dir):
+def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, result_json, save_dir):
     if model == "MagicCoder":
         print("Loading model...")
         loading_model = AutoModelForCausalLM.from_pretrained(model_load_path[model], device_map="auto", cache_dir='./huggingface')
@@ -58,9 +66,7 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times, result_csv, 
     elif model == "GPT-4":
         loading_model = "GPT-4"
         tokenizer = None
-
-    test_info_csv = test_file_info.replace("json", "csv")
-    utils.write_header_csv(test_info_csv,test_file_info_heads)
+        
     utils.write_header_csv(result_csv,result_csv_heads)
     
     test_info = {}
@@ -79,39 +85,63 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times, result_csv, 
             
             project_dir = os.path.join(projects_dir, sha, project_name)
             utils.git_stash(project_dir)
-            
-            file_path_found = False
 
             if tag not in test_info:
                 info = initialize_test_info(project, project_name, sha, module, test_type, test, status, pr, notes, project_dir, test_class)
                 test_done = False
-                for root, dirs, files in os.walk(project_dir):
-                    for file in files:
-                        if not file.endswith(test_class_short_name + ".java"):
-                            continue
-                        file_path = os.path.join(root, file)
-                        if test_path in file_path and module in file_path \
-                            and "/test-classes/" not in file_path and "/test/" in file_path:
-                            file_path_found = True
-                            relative_file_path = file_path.split(project_dir + "/")[-1]
-                            utils.git_checkout_file(project_dir,relative_file_path)
-                            test_class_content = utils.read_file(file_path)
-                            info["relative_file_path"] = relative_file_path
-                            info["file_path"] = file_path
-                            info["test_class_content"][0] = test_class_content
-                            info["imports"] = utils.get_imports(test_class_content)
-                            info["test_method_content"] = utils.get_test_method(info["method_name"],test_class_content)
-                            if "/src/" in file_path:
-                                root_path = file_path.split("/src/")[0]
-                                pom_path = os.path.join(root_path,"pom.xml")
-                                if os.path.exists(pom_path):
-                                    info["pom"] = pom_path
-                            jdk = "8"
-                            nondex_output = run_test_with_nondex(project_dir,module, test, jdk, nondex_times)
+                potential_file_paths = locate_test_file(project_dir, test_class_short_name, module, test_path)
+                if len(potential_file_paths) == 0:
+                    info["Exceptions"][0] = "method_code_location_failure"
+                    test_done = True
+                else:
+                    for file_path in potential_file_paths:
+                        relative_file_path = file_path.split(project_dir + "/")[-1]
+                        utils.git_checkout_file(project_dir,relative_file_path)
+                        test_class_content = utils.read_file(file_path)
+                        info["relative_file_path"] = relative_file_path
+                        info["file_path"] = file_path
+                        info["test_class_content"][0] = test_class_content
+                        info["imports"] = utils.get_imports(test_class_content)
+                        info["test_method_content"] = utils.get_test_method(info["method_name"],test_class_content)
+                        if "/src/" in file_path:
+                            root_path = file_path.split("/src/")[0]
+                            pom_path = os.path.join(root_path,"pom.xml")
+                            if os.path.exists(pom_path):
+                                info["pom"] = pom_path
+                        jdk = "8"
+                        nondex_output = run_test_with_nondex(project_dir,module, test, jdk, nondex_times)
+                        build_result = analyze_nondex_build_result(nondex_output)
+                        test_result = analyze_nondex_test_result(nondex_output)
+                        if test_result == "test_failure":
+                            idx += 1
+                            info["jdk"] = jdk
+                            info["test_logs"][0] = nondex_output
+                            info["test_results"][0] = test_result
+                            info["build_results"][0] = build_result
+                            err_msg_list, err_code_list = parse_err_msg(nondex_output, test, test_class, test_class_content)
+                            info["err_msg"][0] = err_msg_list
+                            info["err_code"][0] = err_code_list
+                            info["if_flaky"] = "True"
+                            test_info[tag] = info
+                            try:
+                                result_dict = repair_ID_tests(info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer)
+                            except Exception as e:
+                                info["Exceptions"] = str(e)
+                            test_done = True
+                        elif test_result == "test_pass":
+                            info["jdk"] = jdk
+                            info["test_logs"][0] = nondex_output
+                            info["test_results"][0] = test_result
+                            info["build_results"][0] = build_result
+                            info["if_flaky"] = "False"
+                        elif test_result == "build_failure" or test_result == "compilation_error":
+                            jdk = "11"
+                            nondex_output = run_test_with_nondex(project_dir,module, test, jdk, "3")
                             build_result = analyze_nondex_build_result(nondex_output)
                             test_result = analyze_nondex_test_result(nondex_output)
                             if test_result == "test_failure":
                                 idx += 1
+                                test_result = analyze_nondex_test_result(nondex_output)
                                 info["jdk"] = jdk
                                 info["test_logs"][0] = nondex_output
                                 info["test_results"][0] = test_result
@@ -126,53 +156,17 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times, result_csv, 
                                 except Exception as e:
                                     info["Exceptions"] = str(e)
                                 test_done = True
-                            elif test_result == "test_pass":
+                            else:
                                 info["jdk"] = jdk
                                 info["test_logs"][0] = nondex_output
                                 info["test_results"][0] = test_result
                                 info["build_results"][0] = build_result
                                 info["if_flaky"] = "False"
-                            elif test_result == "build_failure" or test_result == "compilation_error":
-                                jdk = "11"
-                                nondex_output = run_test_with_nondex(project_dir,module, test, jdk, "3")
-                                build_result = analyze_nondex_build_result(nondex_output)
-                                test_result = analyze_nondex_test_result(nondex_output)
-                                if test_result == "test_failure":
-                                    idx += 1
-                                    test_result = analyze_nondex_test_result(nondex_output)
-                                    info["jdk"] = jdk
-                                    info["test_logs"][0] = nondex_output
-                                    info["test_results"][0] = test_result
-                                    info["build_results"][0] = build_result
-                                    err_msg_list, err_code_list = parse_err_msg(nondex_output, test, test_class, test_class_content)
-                                    info["err_msg"][0] = err_msg_list
-                                    info["err_code"][0] = err_code_list
-                                    info["if_flaky"] = "True"
-                                    test_info[tag] = info
-                                    try:
-                                        result_dict = repair_ID_tests(info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer)
-                                    except Exception as e:
-                                        info["Exceptions"] = str(e)
-                                    test_done = True
-                                else:
-                                    info["jdk"] = jdk
-                                    info["test_logs"][0] = nondex_output
-                                    info["test_results"][0] = test_result
-                                    info["build_results"][0] = build_result
-                                    info["if_flaky"] = "False"
                         if test_done:
                             break
-                    if test_done:
-                        break
-
-                if not file_path_found:  
-                    info["Exceptions"][0] = "method_code_location_failure"
                 
                 res = {}
-                for key in test_file_info_heads:
-                    res[key] = info[key]
-                utils.write_dict_csv(test_info_csv, test_file_info_heads, res)
-                utils.write_json_attach(test_file_info,info)
+                utils.write_json_attach(details_csv,info)
     return test_info
 
 def get_potential_API(test_content):
@@ -210,40 +204,37 @@ def generate_prompts(model, test_method_name, test_type, test_method_content, er
     response = None
 
     ID_description = """ID flaky tests are caused by using some APIs which assume the order of elements are guaranteed,
-        such as HashSet, HashMap, toString, containsExactly, getDeclaredFields, getKey, etc. You should change such APIs which do not guarantee orders.
-        A common fix is to use APIs which can make sure the elements are in deterministic order,such as LinkedHashSet, LinkedHashMap, JsonParser, containsOnly, containsExactlyInAnyOrder, assertThatJson, etc.;
-        But if you didn't find above similar cases, you should fix by other ways, to make sure the test will always pass.
-    """
+such as HashSet, HashMap, toString, containsExactly, getDeclaredFields, getKey, etc. You should change such APIs which do not guarantee orders.
+A common fix is to use APIs which can make sure the elements are in deterministic order,such as LinkedHashSet, LinkedHashMap, JsonParser, containsOnly, containsExactlyInAnyOrder, assertThatJson, etc.;
+But if you didn't find above similar cases, you should fix by other ways, to make sure the test will always pass."""
     err_msg = " ".join(err_msg_list)
     if model == "GPT-4":
         if round == 1:
-            prefix = """You are a software testing expert. 
-            I want you to fix a flaky test. {} is a flaky test of type {}, located in the following java class {}.
-            """.format(test_method_name, test_type, test_method_content)
+            prefix = """You are a software testing expert. I want you to fix a flaky test. {} is a flaky test of type {}, located in the following java class {}.""".\
+                format(test_method_name, test_type, test_method_content)
         else:
-            prefix = """You are a software testing expert. 
-            To fix the original flaky test {}, the following code is from your previous answer {}.
-            """.format(test_method_name, test_method_content)
+            prefix = """You are a software testing expert. To fix the original flaky test {}, the following code is from your previous answer {}.""".\
+                format(test_method_name, test_method_content)
 
         gpt_prompt = prefix + """I got the following error when running NonDex on it: {}. 
-            Lines {} cause the flakiness. Lines {} may cause potential flakiness. {}.
-            Follow steps below, I want you to only reply with all code inside one unique code block, do not write anything else.
-            do not write explanations. do not put original method in your answer.
-            1) Fix the flakiness and print the fixed complete method code of this test between //<fix start> and //<fix end>.
-                Your code should be compilable without any errors.
-                Make sure all the arguments are correct.
-                Use compatible types for all variables.
-                Do not define or write helper methods out of the test, make sure all methods you want to call are inside the test method.
-                Do not use try-catch to avoid assertion error.
-            2) Update dependencies in pom.xml if needed,
-                put the code between <!-- <pom.xml start> --> and <!-- <pom.xml end> -->.
-                Provide a specific version for the dependency you add. Do not add existing dependencies. Do not add my artifact in dependencies, do not include my artifact in your pom.xml code.
-            3) Update import list if needed,
-                put the code between //<import start> and //<import end>.
-                Assume required classes in the original code are setup correctly, do not include them in your code.
-        """.format(err_msg, err_code, p_code, ID_description)
+Lines {} cause the flakiness. Lines {} may cause potential flakiness. {}.
+Follow steps below, I want you to only reply with all code inside one unique code block, do not write anything else.
+do not write explanations. do not put original method in your answer.
+1) Fix the flakiness and print the fixed complete method code of this test between //<fix start> and //<fix end>.
+    Your code should be compilable without any errors.
+    Make sure all the arguments are correct.
+    Use compatible types for all variables.
+    Do not define or write helper methods out of the test, make sure all methods you want to call are inside the test method.
+    Do not use try-catch to avoid assertion error.
+2) Update dependencies in pom.xml if needed,
+    put the code between <!-- <pom.xml start> --> and <!-- <pom.xml end> -->.
+    Provide a specific version for the dependency you add. Do not add existing dependencies. Do not add my artifact in dependencies, do not include my artifact in your pom.xml code.
+3) Update import list if needed,
+    put the code between //<import start> and //<import end>.
+Assume required classes in the original code are setup correctly, do not include them in your code.""".\
+    format(err_msg, err_code, p_code, ID_description)
 
-        print(gpt_prompt)
+        print("GPT prompt:\n{}".format(gpt_prompt))
         full_response = openai.ChatCompletion.create(
             model = "gpt-4", #"gpt-3.5-turbo",
             temperature = 0.2,
@@ -252,35 +243,35 @@ def generate_prompts(model, test_method_name, test_type, test_method_content, er
                 "content":gpt_prompt}
             ]
         )
-        print(full_response)
+        print("GPT response:\n{}".format(full_response))
         response = full_response["choices"][0]["message"]["content"]
         return response,gpt_prompt
 
     elif model == "MagicCoder":
         magiccoder_prompt = """You are an exceptionally intelligent coding assistant that consistently delivers accurate and reliable responses to user instructions.
-        @@ Instruction
-        I want you to fix a flaky test. {} is a flaky test of type {}, located in the following java class {}. {} 
-        I got the following error when running NonDex on it: {}. 
-        Lines {} cause the flakiness. Lines {} may cause potential flakiness.
-        Follow steps below, I want you to only reply with all code inside one unique code block, do not write anything else.
-        do not write explanations. do not put original method in your answer.
-        Fix the flakiness and print the fixed complete method code of this test between //<fix start> and //<fix end>.
-        Do not define or write helper methods out of the test, make sure all methods you want to call are inside the test method.
-        Do not use try-catch to avoid assertion error.
-        Update dependencies in pom.xml if needed,
-        put the code between <!-- <pom.xml start> --> and <!-- <pom.xml end> -->.
-        Provide a specific version for the dependency you add. Do not add existing dependencies. Do not add my artifact in dependencies, do not include my artifact in your pom.xml code.
-        Update import list if needed,
-        put the code between //<import start> and //<import end>.
-        Assume required classes in the original code are setup correctly, do not include them in your code.
-        @@ Response
-        """.format(test_method_name, test_type, test_method_content, ID_description, err_msg, err_code, p_code)
-        print(magiccoder_prompt)
+@@ Instruction
+I want you to fix a flaky test. {} is a flaky test of type {}, located in the following java class {}. {} 
+I got the following error when running NonDex on it: {}. 
+Lines {} cause the flakiness. Lines {} may cause potential flakiness.
+Follow steps below, I want you to only reply with all code inside one unique code block, do not write anything else.
+do not write explanations. do not put original method in your answer.
+Fix the flakiness and print the fixed complete method code of this test between //<fix start> and //<fix end>.
+Do not define or write helper methods out of the test, make sure all methods you want to call are inside the test method.
+Do not use try-catch to avoid assertion error.
+Update dependencies in pom.xml if needed,
+put the code between <!-- <pom.xml start> --> and <!-- <pom.xml end> -->.
+Provide a specific version for the dependency you add. Do not add existing dependencies. Do not add my artifact in dependencies, do not include my artifact in your pom.xml code.
+Update import list if needed,
+put the code between //<import start> and //<import end>.
+Assume required classes in the original code are setup correctly, do not include them in your code.
+@@ Response
+""".format(test_method_name, test_type, test_method_content, ID_description, err_msg, err_code, p_code)
+        print("MagiCoder prompt:{}".format(magiccoder_prompt))
 
         model_inputs = tokenizer([magiccoder_prompt], return_tensors="pt").to(device)
         generated_ids = loading_model.generate(**model_inputs, max_new_tokens=2048 , temperature=0.2, do_sample=True)
         generated_text = tokenizer.batch_decode(generated_ids)[0]
-        print(generated_text)
+        print("Magicoder response:{}".format(generated_text))
         return generated_text, magiccoder_prompt
 
 def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer):
@@ -325,10 +316,7 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
             utils.git_checkout_file(project_dir,relative_file_path)
             return result_dict
         
-        print(err_msg)
-        print(err_code)
         fixed = False
-
         t0 = time.perf_counter()
 
         round = 1
@@ -336,7 +324,7 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
             potential_apis = get_potential_API(test_method_content)
             print("Index {}: ROUND {} to Repair Test {}".format(idx, round, test))
             now = datetime.datetime.now()
-            print("Starting prompt", now)
+            print("Starting prompting...", now)
             if model == "GPT-4":
                 try:
                     response, prompt = "", ""
@@ -370,11 +358,7 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
             test_info["responses"][round] = response
             test_info["patches_before_stitching"][round] = patch
 
-            
-            print(prompt)
-            print(response)
-            print(patch)
-            print(patch["test_code"])
+            print("Patch:\n{}".format(patch))
             
             update_class_content = apply_patch(file_path, test_class_content, test_method_name, patch, project, sha, project_dir)
             test_info["test_class_content"][round] = update_class_content
@@ -389,10 +373,7 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
                 test_info["test_results"][round] = test_result
             test_info["err_msg"][round] = err_msg_list
             test_info["err_code"][round] = err_code_list
-            
-            print(err_msg_list)
-            print(err_code_list)
-            print(test_result)
+
             if test_result == "build_failure" or test_result == "pom_error":
                 if test_info["pom"] != None:
                     project_name = project.split("/")[-1]
@@ -400,7 +381,6 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
                     print("/home/flaky/" + project_dir, pom_path)
                     utils.git_checkout_file( "/home/flaky/" + project_dir,pom_path)
 
-            
             test_method_content = patch["test_code"]
             err_msg = err_msg_list
             err_code = err_code_list
