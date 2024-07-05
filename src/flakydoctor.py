@@ -10,6 +10,8 @@ def parse_args():
             """,)
     parser.add_argument("--input-tests-csv", dest = "input_tests_csv", required = True,
                         help = "A csv file include flaky tests with consistent format as in IDoFT `pr-data.csv`.")
+    parser.add_argument("--flakiness-type", dest = "flakiness_type", required = True,
+                        help = "Flakiness type to fix, select one from [ID, OD].")
     parser.add_argument("--projects", dest = "projects", required = True,
                         help = "A directory path where you save all the Java projects.")
     parser.add_argument("--openai-key", dest = "openai_key", required = True,
@@ -33,6 +35,7 @@ if __name__ == "__main__":
     args = parse_args()
     input_flakies_csv = args.input_tests_csv
     projects_dir = args.projects
+    flakiness_type = args.flakiness_type
     api_key = args.openai_key
     model = args.model
     nondex_times = args.nondex_times
@@ -44,4 +47,5 @@ if __name__ == "__main__":
     openai.api_key = api_key
     openai.organization = os.getenv("OPENAI_ORGANIZATION")
     
-    test_info = repair_flakiness.main(input_flakies_csv, projects_dir, details_json, model, nondex_times,result_csv,result_json, output_dir)
+    if flakiness_type == "ID":
+        repair_flakiness.main(input_flakies_csv, projects_dir, details_json, model, nondex_times,result_csv,result_json, output_dir)
