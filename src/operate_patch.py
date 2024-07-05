@@ -20,31 +20,18 @@ def write_patch_stitch(save_dir, project_url, sha, module, test, patch, patch_be
     Path(patch_dir).mkdir(parents=True, exist_ok=True)
     patch_file = os.path.join(patch_dir,str(round) + ".patch")
 
-    content = """Test File Path: {}\n
-    Original Test Method:\n {}
-    """.format(file_path, original_test_method)
-
-    file = open(patch_file, 'w')
-    file.write(content)
-    file.close()
-
-    file = open(patch_file, 'a')
-    file.write("\nPatch after Stitching:\n")
-    file.close()
-
+    content = """Test File Path: {}\nOriginal Test Method:\n {}""".\
+        format(file_path, original_test_method)
+        
+    utils.write_file(patch_file, content)
+    
+    utils.add_file(patch_file, "\nPatch after Stitching:\n")
     for key in patch:
-        file = open(patch_file, 'a')
-        file.write("\n" + str(key) + ":\n" + str(patch[key]))
-        file.close()
+        utils.add_file(patch_file,"\n" + str(key) + ":\n" + str(patch[key]))
 
-    file = open(patch_file, 'a')
-    file.write("\nPatch before Stitching:\n")
-    file.close()
-
+    utils.add_file(patch_file, "\nPatch before Stitching:\n")
     for key in patch_before_stitching:
-        file = open(patch_file, 'a')
-        file.write("\n" + str(key) + ":\n" + str(patch_before_stitching[key]))
-        file.close()
+        utils.add_file(patch_file, "\n" + str(key) + ":\n" + str(patch_before_stitching[key]))
     return patch_file
 
 def write_patch(save_dir, project_url, sha, module, test, patch, original_test_method, file_path, round):
@@ -53,17 +40,12 @@ def write_patch(save_dir, project_url, sha, module, test, patch, original_test_m
     Path(patch_dir).mkdir(parents=True, exist_ok=True)
     patch_file = os.path.join(patch_dir,str(round) + ".patch")
 
-    file = open(patch_file, 'w')
     content = """Test File Path: {}\nOriginal Test Method:\n {}Patch:\n""".\
         format(file_path, original_test_method)
-
-    file.write(content)
-    file.close()
+    utils.write_file(patch_file, content)
 
     for key in patch:
-        file = open(patch_file, 'a')
-        file.write("\n" + str(key) + ":\n" + str(patch[key]))
-        file.close()
+        utils.add_file(patch_file, "\n" + str(key) + ":\n" + str(patch[key]))
     return patch_file
 
 def apply_patch_stitch(file_path, original_test_class_content, test_method_name, patch, before_patch, project, sha, project_dir):
