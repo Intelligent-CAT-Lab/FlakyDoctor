@@ -1,13 +1,14 @@
-apt-get update
-apt update
-apt-get install -y openjdk-8-jdk
-apt-get install -y maven gradle
-apt-get install -y openjdk-11-jdk
-apt-get install autoconf -y
-apt-get install libtool -y
-apt install protobuf-compiler -y
-add-apt-repository ppa:deadsnakes/ppa -y
-apt install git-all -y
+sudo apt update
+sudo apt install protobuf-compiler -y
+sudo apt install git-all -y
+
+sudo apt-get update
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt-get install -y openjdk-8-jdk
+sudo apt-get install -y openjdk-11-jdk
+sudo apt-get install -y maven
+sudo apt-get install autoconf -y
+sudo apt-get install libtool -y
 
 pip3 install jsonlines
 pip3 install GitPython
