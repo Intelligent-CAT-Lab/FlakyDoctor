@@ -20,7 +20,7 @@ pip3 install transformers==4.31.0
 pip3 install accelerate==0.21.0
 pip3 install git+https://github.com/jose/javalang.git@start_position_and_end_position
 
-
+# protobuf is needed to set up for Java projects in the evaluation
 wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
 tar xvf protobuf-2.5.0.tar.gz
 cd protobuf-2.5.0
