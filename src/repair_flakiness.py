@@ -1229,19 +1229,3 @@ def parse_patch_gpt(response, test_method_name, test_class_content):
             if method_name == test_method_name:
                 patch["test_code"] = (method_code)
     return patch,ifstitched
-
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    input_flakies_csv = args[0]
-    projects_dir = args[1]
-    api_key = args[2]
-    model = args[3]
-    nondex_times = args[4]
-    result_csv = args[5]
-    result_json = args[6]
-    save_dir = args[7]
-    details_json = args[8]
-
-    openai.api_key = api_key
-    openai.organization = os.getenv("OPENAI_ORGANIZATION")
-    test_info = main(input_flakies_csv, projects_dir, details_json, model, nondex_times,result_csv,result_json,save_dir)
