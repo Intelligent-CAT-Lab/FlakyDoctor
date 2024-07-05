@@ -19,6 +19,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
 device = "cuda"
 run_nondex_cmds = "src/cmds/run_nondex.sh"
 java_standard_libs = json.load(open("src/utils/java_standard_libs.json"))
+model_load_path = {
+    "MagicCoder": os.getenv("MagiCoder_LOAD_PATH"),
+}
+
 test_file_info_heads = ["project", "project_name", "sha", "module", "test_type", 
     "test", "method_name", "status", "PR_link", "notes", 
     "file_path", "patch_file", "test_results", "if_flaky", "Exceptions", "time"]
@@ -45,14 +49,10 @@ def initialize_test_info(project, project_name, sha, module, test_type, test, st
         }
 
 def main(pr_csv, projects_dir, test_file_info, model, nondex_times,result_csv,result_json,save_dir):
-    load_path = {
-        "MagicCoder": os.environ["MagiCoder_LOAD_PATH"]
-    }
-    torch.cuda.empty_cache()
     if model == "MagicCoder":
         print("Loading model...")
-        loading_model = AutoModelForCausalLM.from_pretrained(load_path[model], device_map="auto", cache_dir='./huggingface')
-        tokenizer = AutoTokenizer.from_pretrained(load_path[model], cache_dir='./huggingface')
+        loading_model = AutoModelForCausalLM.from_pretrained(model_load_path[model], device_map="auto", cache_dir='./huggingface')
+        tokenizer = AutoTokenizer.from_pretrained(model_load_path[model], cache_dir='./huggingface')
     elif model == "GPT-4":
         loading_model = "GPT-4"
         tokenizer = None
@@ -68,19 +68,15 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times,result_csv,re
         for line in csvFile:
             if "Project URL" in line or "project_url" in line or "project" in line:
                 continue
-            project, sha  = line[0], line[1]
+            project, sha, module, test, test_type, status, pr, notes = line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]
             project_name = project.split("/")[-1]
-            module = line[2]
-            test = line[3]
-            test_type = line[4]
-            status = line[5]
-            pr = line[6]
-            notes = line[7]
             tag = "{}#{}#{}#{}".format(project, sha, module, test)
+            test_class = ".".join(test.split(".")[:-1])
+            test_class_short_name = test.split(".")[-2]
+            
             project_dir = os.path.join(projects_dir, sha, project_name)
             utils.git_stash(project_dir)
-            class_name = test.split(".")[-2]
-            test_class = ".".join(test.split(".")[:-1])
+            
             file_path_found = False
 
             if tag not in test_info:
@@ -88,7 +84,7 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times,result_csv,re
                 test_done = False
                 for root, dirs, files in os.walk(project_dir):
                     for file in files:
-                        if not file.endswith(class_name + ".java"):
+                        if not file.endswith(test_class_short_name + ".java"):
                             continue
                         file_path = os.path.join(root, file)
                         test_path = "/".join(test.split(".")[:-1])
@@ -110,10 +106,8 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times,result_csv,re
                                     info["pom"] = pom_path
                             jdk = "8"
                             nondex_output = run_test_with_nondex(project_dir,module, test, jdk, nondex_times)
-                            # print(nondex_output)
                             build_result = analyze_nondex_build_result(nondex_output)
                             test_result = analyze_nondex_test_result(nondex_output)
-                            # if build_result == "BUILD SUCCESS" :
                             if test_result == "test_failure":
                                 idx += 1
                                 info["jdk"] = jdk
@@ -139,7 +133,6 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times,result_csv,re
                             elif test_result == "build_failure" or test_result == "compilation_error":
                                 jdk = "11"
                                 nondex_output = run_test_with_nondex(project_dir,module, test, jdk, "3")
-                                # print(nondex_output)
                                 build_result = analyze_nondex_build_result(nondex_output)
                                 test_result = analyze_nondex_test_result(nondex_output)
                                 if test_result == "test_failure":
@@ -177,12 +170,7 @@ def main(pr_csv, projects_dir, test_file_info, model, nondex_times,result_csv,re
                 for key in test_file_info_heads:
                     res[key] = info[key]
                 utils.write_dict_csv(test_info_csv, test_file_info_heads, res)
-                
-                #TODO: handle cases that test method not found
-                # if test_info["test_method_content"] == None:
-                #     print(tag, "Not Found Test Code.", test_info["file_path"])
                 utils.write_json_attach(test_file_info,info)
-    # print(len(test_info))
     return test_info
 
 def run_test_with_nondex(project_dir, module, test_fullname, jdk, nondex_times):
@@ -518,41 +506,9 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
                 signal.signal(signal.SIGALRM, handler)
                 signal.alarm(300)
                 try:
-                # if True:
                     response, prompt = "", ""
                     response, prompt = generate_prompts(model, test_method_name, test_type, test_method_content, err_msg, err_code, potential_apis,round,loading_model, tokenizer)
                     patch,ifstitched = parse_patch_magiccoder(response, test_method_name, test_class_content)
-                    # print(response)
-                    # print(patch)
-                    # exit(0)
-                except Exception as e:
-                    test_info["prompts"][round] = prompt
-                    test_info["responses"][round] = response
-                    test_info["Exceptions"][round] = str(e)
-                    signal.alarm(0)
-                    break
-                signal.alarm(0)
-            if model == "DeepseekCoder":
-                signal.signal(signal.SIGALRM, handler)
-                signal.alarm(300)
-                try:
-                    response, prompt = "", ""
-                    response, prompt = generate_prompts(model, test_method_name, test_type, test_method_content, err_msg, err_code, potential_apis,round, loading_model, tokenizer)
-                    patch,ifstitched = parse_patch_deepseekcoder(response, test_method_name, test_class_content)
-                except Exception as e:
-                    test_info["prompts"][round] = prompt
-                    test_info["responses"][round] = response
-                    test_info["Exceptions"][round] = str(e)
-                    signal.alarm(0)
-                    break
-                signal.alarm(0)
-            if model == "CodeLlama":
-                signal.signal(signal.SIGALRM, handler)
-                signal.alarm(300)
-                try:
-                    response, prompt = "", ""
-                    response, prompt = generate_prompts(model, test_method_name, test_type, test_method_content, err_msg, err_code, potential_apis,round, loading_model, tokenizer)
-                    patch,ifstitched = parse_patch_codellama(response, test_method_name, test_class_content)
                 except Exception as e:
                     test_info["prompts"][round] = prompt
                     test_info["responses"][round] = response
@@ -669,8 +625,7 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
                 err_msg = err_msg_list
                 err_code = err_code_list
                 test_class_content = update_class_content
-                    
-            
+                
             round += 1
 
         if fixed == False:
@@ -755,13 +710,6 @@ def stitching_symbols_imports(test_class_content_before_stitching, patch, err_co
             patch["import"].extend(symbols[symbol])
 
     return patch, update_err_msg, final_class_content, import_update
-
-
-    # update_class_content = apply_patch_stitch(file_path, test_class_content, test_method_name, after_patch, patch, project, sha, project_dir)
-    # nondex_output = run_test_with_nondex(project_dir,module, test, jdk, nondex_times)
-    # build_result = analyze_nondex_build_result(nondex_output)
-    # test_result = analyze_nondex_test_result(nondex_output)
-
 
 def dump_all_rounds_patch(info, test, file_path, patch_dir,project_url, sha, module, original_test_method, round):
     project = project_url.split("/")[-1]
@@ -965,16 +913,7 @@ def parse_patch_codellama(full_response, test_method_name, test_class_content):
     
     if len(pom_list):
         patch["pom"] = "\n".join(pom_list).replace("<dependencies>","").replace("</dependencies>","").replace("```xml","").replace("```","")
-
-
-    # if "<!-- <pom.xml start> -->" in response and "<!-- <pom.xml end> -->" in response:
-    #     pom_stat = (response.split("<!-- <pom.xml start> -->")[1]).split("<!-- <pom.xml end> -->")[0]
-    #     patch["pom"] = pom_stat
-    # elif "<pom.xml start>" in response and "<!-- <pom.xml end>" in response:
-    #     pom_stat = (response.split("<pom.xml start>")[1]).split("<!-- <pom.xml end>")[0]
-    #     patch["pom"] = pom_stat
     
-
     import_pattern = re.compile(r"import\s+(static\s+)?([\w\.]+(\.\*)?);", re.MULTILINE)
     
     original_imp_matches = import_pattern.findall(test_class_content)
@@ -1077,14 +1016,6 @@ def parse_patch_deepseekcoder(full_response, test_method_name, test_class_conten
     if len(pom_list):
         patch["pom"] = "\n".join(pom_list).replace("<dependencies>","").replace("</dependencies>","").replace("```xml","").replace("```","")
 
-
-    # if "<!-- <pom.xml start> -->" in response and "<!-- <pom.xml end> -->" in response:
-    #     pom_stat = (response.split("<!-- <pom.xml start> -->")[1]).split("<!-- <pom.xml end> -->")[0]
-    #     patch["pom"] = pom_stat
-    # elif "<pom.xml start>" in response and "<!-- <pom.xml end>" in response:
-    #     pom_stat = (response.split("<pom.xml start>")[1]).split("<!-- <pom.xml end>")[0]
-    #     patch["pom"] = pom_stat
-
     import_pattern = re.compile(r"import\s+(static\s+)?([\w\.]+(\.\*)?);", re.MULTILINE)
     
     original_imp_matches = import_pattern.findall(test_class_content)
@@ -1172,14 +1103,6 @@ def parse_patch_magiccoder(full_response, test_method_name, test_class_content):
     
     if len(pom_list):
         patch["pom"] = "\n".join(pom_list).replace("<dependencies>","").replace("</dependencies>","").replace("```xml","").replace("```","")
-
-
-    # if "<!-- <pom.xml start> -->" in response and "<!-- <pom.xml end> -->" in response:
-    #     pom_stat = (response.split("<!-- <pom.xml start> -->")[1]).split("<!-- <pom.xml end> -->")[0]
-    #     patch["pom"] = pom_stat
-    # elif "<pom.xml start>" in response and "<!-- <pom.xml end>" in response:
-    #     pom_stat = (response.split("<pom.xml start>")[1]).split("<!-- <pom.xml end>")[0]
-    #     patch["pom"] = pom_stat
 
     import_pattern = re.compile(r"import\s+(static\s+)?([\w\.]+(\.\*)?);", re.MULTILINE)
     
@@ -1309,7 +1232,7 @@ def parse_patch_gpt(response, test_method_name, test_class_content):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    input_flakies_csv = args[0] # /home/flaky/idAddac.csv
+    input_flakies_csv = args[0]
     projects_dir = args[1]
     api_key = args[2]
     model = args[3]
