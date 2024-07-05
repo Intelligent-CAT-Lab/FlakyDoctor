@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testListDetail': 'public void testListDetail() throws RemotingException {\n    String result = port.telnet(null, "-l");\n    String[] results = result.split("\\r\\n");\n    assertEquals("dubbo://127.0.0.1:20883", results[0]);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testListDetail']}polluter
+:code:
+{'fields': {}, 'methods': {'testListDetail': 'public void testListDetail() throws RemotingException {\n    String result = port.telnet(null, "-l");\n    String[] results = result.split("\\r\\n");\n    assertEquals("dubbo://127.0.0.1:20883", results[0]);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testListDetail']}

@@ -1,0 +1,40 @@
+test_before_fix:
+    public void assertPersistConfigurationForMasterSlaveRuleWithAuthenticationAndIsNotOverwriteAndConfigurationIsNotExisted() {
+        ConfigurationService configurationService = new ConfigurationService("test", regCenter);
+        configurationService.persistConfiguration("sharding_db",
+                createDataSourceConfigurations(), createMasterSlaveRuleConfiguration(), createAuthentication(), createProperties(), false);
+        verify(regCenter).persist(eq("/test/config/schema/sharding_db/datasource"), ArgumentMatchers.<String>any());
+        verify(regCenter).persist("/test/config/schema/sharding_db/rule", MASTER_SLAVE_RULE_YAML);
+        verify(regCenter).persist("/test/config/authentication", AUTHENTICATION_YAML);
+        verify(regCenter).persist("/test/config/props", PROPS_YAML);
+    }
+
+test_after_fix:
+
+code:
+public void assertPersistConfigurationForMasterSlaveRuleWithAuthenticationAndIsNotOverwriteAndConfigurationIsNotExisted() { 
+     ConfigurationService configurationService = new ConfigurationService("test", regCenter); 
+     configurationService.persistConfiguration("sharding_db", 
+             createDataSourceConfigurations(), createMasterSlaveRuleConfiguration(), createAuthentication(), createProperties(), false); 
+     verify(regCenter).persist(eq("/test/config/schema/sharding_db/datasource"), ArgumentMatchers.<String>any()); 
+     verify(regCenter).persist("/test/config/schema/sharding_db/rule", MASTER_SLAVE_RULE_YAML); 
+      
+     // Convert AUTHENTICATION_YAML to Map 
+     Type type = new TypeToken<Map<String, Object>>(){}.getType(); 
+     Gson gson = new GsonBuilder().create(); 
+     Map<String, Object> authMap = gson.fromJson(AUTHENTICATION_YAML, type); 
+     String sortedAuthYaml = gson.toJson(authMap); // This will sort the keys in the map 
+      
+     verify(regCenter).persist("/test/config/authentication", sortedAuthYaml); 
+     verify(regCenter).persist("/test/config/props", PROPS_YAML); 
+ } 
+ 
+import:
+['import com.google.gson.Gson;\n ', 'import com.google.gson.GsonBuilder;\n ', 'import com.google.gson.reflect.TypeToken;\n ', 'import java.lang.reflect.Type;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

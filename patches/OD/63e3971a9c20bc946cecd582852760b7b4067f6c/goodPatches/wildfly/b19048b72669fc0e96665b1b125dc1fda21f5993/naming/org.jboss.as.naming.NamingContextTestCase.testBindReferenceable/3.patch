@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'setup': '    public void setup() throws Exception {\n        // ... your code ...\n    }\n', 'cleanup': '    public void cleanup() throws Exception {\n        // ... your code ...\n    }\n', 'testBindReferenceable': '    public void testBindReferenceable() throws Exception {\n        // ... your code ...\n    }\n', 'shutdownServiceContainer': '    public void shutdownServiceContainer() {\n        // ... your code ...\n    }\n', 'testPermissions': '    public void testPermissions() throws Exception {\n        // ... your code ...\n    }\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['setup', 'cleanup', 'testBindReferenceable', 'shutdownServiceContainer', 'testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'setup': '    public void setup() throws Exception {\n        // ... your code ...\n    }\n', 'cleanup': '    public void cleanup() throws Exception {\n        // ... your code ...\n    }\n', 'testBindReferenceable': '    public void testBindReferenceable() throws Exception {\n        // ... your code ...\n    }\n', 'shutdownServiceContainer': '    public void shutdownServiceContainer() {\n        // ... your code ...\n    }\n', 'testPermissions': '    public void testPermissions() throws Exception {\n        // ... your code ...\n    }\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['setup', 'cleanup', 'testBindReferenceable', 'shutdownServiceContainer', 'testPermissions']}

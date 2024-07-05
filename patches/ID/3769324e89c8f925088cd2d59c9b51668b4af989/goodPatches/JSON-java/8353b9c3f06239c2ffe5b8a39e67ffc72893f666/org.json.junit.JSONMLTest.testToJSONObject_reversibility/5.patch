@@ -1,0 +1,49 @@
+test_before_fix:
+    public void testToJSONObject_reversibility() {
+        final String originalXml = "<readResult><errors someAttr=\"arrtValue\"><code>400</code></errors><errors><code>402</code></errors></readResult>";
+        final JSONObject originalObject=JSONML.toJSONObject(originalXml,false);
+        final String originalJson = originalObject.toString();
+        final String xml = JSONML.toString(originalObject);
+        final JSONObject revertedObject = JSONML.toJSONObject(xml, false);
+        final String newJson = revertedObject.toString();
+        assertTrue("JSON Objects are not similar",originalObject.similar(revertedObject));
+        assertEquals("original JSON does not equal the new JSON",originalJson, newJson);
+    }
+
+test_after_fix:
+
+code:
+public void testToJSONObject_reversibility() { 
+     final String originalXml = "<readResult><errors someAttr=\"arrtValue\"><code>400</code></errors><errors><code>402</code></errors></readResult>"; 
+     final JSONObject originalObject = JSONML.toJSONObject(originalXml, false); 
+  
+     final String xml = JSONML.toString(originalObject); 
+     final JSONObject revertedObject = JSONML.toJSONObject(xml, false); 
+  
+     Gson gson = new GsonBuilder().setPrettyPrinting().create(); 
+     JsonParser jp = new JsonParser(); 
+     JsonElement originalJsonElement = jp.parse(originalObject.toString()); 
+     JsonElement newJsonElement = jp.parse(revertedObject.toString()); 
+  
+     String prettyOriginalJson = gson.toJson(originalJsonElement); 
+     String prettyNewJson = gson.toJson(newJsonElement); 
+  
+     assertTrue("JSON Objects are not similar", originalObject.similar(revertedObject)); 
+  
+     // Convert JSON strings to maps to compare 
+     Type type = new TypeToken<LinkedHashMap<String, Object>>(){}.getType(); 
+     LinkedHashMap<String, Object> originalMap = gson.fromJson(prettyOriginalJson, type); 
+     LinkedHashMap<String, Object> newMap = gson.fromJson(prettyNewJson, type); 
+  
+     assertEquals("original JSON does not equal the new JSON", originalMap, newMap); 
+ } 
+ 
+import:
+[]
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

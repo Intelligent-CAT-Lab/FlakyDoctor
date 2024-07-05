@@ -1,0 +1,56 @@
+test_before_fix:
+	public void testUpdateClientRedirectURI() {
+
+		BaseClientDetails clientDetails = new BaseClientDetails();
+		clientDetails.setClientId("newClientIdWithNoDetails");
+
+		service.addClientDetails(clientDetails);
+
+		String[] redirectURI = { "http://localhost:8080",
+				"http://localhost:9090" };
+		clientDetails.setRegisteredRedirectUri(new HashSet<String>(Arrays
+				.asList(redirectURI)));
+
+		service.updateClientDetails(clientDetails);
+
+		Map<String, Object> map = jdbcTemplate.queryForMap(SELECT_SQL,
+				"newClientIdWithNoDetails");
+
+		assertEquals("newClientIdWithNoDetails", map.get("client_id"));
+		assertTrue(map.containsKey("web_server_redirect_uri"));
+		assertEquals("http://localhost:8080,http://localhost:9090",
+				map.get("web_server_redirect_uri"));
+	}
+
+test_after_fix:
+
+code:
+public void testUpdateClientRedirectURI() { 
+  
+ 	BaseClientDetails clientDetails = new BaseClientDetails(); 
+ 	clientDetails.setClientId("newClientIdWithNoDetails"); 
+  
+ 	service.addClientDetails(clientDetails); 
+  
+ 	String[] redirectURI = { "http://localhost:8080", 
+ 			"http://localhost:9090" }; 
+ 	clientDetails.setRegisteredRedirectUri(new LinkedHashSet<String>(Arrays 
+ 			.asList(redirectURI))); 
+  
+ 	service.updateClientDetails(clientDetails); 
+  
+ 	Map<String, Object> map = jdbcTemplate.queryForMap(SELECT_SQL, 
+ 			"newClientIdWithNoDetails"); 
+  
+ 	assertEquals("newClientIdWithNoDetails", map.get("client_id")); 
+ 	assertTrue(map.containsKey("web_server_redirect_uri")); 
+ 	String[] actualRedirectUris = map.get("web_server_redirect_uri").toString().split(","); 
+ 	Arrays.sort(actualRedirectUris); 
+ 	Arrays.sort(redirectURI); 
+ 	assertEquals(Arrays.toString(redirectURI), Arrays.toString(actualRedirectUris)); 
+ } 
+ 
+import:
+['import java.util.LinkedHashSet;\n ']
+pom:
+

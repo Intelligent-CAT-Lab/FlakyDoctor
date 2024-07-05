@@ -1,0 +1,69 @@
+test_before_fix:
+	public void testToJSON() {
+		Fuse root = new Fuse(0, 32);
+		Fuse f1 = new Fuse(1, 32);
+		root.addChild(f1);
+		
+		ChargingStation cs1 = buildDefaultChargingStation();
+		f1.addChild(cs1);
+		ChargingStation cs2 = buildDefaultChargingStation();
+		f1.addChild(cs2);
+		
+		Fuse f2 = new Fuse(2, 32);
+		root.addChild(f2);
+		
+		FuseTree fuseTree = new FuseTree(root, 20);
+
+		JSONObject json1 = fuseTree.toJSONObject();
+		String jsonString1 = json1.toString();
+		
+		FuseTree clone = FuseTree.fromJSON(json1, new ArrayList<ChargingStation>());
+		String jsonString2 = clone.toJSONObject().toString();
+		
+		assertEquals(jsonString1, jsonString2);
+	}
+
+test_after_fix:
+
+code:
+public void testToJSON() {  
+      Fuse root = new Fuse(0, 32);  
+      Fuse f1 = new Fuse(1, 32);  
+      root.addChild(f1);  
+    
+      ChargingStation cs1 = buildDefaultChargingStation();  
+      f1.addChild(cs1);  
+      ChargingStation cs2 = buildDefaultChargingStation();  
+      f1.addChild(cs2);  
+    
+      Fuse f2 = new Fuse(2, 32);  
+      root.addChild(f2);  
+    
+      FuseTree fuseTree = new FuseTree(root, 20);  
+    
+      JSONObject json1 = fuseTree.toJSONObject();  
+    
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();  
+      JsonParser jp = new JsonParser();  
+      Type type = new TypeToken<LinkedHashMap<String, Object>>(){}.getType();  
+    
+      LinkedHashMap<String, Object> map1 = gson.fromJson(json1.toString(), type);  
+      JsonElement je1 = jp.parse(gson.toJson(map1));  
+    
+      FuseTree clone = FuseTree.fromJSON(json1, new ArrayList<ChargingStation>());  
+    
+      LinkedHashMap<String, Object> map2 = gson.fromJson(clone.toJSONObject().toString(), type);  
+      JsonElement je2 = jp.parse(gson.toJson(map2));  
+    
+      assertEquals(je1, je2);  
+ } 
+ 
+import:
+[]
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

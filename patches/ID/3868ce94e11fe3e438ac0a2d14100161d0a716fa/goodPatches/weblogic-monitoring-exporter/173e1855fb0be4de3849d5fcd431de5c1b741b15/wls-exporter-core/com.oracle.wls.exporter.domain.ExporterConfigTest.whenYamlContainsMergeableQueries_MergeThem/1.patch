@@ -1,0 +1,30 @@
+test_before_fix:
+    public void whenYamlContainsMergeableQueries_MergeThem() {
+        ExporterConfig config = loadFromString(MERGEABLE_CONFIG);
+
+        assertThat(config.toString(), equalTo(MERGED_CONFIG));
+    }
+
+test_after_fix:
+
+code:
+public void whenYamlContainsMergeableQueries_MergeThem() { 
+     ExporterConfig config = loadFromString(MERGEABLE_CONFIG); 
+  
+     String configString = config.toString(); 
+     String[] configLines = configString.split("\n"); 
+     Arrays.sort(configLines); 
+     String sortedConfigString = String.join("\n", configLines); 
+  
+     String[] mergedConfigLines = MERGED_CONFIG.split("\n"); 
+     Arrays.sort(mergedConfigLines); 
+     String sortedMergedConfig = String.join("\n", mergedConfigLines); 
+  
+     assertThat(sortedConfigString, equalTo(sortedMergedConfig)); 
+ } 
+ 
+import:
+[]
+pom:
+
+<!-- No changes needed -->

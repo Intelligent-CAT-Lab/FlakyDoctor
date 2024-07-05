@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testValidation': 'public void testValidation() {\n    ServiceConfig<ValidationService> service = new ServiceConfig<ValidationService>();\n    service.setApplication(new ApplicationConfig("validation-provider"));\n    service.setRegistry(new RegistryConfig("N/A"));\n    service.setProtocol(new ProtocolConfig("dubbo", 29582));\n    service.setInterface(ValidationService.class.getName());\n    service.setRef(new ValidationServiceImpl());\n    service.setValidation(String.valueOf(true));\n    service.export();\n    try {\n        ReferenceConfig<ValidationService> reference = new ReferenceConfig<ValidationService>();\n        reference.setApplication(new ApplicationConfig("validation-consumer"));\n        reference.setInterface(ValidationService.class);\n        reference.setUrl("dubbo://127.0.0.1:29582?scope=remote&validation=true");\n        ValidationService validationService = reference.get();\n        try {\n            // Save OK\n            ValidationParameter parameter = new ValidationParameter();\n            parameter.setName("liangfei");\n            parameter.setEmail("liangfei@liang.fei");\n            parameter.setAge(50);\n            parameter.setLoginDate(new Date(System.currentTimeMillis() - 1000000));\n            parameter.setExpiryDate(new Date(System.currentTimeMillis() + 1000000));\n            parameter.setId(1); \n\n            validationService.save(parameter);\n\n            // Delete OK\n            validationService.delete(2, "abcd"); \n\n\n        } finally {\n            reference.destroy();\n        }\n    } finally {\n        service.unexport();\n    }\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testValidation']}polluter
+:code:
+{'fields': {}, 'methods': {'testValidation': 'public void testValidation() {\n    ServiceConfig<ValidationService> service = new ServiceConfig<ValidationService>();\n    service.setApplication(new ApplicationConfig("validation-provider"));\n    service.setRegistry(new RegistryConfig("N/A"));\n    service.setProtocol(new ProtocolConfig("dubbo", 29582));\n    service.setInterface(ValidationService.class.getName());\n    service.setRef(new ValidationServiceImpl());\n    service.setValidation(String.valueOf(true));\n    service.export();\n    try {\n        ReferenceConfig<ValidationService> reference = new ReferenceConfig<ValidationService>();\n        reference.setApplication(new ApplicationConfig("validation-consumer"));\n        reference.setInterface(ValidationService.class);\n        reference.setUrl("dubbo://127.0.0.1:29582?scope=remote&validation=true");\n        ValidationService validationService = reference.get();\n        try {\n            // Save OK\n            ValidationParameter parameter = new ValidationParameter();\n            parameter.setName("liangfei");\n            parameter.setEmail("liangfei@liang.fei");\n            parameter.setAge(50);\n            parameter.setLoginDate(new Date(System.currentTimeMillis() - 1000000));\n            parameter.setExpiryDate(new Date(System.currentTimeMillis() + 1000000));\n            parameter.setId(1); \n\n            validationService.save(parameter);\n\n            // Delete OK\n            validationService.delete(2, "abcd"); \n\n\n        } finally {\n            reference.destroy();\n        }\n    } finally {\n        service.unexport();\n    }\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testValidation']}

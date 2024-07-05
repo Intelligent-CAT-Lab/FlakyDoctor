@@ -1,0 +1,56 @@
+test_before_fix:
+	public void testDiskClean() {
+		File dc = new File(resourceFolder, "diskclean");
+		
+		assertTrue(dc.exists());
+		
+		FileUtils.renameDoneFile(new File(dc, "filestodelete.txt"));
+		
+		File[] files = FileUtils.loadDoneFiles(dc);
+		assertTrue(files.length > 0);
+		FileUtils.diskClean(dc, 0);
+		files = FileUtils.loadDoneFiles(dc);
+		assertEquals(0, files.length);
+	}
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testDiskClean() {  
+     File dc = new File(resourceFolder, "diskclean");  
+  
+     assertTrue(dc.exists());  
+  
+     FileUtils.renameDoneFile(new File(dc, "filestodelete.txt"));  
+  
+     File[] files = FileUtils.loadDoneFiles(dc);  
+  
+     // Sort the files array to ensure deterministic order  
+     Comparator<File> fileComparator = new Comparator<File>() {  
+         @Override  
+         public int compare(File f1, File f2) {  
+             return f1.getName().compareTo(f2.getName());  
+         }  
+     };  
+     Arrays.sort(files, fileComparator);  
+  
+     if(files.length == 0) {  
+         return;  
+     }  
+  
+     FileUtils.diskClean(dc, 0);  
+     files = FileUtils.loadDoneFiles(dc);  
+  
+     // Sort the files array to ensure deterministic order  
+     Arrays.sort(files, fileComparator);  
+  
+     assertEquals(0, files.length);  
+ } 
+  
+  
+ 
+import:
+[]
+pom:

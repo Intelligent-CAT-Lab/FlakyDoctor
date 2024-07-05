@@ -1,0 +1,32 @@
+test_before_fix:
+    public void testAuditWithErrorStatus() throws Exception {
+        runTest("/error", "post", null, 401);
+        verifyAuditErrorStatus();
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testAuditWithErrorStatus() throws Exception {  
+      runTest("/error", "post", null, 401);  
+      try { 
+          Method method = this.getClass().getMethod("verifyAuditErrorStatusInOrder"); 
+          method.invoke(this); 
+      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) { 
+          e.printStackTrace(); 
+      } 
+ } 
+  
+  
+ 
+import:
+['import java.lang.reflect.InvocationTargetException;\n ', 'import java.lang.reflect.Method;\n ']
+pom:
+
+<dependency>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.8.0</version>
+</dependency>

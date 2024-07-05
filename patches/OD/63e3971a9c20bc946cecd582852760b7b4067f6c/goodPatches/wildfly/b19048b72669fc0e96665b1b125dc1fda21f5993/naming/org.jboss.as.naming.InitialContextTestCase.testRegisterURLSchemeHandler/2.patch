@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n    \n\n    // Initialize the variables inside the test method to ensure they are not affected by other tests\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n    \n\n\n    // Rest of the code remains the same\n    // ...\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n    \n\n    // Initialize the variables inside the test method to ensure they are not affected by other tests\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n    \n\n\n    // Rest of the code remains the same\n    // ...\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}

@@ -1,0 +1,31 @@
+test_before_fix:
+    public void testFormatMultiple() {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("a", "b");
+        params.put("a", "b");
+        params.put("b", "c");
+        
+        Assert.assertTrue(
+                ("a=b&b=c").equals(KeyValueFormatter.format(params, true))
+                ||
+                ("b=c&a=b").equals(KeyValueFormatter.format(params, true))
+                );
+    }
+
+test_after_fix:
+
+code:
+public void testFormatMultiple() { 
+     LinkedHashMap<String, String> params = new LinkedHashMap<String, String>(); 
+     params.put("a", "b"); 
+     params.put("b", "c"); 
+  
+     Assert.assertTrue( 
+             ("a=b&b=c").equals(KeyValueFormatter.format(params, true)) 
+     ); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ']
+pom:
+

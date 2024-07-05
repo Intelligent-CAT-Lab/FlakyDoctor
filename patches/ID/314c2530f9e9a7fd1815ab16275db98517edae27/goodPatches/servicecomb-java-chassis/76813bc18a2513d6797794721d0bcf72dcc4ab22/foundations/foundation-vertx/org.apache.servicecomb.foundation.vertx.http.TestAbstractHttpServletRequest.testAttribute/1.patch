@@ -1,0 +1,41 @@
+test_before_fix:
+  public void testAttribute() {
+    String key = "a1";
+    String value = "abc";
+    request.setAttribute(key, value);
+    Assertions.assertSame(value, request.getAttribute(key));
+    MatcherAssert.assertThat(Collections.list(request.getAttributeNames()), Matchers.contains(key));
+
+    request.setAttribute("a2", "v");
+    MatcherAssert.assertThat(Collections.list(request.getAttributeNames()), Matchers.contains(key, "a2"));
+
+    request.removeAttribute(key);
+    Assertions.assertNull(request.getAttribute(key));
+  }
+
+test_after_fix:
+
+code:
+public void testAttribute() { 
+     String key = "a1"; 
+     String value = "abc"; 
+     request.setAttribute(key, value); 
+     Assertions.assertSame(value, request.getAttribute(key)); 
+      
+     List<String> attributeNames = Collections.list(request.getAttributeNames()); 
+     Collections.sort(attributeNames); 
+     MatcherAssert.assertThat(attributeNames, Matchers.contains(key)); 
+  
+     request.setAttribute("a2", "v"); 
+     attributeNames = Collections.list(request.getAttributeNames()); 
+     Collections.sort(attributeNames); 
+     MatcherAssert.assertThat(attributeNames, Matchers.contains(key, "a2")); 
+  
+     request.removeAttribute(key); 
+     Assertions.assertNull(request.getAttribute(key)); 
+ } 
+ 
+import:
+['import java.util.List;\n ']
+pom:
+

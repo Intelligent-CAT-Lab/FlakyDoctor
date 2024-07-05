@@ -1,0 +1,26 @@
+test_before_fix:
+    public void testGenerateSearchWeightString() {
+        Map<String, Integer> fields = new HashMap<>();
+        fields.put("one", 10);
+        fields.put("two", 1);
+        fields.put("three", 15);
+        String generatedString = AtlasJanusGraphIndexClient.generateSearchWeightString(fields);
+        Assert.assertEquals(generatedString, " one^10 two^1 three^15");
+    }
+
+test_after_fix:
+
+code:
+public void testGenerateSearchWeightString() {  
+      Map<String, Integer> fields = new LinkedHashMap<>();  
+      fields.put("one", 10);  
+      fields.put("two", 1);  
+      fields.put("three", 15);  
+      String generatedString = AtlasJanusGraphIndexClient.generateSearchWeightString(fields);  
+      String expectedString = " one^10 two^1 three^15"; 
+      Assert.assertEquals(expectedString, generatedString);  
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ']
+pom:

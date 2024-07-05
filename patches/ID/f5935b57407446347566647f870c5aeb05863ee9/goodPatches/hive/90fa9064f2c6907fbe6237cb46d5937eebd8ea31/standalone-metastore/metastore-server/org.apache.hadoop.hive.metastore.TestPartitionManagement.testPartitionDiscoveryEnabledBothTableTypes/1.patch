@@ -1,0 +1,150 @@
+test_before_fix:
+  public void testPartitionDiscoveryEnabledBothTableTypes() throws TException, IOException {
+    String dbName = "db2";
+    String tableName = "tbl2";
+    Map<String, Column> colMap = buildAllColumns();
+    List<String> partKeys = Lists.newArrayList("state", "dt");
+    List<String> partKeyTypes = Lists.newArrayList("string", "date");
+    List<List<String>> partVals = Lists.newArrayList(
+      Lists.newArrayList("__HIVE_DEFAULT_PARTITION__", "1990-01-01"),
+      Lists.newArrayList("CA", "1986-04-28"),
+      Lists.newArrayList("MN", "2018-11-31"));
+    createMetadata(DEFAULT_CATALOG_NAME, dbName, tableName, partKeys, partKeyTypes, partVals, colMap, false);
+    Table table = client.getTable(dbName, tableName);
+    List<Partition> partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(3, partitions.size());
+    String tableLocation = table.getSd().getLocation();
+    URI location = URI.create(tableLocation);
+    Path tablePath = new Path(location);
+    FileSystem fs = FileSystem.get(location, conf);
+    Path newPart1 = new Path(tablePath, "state=WA/dt=2018-12-01");
+    Path newPart2 = new Path(tablePath, "state=UT/dt=2018-12-02");
+    fs.mkdirs(newPart1);
+    fs.mkdirs(newPart2);
+    assertEquals(5, fs.listStatus(tablePath).length);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(3, partitions.size());
+
+    // table property is set to true, we expect 5 partitions
+    table.getParameters().put(PartitionManagementTask.DISCOVER_PARTITIONS_TBLPROPERTY, "true");
+    client.alter_table(dbName, tableName, table);
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(5, partitions.size());
+
+    // change table type to external, delete a partition directory and make sure partition discovery works
+    table.getParameters().put("EXTERNAL", "true");
+    table.setTableType(TableType.EXTERNAL_TABLE.name());
+    client.alter_table(dbName, tableName, table);
+    boolean deleted = fs.delete(newPart1.getParent(), true);
+    assertTrue(deleted);
+    assertEquals(4, fs.listStatus(tablePath).length);
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(4, partitions.size());
+
+    // remove external tables from partition discovery and expect no changes even after partition is deleted
+    conf.set(MetastoreConf.ConfVars.PARTITION_MANAGEMENT_TABLE_TYPES.getVarname(), TableType.MANAGED_TABLE.name());
+    deleted = fs.delete(newPart2.getParent(), true);
+    assertTrue(deleted);
+    assertEquals(3, fs.listStatus(tablePath).length);
+    // this doesn't remove partition because table is still external and we have remove external table type from
+    // partition discovery
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(4, partitions.size());
+
+    // no table types specified, msck will not select any tables
+    conf.set(MetastoreConf.ConfVars.PARTITION_MANAGEMENT_TABLE_TYPES.getVarname(), "");
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(4, partitions.size());
+
+    // only EXTERNAL table type, msck should drop a partition now
+    conf.set(MetastoreConf.ConfVars.PARTITION_MANAGEMENT_TABLE_TYPES.getVarname(), TableType.EXTERNAL_TABLE.name());
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(3, partitions.size());
+  }
+
+test_after_fix:
+
+code:
+void testPartitionDiscoveryEnabledBothTableTypes() throws TException, IOException { 
+     String dbName = "db2"; 
+     String tableName = "tbl2"; 
+     Map<String, Column> colMap = buildAllColumns(); 
+     List<String> partKeys = Lists.newArrayList("state", "dt"); 
+     List<String> partKeyTypes = Lists.newArrayList("string", "date"); 
+     List<List<String>> partVals = Lists.newArrayList( 
+       Lists.newArrayList("__HIVE_DEFAULT_PARTITION__", "1990-01-01"), 
+       Lists.newArrayList("CA", "1986-04-28"), 
+       Lists.newArrayList("MN", "2018-11-31")); 
+     createMetadata(DEFAULT_CATALOG_NAME, dbName, tableName, partKeys, partKeyTypes, partVals, colMap, false); 
+     Table table = client.getTable(dbName, tableName); 
+     List<Partition> partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions = partitions.stream().sorted().collect(Collectors.toList()); 
+     assertEquals(3, partitions.size()); 
+     String tableLocation = table.getSd().getLocation(); 
+     URI location = URI.create(tableLocation); 
+     Path tablePath = new Path(location); 
+     FileSystem fs = FileSystem.get(location, conf); 
+     Path newPart1 = new Path(tablePath, "state=WA/dt=2018-12-01"); 
+     Path newPart2 = new Path(tablePath, "state=UT/dt=2018-12-02"); 
+     fs.mkdirs(newPart1); 
+     fs.mkdirs(newPart2); 
+     assertEquals(5, fs.listStatus(tablePath).length); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions = partitions.stream().sorted().collect(Collectors.toList()); 
+     assertEquals(3, partitions.size()); 
+  
+     // table property is set to true, we expect 5 partitions 
+     table.getParameters().put(PartitionManagementTask.DISCOVER_PARTITIONS_TBLPROPERTY, "true"); 
+     client.alter_table(dbName, tableName, table); 
+     runPartitionManagementTask(conf); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions = partitions.stream().sorted().collect(Collectors.toList()); 
+     assertEquals(5, partitions.size()); 
+  
+     // change table type to external, delete a partition directory and make sure partition discovery works 
+     table.getParameters().put("EXTERNAL", "true"); 
+     table.setTableType(TableType.EXTERNAL_TABLE.name()); 
+     client.alter_table(dbName, tableName, table); 
+     boolean deleted = fs.delete(newPart1.getParent(), true); 
+     assertTrue(deleted); 
+     assertEquals(4, fs.listStatus(tablePath).length); 
+     runPartitionManagementTask(conf); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions = partitions.stream().sorted().collect(Collectors.toList()); 
+     assertEquals(4, partitions.size()); 
+  
+     // remove external tables from partition discovery and expect no changes even after partition is deleted 
+     conf.set(MetastoreConf.ConfVars.PARTITION_MANAGEMENT_TABLE_TYPES.getVarname(), TableType.MANAGED_TABLE.name()); 
+     deleted = fs.delete(newPart2.getParent(), true); 
+     assertTrue(deleted); 
+     assertEquals(3, fs.listStatus(tablePath).length); 
+     // this doesn't remove partition because table is still external and we have remove external table type from 
+     // partition discovery 
+     runPartitionManagementTask(conf); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions = partitions.stream().sorted().collect(Collectors.toList()); 
+     assertEquals(4, partitions.size()); 
+  
+     // no table types specified, msck will not select any tables 
+     conf.set(MetastoreConf.ConfVars.PARTITION_MANAGEMENT_TABLE_TYPES.getVarname(), ""); 
+     runPartitionManagementTask(conf); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions = partitions.stream().sorted().collect(Collectors.toList()); 
+     assertEquals(4, partitions.size()); 
+  
+     // only EXTERNAL table type, msck should drop a partition now 
+     conf.set(MetastoreConf.ConfVars.PARTITION_MANAGEMENT_TABLE_TYPES.getVarname(), TableType.EXTERNAL_TABLE.name()); 
+     runPartitionManagementTask(conf); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions = partitions.stream().sorted().collect(Collectors.toList()); 
+     assertEquals(3, partitions.size()); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import java.util.stream.Collectors;\n ']
+pom:

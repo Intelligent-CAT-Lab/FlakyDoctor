@@ -1,0 +1,60 @@
+test_before_fix:
+  @Test public void serialization() {
+    Event event = new Event("e93facc04764012d7bfb002500d5d1a6", "srv01/HTTP", "trigger",
+        "FAILURE for production/HTTP on machine srv01.acme.com", "Sample Monitoring Service",
+        "https://monitoring.service.com", TestUtil.map("ping time", "1500ms", "load avg", "0.75"));
+    String actual = gson.toJson(event);
+
+    String expected = ""
+        + "{"
+        + "\"service_key\":\"e93facc04764012d7bfb002500d5d1a6\","
+        + "\"incident_key\":\"srv01/HTTP\","
+        + "\"event_type\":\"trigger\","
+        + "\"description\":\"FAILURE for production/HTTP on machine srv01.acme.com\","
+        + "\"client\":\"Sample Monitoring Service\","
+        + "\"client_url\":\"https://monitoring.service.com\","
+        + "\"details\":{"
+        + "\"ping time\":\"1500ms\","
+        + "\"load avg\":\"0.75\""
+        + "}"
+        + "}";
+    assertThat(actual).isEqualTo(expected);
+  }
+
+test_after_fix:
+
+code:
+public void serialization() { 
+     Event event = new Event("e93facc04764012d7bfb002500d5d1a6", "srv01/HTTP", "trigger", 
+         "FAILURE for production/HTTP on machine srv01.acme.com", "Sample Monitoring Service", 
+         "https://monitoring.service.com", TestUtil.map("ping time", "1500ms", "load avg", "0.75")); 
+     String actual = gson.toJson(event); 
+  
+     JsonObject expected = new JsonObject(); 
+     expected.addProperty("service_key", "e93facc04764012d7bfb002500d5d1a6"); 
+     expected.addProperty("incident_key", "srv01/HTTP"); 
+     expected.addProperty("event_type", "trigger"); 
+     expected.addProperty("description", "FAILURE for production/HTTP on machine srv01.acme.com"); 
+     expected.addProperty("client", "Sample Monitoring Service"); 
+     expected.addProperty("client_url", "https://monitoring.service.com"); 
+     JsonObject details = new JsonObject(); 
+     details.addProperty("ping time", "1500ms"); 
+     details.addProperty("load avg", "0.75"); 
+     expected.add("details", details); 
+  
+     JsonParser parser = new JsonParser(); 
+     JsonElement actualJsonElement = parser.parse(actual); 
+     JsonElement expectedJsonElement = parser.parse(expected.toString()); 
+  
+     assertThat(actualJsonElement).isEqualTo(expectedJsonElement); 
+ } 
+ 
+import:
+['import com.google.gson.JsonObject;\n ', 'import com.google.gson.JsonParser;\n ', 'import com.google.gson.JsonElement;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

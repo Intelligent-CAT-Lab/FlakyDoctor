@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testRegisterParserWithAlternativeBeginChar': 'public void testRegisterParserWithAlternativeBeginChar() {\n\n\ttry {\n\t\tinstance.registerParser("VDM", VDMParser.class);\n\t\tassertTrue(instance.hasParser("VDM"));\n\t} catch (Exception e) {\n\t\tfail("parser registering failed");\n\t}\n\n\tSentence s = instance.createParser("!AIVDM,1,2,3");\n\tassertNotNull(s);\n\tassertTrue(s instanceof Sentence);\n\tassertTrue(s instanceof SentenceParser);\n\tassertTrue(s instanceof VDMParser);\n\tinstance.unregisterParser(VDMParser.class);\n\tassertFalse(instance.hasParser("VDM"));\n\n\t\n\n\tinstance.reset();\n\t\n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testRegisterParserWithAlternativeBeginChar']}polluter
+:code:
+{'fields': {}, 'methods': {'testRegisterParserWithAlternativeBeginChar': 'public void testRegisterParserWithAlternativeBeginChar() {\n\n\ttry {\n\t\tinstance.registerParser("VDM", VDMParser.class);\n\t\tassertTrue(instance.hasParser("VDM"));\n\t} catch (Exception e) {\n\t\tfail("parser registering failed");\n\t}\n\n\tSentence s = instance.createParser("!AIVDM,1,2,3");\n\tassertNotNull(s);\n\tassertTrue(s instanceof Sentence);\n\tassertTrue(s instanceof SentenceParser);\n\tassertTrue(s instanceof VDMParser);\n\tinstance.unregisterParser(VDMParser.class);\n\tassertFalse(instance.hasParser("VDM"));\n\n\t\n\n\tinstance.reset();\n\t\n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testRegisterParserWithAlternativeBeginChar']}

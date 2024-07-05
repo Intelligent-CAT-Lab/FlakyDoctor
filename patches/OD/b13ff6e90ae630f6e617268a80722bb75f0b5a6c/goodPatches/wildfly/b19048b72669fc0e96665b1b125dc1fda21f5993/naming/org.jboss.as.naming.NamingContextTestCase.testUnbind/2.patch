@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testUnbind': 'public void testUnbind() throws Exception {\n    // Reinitialize the namingStore and namingContext objects to ensure they are in a clean state before the test is run\n    namingStore = new InMemoryNamingStore();\n    NamingContext.setActiveNamingStore(namingStore);\n    namingContext = new NamingContext(namingStore, null);\n\n    final Name name = new CompositeName("test");\n    final Object value = new Object();\n    namingStore.bind(name, value);\n    namingContext.unbind(name);\n    try {\n        namingStore.lookup(name);\n        fail("Should have thrown name not found");\n    } catch (NameNotFoundException expect) {}\n\n    //the same with security permissions\n    testActionPermission(JndiPermission.ACTION_BIND, namingContext, "test", value);\n    testActionPermission(JndiPermission.ACTION_UNBIND, namingContext, "test");\n    try {\n        namingStore.lookup(name);\n        fail("Should have thrown name not found");\n    } catch (NameNotFoundException expect) {}\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    // Initialize the NamingManager before testing permissions\n    NamingContext.initializeNamingManager();\n\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n\n    // Rest of the code...\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testUnbind', 'testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'testUnbind': 'public void testUnbind() throws Exception {\n    // Reinitialize the namingStore and namingContext objects to ensure they are in a clean state before the test is run\n    namingStore = new InMemoryNamingStore();\n    NamingContext.setActiveNamingStore(namingStore);\n    namingContext = new NamingContext(namingStore, null);\n\n    final Name name = new CompositeName("test");\n    final Object value = new Object();\n    namingStore.bind(name, value);\n    namingContext.unbind(name);\n    try {\n        namingStore.lookup(name);\n        fail("Should have thrown name not found");\n    } catch (NameNotFoundException expect) {}\n\n    //the same with security permissions\n    testActionPermission(JndiPermission.ACTION_BIND, namingContext, "test", value);\n    testActionPermission(JndiPermission.ACTION_UNBIND, namingContext, "test");\n    try {\n        namingStore.lookup(name);\n        fail("Should have thrown name not found");\n    } catch (NameNotFoundException expect) {}\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    // Initialize the NamingManager before testing permissions\n    NamingContext.initializeNamingManager();\n\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n\n    // Rest of the code...\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testUnbind', 'testPermissions']}

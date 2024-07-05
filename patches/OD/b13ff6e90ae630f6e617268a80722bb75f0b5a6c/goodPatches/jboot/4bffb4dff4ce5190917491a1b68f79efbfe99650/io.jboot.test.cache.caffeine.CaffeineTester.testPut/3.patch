@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'config': 'public void config() {\n    JbootApplication.setBootArg("jboot.cache.type", "caffeine");\n}\n', 'testGet': 'public void testGet() {\n    String uniqueCacheName = "cachename2";\n    String uniqueKey = "key2";\n    Jboot.getCache().put(uniqueCacheName, uniqueKey, "value");\n    String value = Jboot.getCache().get(uniqueCacheName, uniqueKey);\n    Assert.assertTrue("value".equals(value));\n}\n', 'testPut': 'public void testPut() {\n    String uniqueCacheName = "cachename1";\n    String uniqueKey = "key1";\n    Jboot.getCache().put(uniqueCacheName, uniqueKey, "value");\n    String value = Jboot.getCache().get(uniqueCacheName, uniqueKey);\n    Assert.assertNotNull(value);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['config', 'testGet', 'testPut']}polluter
+:code:
+{'fields': {}, 'methods': {'config': 'public void config() {\n    JbootApplication.setBootArg("jboot.cache.type", "caffeine");\n}\n', 'testGet': 'public void testGet() {\n    String uniqueCacheName = "cachename2";\n    String uniqueKey = "key2";\n    Jboot.getCache().put(uniqueCacheName, uniqueKey, "value");\n    String value = Jboot.getCache().get(uniqueCacheName, uniqueKey);\n    Assert.assertTrue("value".equals(value));\n}\n', 'testPut': 'public void testPut() {\n    String uniqueCacheName = "cachename1";\n    String uniqueKey = "key1";\n    Jboot.getCache().put(uniqueCacheName, uniqueKey, "value");\n    String value = Jboot.getCache().get(uniqueCacheName, uniqueKey);\n    Assert.assertNotNull(value);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['config', 'testGet', 'testPut']}

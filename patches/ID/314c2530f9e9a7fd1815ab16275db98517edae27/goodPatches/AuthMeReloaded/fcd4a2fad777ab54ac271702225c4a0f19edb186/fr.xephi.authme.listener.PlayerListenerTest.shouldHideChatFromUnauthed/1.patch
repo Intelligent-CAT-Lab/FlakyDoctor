@@ -1,0 +1,53 @@
+test_before_fix:
+    public void shouldHideChatFromUnauthed() {
+        // given
+        given(settings.getProperty(RestrictionSettings.ALLOW_CHAT)).willReturn(false);
+        AsyncPlayerChatEvent event = newAsyncChatEvent();
+        given(listenerService.shouldCancelEvent(event.getPlayer())).willReturn(false);
+        given(settings.getProperty(RestrictionSettings.HIDE_CHAT)).willReturn(true);
+        List<Player> recipients = new ArrayList<>(event.getRecipients());
+        given(listenerService.shouldCancelEvent(recipients.get(0))).willReturn(true);
+
+        // when
+        listener.onPlayerChat(event);
+
+        // then
+        verify(listenerService).shouldCancelEvent(event.getPlayer());
+        // message sender + 3 recipients = 4
+        verify(listenerService, times(4)).shouldCancelEvent(any(Player.class));
+        verify(event, never()).setCancelled(anyBoolean());
+        assertThat(event.getRecipients(), contains(recipients.get(1), recipients.get(2)));
+    }
+
+test_after_fix:
+
+code:
+public void shouldHideChatFromUnauthed() { 
+     // given 
+     given(settings.getProperty(RestrictionSettings.ALLOW_CHAT)).willReturn(false); 
+     AsyncPlayerChatEvent event = newAsyncChatEvent(); 
+     given(listenerService.shouldCancelEvent(event.getPlayer())).willReturn(false); 
+     given(settings.getProperty(RestrictionSettings.HIDE_CHAT)).willReturn(true); 
+     List<Player> recipients = new ArrayList<>(event.getRecipients()); 
+     given(listenerService.shouldCancelEvent(recipients.get(0))).willReturn(true); 
+  
+     // when 
+     listener.onPlayerChat(event); 
+  
+     // then 
+     verify(listenerService).shouldCancelEvent(event.getPlayer()); 
+     // message sender + 3 recipients = 4 
+     verify(listenerService, times(4)).shouldCancelEvent(any(Player.class)); 
+     verify(event, never()).setCancelled(anyBoolean()); 
+      
+     List<Player> expectedRecipients = Arrays.asList(recipients.get(1), recipients.get(2)); 
+     List<Player> actualRecipients = new ArrayList<>(event.getRecipients()); 
+     Collections.sort(expectedRecipients, Comparator.comparing(Player::hashCode)); 
+     Collections.sort(actualRecipients, Comparator.comparing(Player::hashCode)); 
+     assertThat(actualRecipients, is(expectedRecipients)); 
+ } 
+ 
+import:
+['import java.util.Comparator;\n ', 'import static org.hamcrest.CoreMatchers.is;\n ']
+pom:
+

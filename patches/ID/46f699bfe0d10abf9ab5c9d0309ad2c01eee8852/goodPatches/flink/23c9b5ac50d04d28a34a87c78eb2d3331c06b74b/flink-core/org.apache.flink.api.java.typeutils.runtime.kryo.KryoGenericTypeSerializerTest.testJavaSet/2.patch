@@ -1,0 +1,23 @@
+test_before_fix:
+	public void testJavaSet(){
+		Collection<Integer> b = new HashSet<>();
+
+		fillCollection(b);
+
+		runTests(b);
+	}
+
+test_after_fix:
+
+code:
+public void testJavaSet(){  
+     Collection<Integer> b = new LinkedHashSet<>();  
+  
+     fillCollection(b);  
+  
+     runTests(b);  
+ } 
+ 
+import:
+['import java.util.LinkedHashSet;\n ', 'import java.util.LinkedHashSet;\n ']
+pom:

@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testRegisterAndUnregister_tracksRegistrations': 'public void testRegisterAndUnregister_tracksRegistrations() {\n  \n\n  // Clear the MetricRegistry before the test starts\n  MetricRegistryImpl.getDefault().unregisterAllMetrics();\n  \n\n\n  assertThat(MetricRegistryImpl.getDefault().getRegisteredMetrics()).isEmpty();\n\n  AbstractMetric<?> metric = mock(AbstractMetric.class);\n  MetricRegistryImpl.getDefault().registerMetric("/test/metric", metric);\n\n  assertThat(MetricRegistryImpl.getDefault().getRegisteredMetrics()).containsExactly(metric);\n\n  MetricRegistryImpl.getDefault().unregisterMetric("/test/metric");\n\n  assertThat(MetricRegistryImpl.getDefault().getRegisteredMetrics()).isEmpty();\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testRegisterAndUnregister_tracksRegistrations']}polluter
+:code:
+{'fields': {}, 'methods': {'testRegisterAndUnregister_tracksRegistrations': 'public void testRegisterAndUnregister_tracksRegistrations() {\n  \n\n  // Clear the MetricRegistry before the test starts\n  MetricRegistryImpl.getDefault().unregisterAllMetrics();\n  \n\n\n  assertThat(MetricRegistryImpl.getDefault().getRegisteredMetrics()).isEmpty();\n\n  AbstractMetric<?> metric = mock(AbstractMetric.class);\n  MetricRegistryImpl.getDefault().registerMetric("/test/metric", metric);\n\n  assertThat(MetricRegistryImpl.getDefault().getRegisteredMetrics()).containsExactly(metric);\n\n  MetricRegistryImpl.getDefault().unregisterMetric("/test/metric");\n\n  assertThat(MetricRegistryImpl.getDefault().getRegisteredMetrics()).isEmpty();\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testRegisterAndUnregister_tracksRegistrations']}

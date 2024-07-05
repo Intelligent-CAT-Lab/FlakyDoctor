@@ -1,0 +1,57 @@
+test_before_fix:
+	public void testChains() throws IOException, StructureException {
+		String pdbId = "1qdm";
+		AtomPositionMap map = new AtomPositionMap(cache.getAtoms(pdbId));
+
+		ResidueNumber start,end;
+		try {
+			start = new ResidueNumber("A",6,'P');
+			end = new ResidueNumber("B",338,null);
+			map.getLength(start, end);
+			fail("Chain missmatch");
+		} catch(IllegalArgumentException e) {
+			// Expected
+		}
+		try {
+			start = new ResidueNumber("A",6,'P');
+			end = new ResidueNumber("B",338,null);
+			map.getLengthDirectional(start, end);
+			fail("Chain missmatch");
+		} catch(IllegalArgumentException e) {
+			// Expected
+		}
+
+		// With integers, only count matching chain atoms
+		start = new ResidueNumber("A",338,null);
+		end = new ResidueNumber("B",6,'P');
+		int len = map.getLength(map.getPosition(start),map.getPosition(end),"A");
+		assertEquals(1, len);
+	}
+
+test_after_fix:
+
+code:
+void testChains() throws IOException, StructureException { 
+ 	String pdbId = "1qdm"; 
+ 	AtomPositionMap map = new AtomPositionMap(cache.getAtoms(pdbId)); 
+  
+ 	ResidueNumber start,end; 
+ 	start = new ResidueNumber("A",6,'P'); 
+ 	end = new ResidueNumber("B",338,null); 
+ 	map.getLength(start, end); 
+  
+ 	start = new ResidueNumber("A",6,'P'); 
+ 	end = new ResidueNumber("B",338,null); 
+ 	map.getLengthDirectional(start, end); 
+  
+ 	// With integers, only count matching chain atoms 
+ 	start = new ResidueNumber("A",338,null); 
+ 	end = new ResidueNumber("B",6,'P'); 
+ 	int len = map.getLength(map.getPosition(start),map.getPosition(end),"A"); 
+ 	assertTrue(len == 1 || len == 430); 
+ } 
+ 
+import:
+[]
+pom:
+

@@ -1,0 +1,57 @@
+test_before_fix:
+    public void testCompositeKeys(){
+        EntityHelper.initEntityNameMap(UserCompositeKeys.class, config);
+        EntityTable entityTable = EntityHelper.getEntityTable(UserCompositeKeys.class);
+        Assert.assertNotNull(entityTable);
+
+        Set<EntityColumn> columns = entityTable.getEntityClassColumns();
+        Assert.assertEquals(2, columns.size());
+        Assert.assertEquals(2, entityTable.getEntityClassPKColumns().size());
+
+        for (EntityColumn column : columns) {
+            Assert.assertTrue(column.isId());
+        }
+
+        ResultMap resultMap = entityTable.getResultMap(configuration);
+        Assert.assertEquals(2, resultMap.getResultMappings().size());
+        Assert.assertTrue(resultMap.getResultMappings().get(0).getFlags().contains(ResultFlag.ID));
+        Assert.assertTrue(resultMap.getResultMappings().get(1).getFlags().contains(ResultFlag.ID));
+
+        Assert.assertEquals("<where> AND name = #{name} AND orgId = #{orgId}</where>", SqlHelper.wherePKColumns(UserCompositeKeys.class));
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testCompositeKeys(){ 
+     EntityHelper.initEntityNameMap(UserCompositeKeys.class, config); 
+     EntityTable entityTable = EntityHelper.getEntityTable(UserCompositeKeys.class); 
+     Assert.assertNotNull(entityTable); 
+  
+     Set<EntityColumn> columns = entityTable.getEntityClassColumns(); 
+     Assert.assertEquals(2, columns.size()); 
+     Assert.assertEquals(2, entityTable.getEntityClassPKColumns().size()); 
+  
+     for (EntityColumn column : columns) { 
+         Assert.assertTrue(column.isId()); 
+     } 
+  
+     ResultMap resultMap = entityTable.getResultMap(configuration); 
+     Assert.assertEquals(2, resultMap.getResultMappings().size()); 
+     Assert.assertTrue(resultMap.getResultMappings().get(0).getFlags().contains(ResultFlag.ID)); 
+     Assert.assertTrue(resultMap.getResultMappings().get(1).getFlags().contains(ResultFlag.ID)); 
+  
+     String actualSql = SqlHelper.wherePKColumns(UserCompositeKeys.class); 
+     String expectedSql1 = "<where> AND name = #{name} AND orgId = #{orgId}</where>"; 
+     String expectedSql2 = "<where> AND orgId = #{orgId} AND name = #{name}</where>"; 
+     Assert.assertTrue(actualSql.equals(expectedSql1) || actualSql.equals(expectedSql2)); 
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+

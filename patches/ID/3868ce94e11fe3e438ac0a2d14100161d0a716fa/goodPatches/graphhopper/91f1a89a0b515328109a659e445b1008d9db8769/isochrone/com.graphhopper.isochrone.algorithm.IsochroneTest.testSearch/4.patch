@@ -1,0 +1,52 @@
+test_before_fix:
+    public void testSearch() {
+        initDirectedAndDiffSpeed(graph);
+        PMap pMap = new PMap();
+        Isochrone instance = new Isochrone(graph, new FastestWeighting(carEncoder, pMap), false);
+        // limit to certain seconds
+        instance.setTimeLimit(60);
+        List<Set<Integer>> res = instance.search(0, 5);
+        assertEquals("[[0, 4], [6], [1, 7], [5], [2, 3]]", res.toString());
+
+        instance = new Isochrone(graph, new FastestWeighting(carEncoder, pMap), false);
+        instance.setTimeLimit(30);
+        res = instance.search(0, 5);
+        assertEquals("[[0], [4], [], [6], [1, 7]]", res.toString());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testSearch() { 
+     initDirectedAndDiffSpeed(graph); 
+     PMap pMap = new PMap(); 
+     Isochrone instance = new Isochrone(graph, new FastestWeighting(carEncoder, pMap), false); 
+     instance.setTimeLimit(60); 
+     List<Set<Integer>> res = instance.search(0, 5); 
+     List<List<Integer>> sortedRes = new ArrayList<>(); 
+     for (Set<Integer> set : res) { 
+         List<Integer> list = new ArrayList<>(set); 
+         Collections.sort(list); 
+         sortedRes.add(list); 
+     } 
+     assertEquals(Arrays.asList(Arrays.asList(0, 4), Arrays.asList(6), Arrays.asList(1, 7), Arrays.asList(5), Arrays.asList(2, 3)), sortedRes); 
+  
+     instance = new Isochrone(graph, new FastestWeighting(carEncoder, pMap), false); 
+     instance.setTimeLimit(30); 
+     res = instance.search(0, 5); 
+     sortedRes = new ArrayList<>(); 
+     for (Set<Integer> set : res) { 
+         List<Integer> list = new ArrayList<>(set); 
+         Collections.sort(list); 
+         sortedRes.add(list); 
+     } 
+     assertEquals(Arrays.asList(Arrays.asList(0), Arrays.asList(4), new ArrayList<>(), Arrays.asList(6), Arrays.asList(1, 7)), sortedRes); 
+ } 
+  
+  
+ 
+import:
+[]
+pom:

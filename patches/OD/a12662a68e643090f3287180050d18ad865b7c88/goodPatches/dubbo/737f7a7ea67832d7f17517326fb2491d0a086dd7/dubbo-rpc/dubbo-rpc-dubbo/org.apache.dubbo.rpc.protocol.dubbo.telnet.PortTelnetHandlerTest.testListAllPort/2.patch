@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testListAllPort': 'public void testListAllPort() throws RemotingException {\n    \n\n    String result = port.telnet(null, "");\n    String[] ports = result.split("\\\\s+");\n    assertTrue(Arrays.asList(ports).contains("20887"));\n    \n\n}\n'}}victim
+:import:
+['import java.util.Arrays;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testListAllPort']}polluter
+:code:
+{'fields': {}, 'methods': {'testListAllPort': 'public void testListAllPort() throws RemotingException {\n    \n\n    String result = port.telnet(null, "");\n    String[] ports = result.split("\\\\s+");\n    assertTrue(Arrays.asList(ports).contains("20887"));\n    \n\n}\n'}}polluter
+:import:
+['import java.util.Arrays;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testListAllPort']}

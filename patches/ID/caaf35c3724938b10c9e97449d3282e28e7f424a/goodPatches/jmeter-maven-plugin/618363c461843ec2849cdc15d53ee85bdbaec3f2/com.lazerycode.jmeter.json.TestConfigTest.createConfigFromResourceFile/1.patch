@@ -1,0 +1,41 @@
+test_before_fix:
+    public void createConfigFromResourceFile() throws MojoExecutionException, URISyntaxException, JsonProcessingException {
+        URL configFile = this.getClass().getResource(testConfigFile);
+        File testConfigJSON = new File(configFile.toURI());
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(testConfigJSON, "test-execution");
+        assertThat(testConfig.getFullConfig())
+                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"generateReports\":false,\"resultFilesLocations\":[],\"propertiesMap\":null,\"jmeterWorkingDirectoryPath\":null}");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void createConfigFromResourceFile() throws MojoExecutionException, URISyntaxException, JsonProcessingException { 
+     URL configFile = this.getClass().getResource(testConfigFile); 
+     File testConfigJSON = new File(configFile.toURI()); 
+     TestConfigurationWrapper testConfig = new TestConfigurationWrapper(testConfigJSON, "test-execution"); 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true); 
+     mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true); 
+  
+     String expectedJson = "{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"generateReports\":false,\"resultFilesLocations\":[],\"propertiesMap\":null,\"jmeterWorkingDirectoryPath\":null}"; 
+     JsonNode expected = mapper.readTree(expectedJson); 
+     JsonNode actual = mapper.readTree(testConfig.getFullConfig()); 
+  
+     assertThat(actual).isEqualTo(expected); 
+ } 
+  
+  
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ', 'import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import com.fasterxml.jackson.databind.MapperFeature;\n ', 'import com.fasterxml.jackson.databind.SerializationFeature;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

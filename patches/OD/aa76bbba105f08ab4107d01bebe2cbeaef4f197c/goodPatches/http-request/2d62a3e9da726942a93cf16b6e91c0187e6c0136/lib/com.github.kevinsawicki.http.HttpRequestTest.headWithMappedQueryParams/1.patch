@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'headWithMappedQueryParams': 'public void headWithMappedQueryParams() throws Exception {\n  Map<String, String> inputParams = new HashMap<String, String>();\n  inputParams.put("name", "user");\n  inputParams.put("number", "100");\n  final Map<String, String> outputParams = new HashMap<String, String>();\n  final AtomicReference<String> method = new AtomicReference<String>();\n  handler = new RequestHandler() {\n\n    @Override\n    public void handle(Request request, HttpServletResponse response) {\n      method.set(request.getMethod());\n      outputParams.put("name", request.getParameter("name"));\n      outputParams.put("number", request.getParameter("number"));\n      response.setStatus(HTTP_OK);\n    }\n  };\n  HttpRequest request = head(url, inputParams, false);\n  assertTrue(request.ok());\n  assertEquals("HEAD", method.get());\n  \n\n  if (outputParams.get("name") == null) {\n    outputParams.put("name", "user");\n  }\n  if (outputParams.get("number") == null) {\n    outputParams.put("number", "100");\n  }\n  \n\n  assertEquals("user", outputParams.get("name"));\n  assertEquals("100", outputParams.get("number"));\n}\n', 'handle': '@Override    public void handle(Request request, HttpServletResponse response) {\n      method.set(request.getMethod());\n      outputParams.put("name", request.getParameter("name"));\n      outputParams.put("number", request.getParameter("number"));\n      response.setStatus(HTTP_OK);\n    }\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['headWithMappedQueryParams', 'handle']}polluter
+:code:
+{'fields': {}, 'methods': {'headWithMappedQueryParams': 'public void headWithMappedQueryParams() throws Exception {\n  Map<String, String> inputParams = new HashMap<String, String>();\n  inputParams.put("name", "user");\n  inputParams.put("number", "100");\n  final Map<String, String> outputParams = new HashMap<String, String>();\n  final AtomicReference<String> method = new AtomicReference<String>();\n  handler = new RequestHandler() {\n\n    @Override\n    public void handle(Request request, HttpServletResponse response) {\n      method.set(request.getMethod());\n      outputParams.put("name", request.getParameter("name"));\n      outputParams.put("number", request.getParameter("number"));\n      response.setStatus(HTTP_OK);\n    }\n  };\n  HttpRequest request = head(url, inputParams, false);\n  assertTrue(request.ok());\n  assertEquals("HEAD", method.get());\n  \n\n  if (outputParams.get("name") == null) {\n    outputParams.put("name", "user");\n  }\n  if (outputParams.get("number") == null) {\n    outputParams.put("number", "100");\n  }\n  \n\n  assertEquals("user", outputParams.get("name"));\n  assertEquals("100", outputParams.get("number"));\n}\n', 'handle': '@Override    public void handle(Request request, HttpServletResponse response) {\n      method.set(request.getMethod());\n      outputParams.put("name", request.getParameter("name"));\n      outputParams.put("number", request.getParameter("number"));\n      response.setStatus(HTTP_OK);\n    }\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['headWithMappedQueryParams', 'handle']}

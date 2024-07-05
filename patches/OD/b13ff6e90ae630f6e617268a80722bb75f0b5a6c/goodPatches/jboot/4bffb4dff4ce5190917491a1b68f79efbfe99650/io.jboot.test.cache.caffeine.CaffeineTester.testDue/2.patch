@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testDue': 'public void testDue() throws InterruptedException {\n    config(); \n\n    String testDueCacheName = "testDueCache";\n    JbootCache cache = Jboot.getCache();\n    cache.put(testDueCacheName, "key", "value~~~~~~~",10);\n    for (int i = 0;i<15;i++){\n        System.out.println((String) cache.get(testDueCacheName,"key"));\n        Thread.sleep(1000);\n    } \n\n}\n', 'config': 'public void config() {\n    JbootApplication.setBootArg("jboot.cache.type", "caffeine");\n}\n', 'testGet': 'public void testGet() {\n    config(); \n\n    String testGetCacheName = "testGetCache";\n    Jboot.getCache().put(testGetCacheName, "key", "value");\n    String value = Jboot.getCache().get(testGetCacheName, "key");\n    Assert.assertTrue("value".equals(value)); \n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testDue', 'config', 'testGet']}polluter
+:code:
+{'fields': {}, 'methods': {'testDue': 'public void testDue() throws InterruptedException {\n    config(); \n\n    String testDueCacheName = "testDueCache";\n    JbootCache cache = Jboot.getCache();\n    cache.put(testDueCacheName, "key", "value~~~~~~~",10);\n    for (int i = 0;i<15;i++){\n        System.out.println((String) cache.get(testDueCacheName,"key"));\n        Thread.sleep(1000);\n    } \n\n}\n', 'config': 'public void config() {\n    JbootApplication.setBootArg("jboot.cache.type", "caffeine");\n}\n', 'testGet': 'public void testGet() {\n    config(); \n\n    String testGetCacheName = "testGetCache";\n    Jboot.getCache().put(testGetCacheName, "key", "value");\n    String value = Jboot.getCache().get(testGetCacheName, "key");\n    Assert.assertTrue("value".equals(value)); \n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testDue', 'config', 'testGet']}

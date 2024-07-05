@@ -1,0 +1,75 @@
+test_before_fix:
+	public void testJSONString() {
+		Car car = new Car();
+		car.setCost(10);
+		car.setWeight(1000);
+
+		String carJSON = JSONSerializeUtils.serializeToJSON(car);
+		JSONString jsonString = new JSONString(carJSON);
+		System.out.println("1:--\r\n" + carJSON);
+
+		String newJSONString = JSONSerializeUtils.serializeToJSON(jsonString);
+		assertEquals(carJSON, newJSONString);
+		System.out.println("2:--\r\n" + newJSONString);
+
+		JSONString newJSONString2 = JSONSerializeUtils.deserializeAs(newJSONString, JSONString.class);
+		assertEquals(carJSON, newJSONString2.toString());
+
+		String address = UUID.randomUUID().toString();
+		JSONString jsonAddress = new JSONString(JSONSerializeUtils.serializeToJSON(address));
+		String desAddress = JSONSerializeUtils.deserializeAs(jsonAddress, String.class);
+		assertEquals(address, desAddress);
+
+		String emptyStr = "";
+		JSONString emptyJsonStr = new JSONString(JSONSerializeUtils.serializeToJSON(emptyStr));
+		String desEmptyStr = JSONSerializeUtils.deserializeAs(emptyJsonStr, String.class);
+		assertEquals(emptyStr, desEmptyStr);
+
+		String nullStr = null;
+		String nullJson = JSONSerializeUtils.serializeToJSON(nullStr);
+		assertNull(nullJson);
+	}
+
+test_after_fix:
+
+code:
+public void testJSONString() {  
+      Car car = new Car();  
+      car.setCost(10);  
+      car.setWeight(1000);  
+  
+      String carJSON = JSONSerializeUtils.serializeToJSON(car);  
+      JSONString jsonString = new JSONString(carJSON);  
+      System.out.println("1:--\r\n" + carJSON);  
+  
+      String newJSONString = JSONSerializeUtils.serializeToJSON(jsonString);  
+  
+      // Fix flakiness by parsing JSON strings into objects and comparing objects instead of strings  
+      JSONObject expectedObj = JSON.parseObject(carJSON, Feature.OrderedField);  
+      JSONObject actualObj = JSON.parseObject(newJSONString, Feature.OrderedField);  
+      assertEquals(expectedObj, actualObj);  
+  
+      System.out.println("2:--\r\n" + newJSONString);  
+  
+      JSONString newJSONString2 = JSONSerializeUtils.deserializeAs(newJSONString, JSONString.class);  
+      JSONObject actualObj2 = JSON.parseObject(newJSONString2.toString(), Feature.OrderedField);  
+      assertEquals(expectedObj, actualObj2);  
+  
+      String address = UUID.randomUUID().toString();  
+      JSONString jsonAddress = new JSONString(JSONSerializeUtils.serializeToJSON(address));  
+      String desAddress = JSONSerializeUtils.deserializeAs(jsonAddress, String.class);  
+      assertEquals(address, desAddress);  
+  
+      String emptyStr = "";  
+      JSONString emptyJsonStr = new JSONString(JSONSerializeUtils.serializeToJSON(emptyStr));  
+      String desEmptyStr = JSONSerializeUtils.deserializeAs(emptyJsonStr, String.class);  
+      assertEquals(emptyStr, desEmptyStr);  
+  
+      String nullStr = null;  
+      String nullJson = JSONSerializeUtils.serializeToJSON(nullStr);  
+      assertNull(nullJson);  
+ } 
+ 
+import:
+['import com.alibaba.fastjson.parser.Feature;\n ']
+pom:

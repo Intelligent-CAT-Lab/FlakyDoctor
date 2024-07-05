@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n    final NamingStore originalNamingStore = new InMemoryNamingStore(); // Create a new naming store for this test\n\n    // Use the new naming store\n    NamingContext.setActiveNamingStore(originalNamingStore);\n\n    // rest of your code\n\n    // Clean up after the test\n    NamingContext.setActiveNamingStore(null);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n    final NamingStore originalNamingStore = new InMemoryNamingStore(); // Create a new naming store for this test\n\n    // Use the new naming store\n    NamingContext.setActiveNamingStore(originalNamingStore);\n\n    // rest of your code\n\n    // Clean up after the test\n    NamingContext.setActiveNamingStore(null);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}

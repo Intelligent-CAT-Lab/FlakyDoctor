@@ -1,0 +1,46 @@
+test_before_fix:
+  public void testConnectedComponents() {
+
+    System.out.println("graph is " + graph.toString());
+    List<Set<Integer>> ccs = graph.getConnectedComponents();
+    for (Set<Integer> cc : ccs) {
+      System.out.println("Connected component: " + cc);
+    }
+    assertEquals(ccs.size(), 4);
+    assertEquals(CollectionUtils.sorted(ccs.get(0)), 
+                 Arrays.asList(1, 2, 3, 4));
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testConnectedComponents() { 
+     System.out.println("graph is " + graph.toString()); 
+     List<Set<Integer>> ccs = graph.getConnectedComponents(); 
+     List<Set<Integer>> sortedCCs = new ArrayList<>(); 
+     for (Set<Integer> cc : ccs) { 
+         List<Integer> sortedList = new ArrayList<>(cc); 
+         Collections.sort(sortedList); 
+         sortedCCs.add(new LinkedHashSet<>(sortedList)); 
+         System.out.println("Connected component: " + cc); 
+     } 
+     Collections.sort(sortedCCs, new Comparator<Set<Integer>>() { 
+         @Override 
+         public int compare(Set<Integer> o1, Set<Integer> o2) { 
+             return o1.iterator().next().compareTo(o2.iterator().next()); 
+         } 
+     }); 
+     assertEquals(sortedCCs.size(), 4); 
+     assertEquals(new ArrayList<>(sortedCCs.get(0)), Arrays.asList(1, 2, 3, 4)); 
+     assertEquals(new ArrayList<>(sortedCCs.get(1)), Arrays.asList(5, 6, 7)); 
+     assertEquals(new ArrayList<>(sortedCCs.get(2)), Arrays.asList(8)); 
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+

@@ -1,0 +1,73 @@
+test_before_fix:
+    public void testBulletinEntity() throws Exception {
+        final ObjectMapper jsonCodec = new ObjectMapper();
+        jsonCodec.registerModule(new JaxbAnnotationModule());
+        jsonCodec.setSerializationInclusion(Include.NON_NULL);
+
+        final Date timestamp = new Date();
+        final TimeAdapter adapter = new TimeAdapter();
+        final String formattedTimestamp = adapter.marshal(timestamp);
+
+        // Test that we can properly serialize a Bulletin because it contains a timestmap,
+        // which uses a JAXB annotation to specify how to marshal it.
+        final JsonEntitySerializer serializer = new JsonEntitySerializer(jsonCodec);
+
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            final BulletinDTO bulletinDto = new BulletinDTO();
+            bulletinDto.setCategory("test");
+            bulletinDto.setLevel("INFO");
+            bulletinDto.setTimestamp(timestamp);
+
+            final BulletinEntity bulletin = new BulletinEntity();
+            bulletin.setBulletin(bulletinDto);
+            serializer.serialize(bulletin, baos);
+
+            final String serialized = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            assertEquals("{\"bulletin\":{\"category\":\"test\",\"level\":\"INFO\",\"timestamp\":\"" + formattedTimestamp + "\"}}", serialized);
+        }
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testBulletinEntity() throws Exception { 
+     final ObjectMapper jsonCodec = new ObjectMapper(); 
+     jsonCodec.registerModule(new JaxbAnnotationModule()); 
+     jsonCodec.setSerializationInclusion(Include.NON_NULL); 
+  
+     final Date timestamp = new Date(); 
+     final TimeAdapter adapter = new TimeAdapter(); 
+     final String formattedTimestamp = adapter.marshal(timestamp); 
+  
+     final JsonEntitySerializer serializer = new JsonEntitySerializer(jsonCodec); 
+  
+     try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) { 
+  
+         final BulletinDTO bulletinDto = new BulletinDTO(); 
+         bulletinDto.setCategory("test"); 
+         bulletinDto.setLevel("INFO"); 
+         bulletinDto.setTimestamp(timestamp); 
+  
+         final BulletinEntity bulletin = new BulletinEntity(); 
+         bulletin.setBulletin(bulletinDto); 
+         serializer.serialize(bulletin, baos); 
+  
+         final String serialized = new String(baos.toByteArray(), StandardCharsets.UTF_8); 
+  
+         final JsonNode expected = jsonCodec.readTree("{\"bulletin\":{\"category\":\"test\",\"level\":\"INFO\",\"timestamp\":\"" + formattedTimestamp + "\"}}"); 
+         final JsonNode actual = jsonCodec.readTree(serialized); 
+  
+         assertEquals(expected, actual); 
+     } 
+ } 
+  
+  
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ']
+pom:
+
+<!-- No changes needed -->

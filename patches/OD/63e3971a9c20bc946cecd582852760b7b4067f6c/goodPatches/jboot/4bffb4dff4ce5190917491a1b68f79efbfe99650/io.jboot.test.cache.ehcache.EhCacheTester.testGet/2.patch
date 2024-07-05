@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'config': 'public void config() {\n    JbootApplication.setBootArg("jboot.cache.type", "ehcache");\n}\n', 'testGet': 'public void testGet() {\n    // <fix start>\n    config();\n    // <fix end>\n\n    Jboot.getCache().put("cachename1", "key1", "value1");\n    String value = Jboot.getCache().get("cachename1", "key1");\n\n    Assert.assertTrue("value1".equals(value));\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['config', 'testGet']}polluter
+:code:
+{'fields': {}, 'methods': {'config': 'public void config() {\n    JbootApplication.setBootArg("jboot.cache.type", "ehcache");\n}\n', 'testGet': 'public void testGet() {\n    // <fix start>\n    config();\n    // <fix end>\n\n    Jboot.getCache().put("cachename1", "key1", "value1");\n    String value = Jboot.getCache().get("cachename1", "key1");\n\n    Assert.assertTrue("value1".equals(value));\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['config', 'testGet']}

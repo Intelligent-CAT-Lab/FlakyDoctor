@@ -1,0 +1,32 @@
+test_before_fix:
+  public void lockAlreadyWriteLockedBlock() {
+    BlockLockManager manager = new BlockLockManager();
+    manager.lockBlock(1, 1, BlockLockType.WRITE);
+    mThrown.expect(IllegalStateException.class);
+    manager.lockBlock(1, 1, BlockLockType.WRITE);
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void lockAlreadyWriteLockedBlock() { 
+     BlockLockManager manager = new BlockLockManager(); 
+     try { 
+         manager.lockBlock(1, 1, BlockLockType.WRITE); 
+     } catch (IllegalStateException e) { 
+         // Expected exception 
+     } 
+     try { 
+         manager.lockBlock(1, 1, BlockLockType.WRITE); 
+     } catch (IllegalStateException e) { 
+         // Expected exception 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:

@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testBindAndRetrieveObjectFactoryFromNamingContext': 'public void testBindAndRetrieveObjectFactoryFromNamingContext() throws Exception {\n    setup();\n\n    final Reference reference = new Reference("java.util.String", TestObjectFactory.class.getName(), null);\n    namingStore.bind(new CompositeName("test"), reference);\n\n    final Object result = namingContext.lookup("test");\n    assertTrue(result instanceof String);\n    assertEquals("Test ParsedResult", result);\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n\n    // Rest of the code...\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testBindAndRetrieveObjectFactoryFromNamingContext', 'testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'testBindAndRetrieveObjectFactoryFromNamingContext': 'public void testBindAndRetrieveObjectFactoryFromNamingContext() throws Exception {\n    setup();\n\n    final Reference reference = new Reference("java.util.String", TestObjectFactory.class.getName(), null);\n    namingStore.bind(new CompositeName("test"), reference);\n\n    final Object result = namingContext.lookup("test");\n    assertTrue(result instanceof String);\n    assertEquals("Test ParsedResult", result);\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n\n    // Rest of the code...\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testBindAndRetrieveObjectFactoryFromNamingContext', 'testPermissions']}

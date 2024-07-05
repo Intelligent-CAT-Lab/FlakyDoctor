@@ -196,6 +196,15 @@ def write_file(file_path,content):
     f = open(file_path, "w")
     f.write(content)
     f.close()
+    
+def add_file(file_path,content):
+    try:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    except:
+        pass
+    f = open(file_path, "a")
+    f.write(content)
+    f.close()
 
 def write_json(file_path, dict):
     with open(file_path, 'w') as fp:

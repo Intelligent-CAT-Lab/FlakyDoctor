@@ -1,0 +1,64 @@
+test_before_fix:
+  public void testUpdateBranchGrayRulesWithUpdateOnce() {
+    GrayReleaseRule rule = instanceGrayReleaseRule();
+
+    namespaceBranchService.updateBranchGrayRules(testApp, testCluster, testNamespace, testBranchName, rule);
+
+    GrayReleaseRule
+        activeRule =
+        namespaceBranchService.findBranchGrayRules(testApp, testCluster, testNamespace, testBranchName);
+
+    Assert.assertNotNull(activeRule);
+    Assert.assertEquals(rule.getAppId(), activeRule.getAppId());
+    Assert.assertEquals(rule.getRules(), activeRule.getRules());
+    Assert.assertEquals(Long.valueOf(0), activeRule.getReleaseId());
+
+    Page<ReleaseHistory> releaseHistories = releaseHistoryService.findReleaseHistoriesByNamespace
+        (testApp, testCluster, testNamespace, pageable);
+
+    ReleaseHistory releaseHistory = releaseHistories.getContent().get(0);
+
+    Assert.assertEquals(1, releaseHistories.getTotalElements());
+    Assert.assertEquals(ReleaseOperation.APPLY_GRAY_RULES, releaseHistory.getOperation());
+    Assert.assertEquals(0, releaseHistory.getReleaseId());
+    Assert.assertEquals(0, releaseHistory.getPreviousReleaseId());
+    Assert.assertTrue(releaseHistory.getOperationContext().contains(rule.getRules()));
+  }
+
+test_after_fix:
+
+code:
+public void testUpdateBranchGrayRulesWithUpdateOnce() { 
+     GrayReleaseRule rule = instanceGrayReleaseRule(); 
+  
+     namespaceBranchService.updateBranchGrayRules(testApp, testCluster, testNamespace, testBranchName, rule); 
+  
+     GrayReleaseRule 
+         activeRule = 
+         namespaceBranchService.findBranchGrayRules(testApp, testCluster, testNamespace, testBranchName); 
+  
+     Assert.assertNotNull(activeRule); 
+     Assert.assertEquals(rule.getAppId(), activeRule.getAppId()); 
+     Assert.assertEquals(rule.getRules(), activeRule.getRules()); 
+     Assert.assertEquals(Long.valueOf(0), activeRule.getReleaseId()); 
+  
+     Page<ReleaseHistory> releaseHistories = releaseHistoryService.findReleaseHistoriesByNamespace 
+         (testApp, testCluster, testNamespace, pageable); 
+  
+     ReleaseHistory releaseHistory = releaseHistories.getContent().get(0); 
+  
+     Assert.assertEquals(1, releaseHistories.getTotalElements()); 
+     Assert.assertEquals(ReleaseOperation.APPLY_GRAY_RULES, releaseHistory.getOperation()); 
+     Assert.assertEquals(0, releaseHistory.getReleaseId()); 
+     Assert.assertEquals(0, releaseHistory.getPreviousReleaseId()); 
+  
+     Gson gson = new Gson(); 
+     Map<String, Object> operationContextMap = gson.fromJson(releaseHistory.getOperationContext(), new TypeToken<Map<String, Object>>(){}.getType()); 
+     Map<String, Object> ruleMap = gson.fromJson(rule.getRules(), new TypeToken<Map<String, Object>>(){}.getType()); 
+  
+     Assert.assertTrue(operationContextMap.equals(ruleMap)); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import java.util.Map;\n ', 'import com.google.gson.Gson;\n ', 'import com.google.gson.reflect.TypeToken;\n ']
+pom:

@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'assertExistExecutorOnS0': 'public void assertExistExecutorOnS0() {\n    \n\n    // Reset the state of facadeService\n    facadeService = mock(FacadeService.class);\n    AppConstraintEvaluator.init(facadeService);\n    \n\n    \n    when(facadeService.loadExecutorInfo()).thenReturn(Collections.singletonList(new ExecutorStateInfo("foo-app@-@S0", "S0")));\n    AppConstraintEvaluator.getInstance().loadAppRunningState();\n    SchedulingResult result = taskScheduler.scheduleOnce(getTasks(), Arrays.asList(getLease(0, INSUFFICIENT_CPU, INSUFFICIENT_MEM), getLease(1, INSUFFICIENT_CPU, INSUFFICIENT_MEM)));\n    assertThat(result.getResultMap().size(), is(2));\n    assertTrue(getAssignedTaskNumber(result) > 18);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['assertExistExecutorOnS0']}polluter
+:code:
+{'fields': {}, 'methods': {'assertExistExecutorOnS0': 'public void assertExistExecutorOnS0() {\n    \n\n    // Reset the state of facadeService\n    facadeService = mock(FacadeService.class);\n    AppConstraintEvaluator.init(facadeService);\n    \n\n    \n    when(facadeService.loadExecutorInfo()).thenReturn(Collections.singletonList(new ExecutorStateInfo("foo-app@-@S0", "S0")));\n    AppConstraintEvaluator.getInstance().loadAppRunningState();\n    SchedulingResult result = taskScheduler.scheduleOnce(getTasks(), Arrays.asList(getLease(0, INSUFFICIENT_CPU, INSUFFICIENT_MEM), getLease(1, INSUFFICIENT_CPU, INSUFFICIENT_MEM)));\n    assertThat(result.getResultMap().size(), is(2));\n    assertTrue(getAssignedTaskNumber(result) > 18);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['assertExistExecutorOnS0']}

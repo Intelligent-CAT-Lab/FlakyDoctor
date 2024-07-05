@@ -1,0 +1,59 @@
+test_before_fix:
+  @Test public void multipleFields() throws InitializationError {
+    BurstJUnit4 runner = new BurstJUnit4(MultipleFieldsTest.class);
+    runner.run(listener.notifier());
+    assertThat(listener.journal()).containsExactly(
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CHIPS])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CHIPS])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, NUTS])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, NUTS])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CANDY])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CANDY])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CHIPS])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CHIPS])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[COKE, NUTS])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[COKE, NUTS])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CANDY])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CANDY])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CHIPS])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CHIPS])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, NUTS])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, NUTS])",
+        "START testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CANDY])",
+        "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CANDY])");
+  }
+
+test_after_fix:
+
+code:
+public void multipleFields() throws InitializationError { 
+     BurstJUnit4 runner = new BurstJUnit4(MultipleFieldsTest.class); 
+     runner.run(listener.notifier()); 
+     List<String> expected = Arrays.asList( 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CHIPS])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CHIPS])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, NUTS])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, NUTS])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CANDY])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[PEPSI, CANDY])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CHIPS])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CHIPS])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[COKE, NUTS])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[COKE, NUTS])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CANDY])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[COKE, CANDY])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CHIPS])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CHIPS])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, NUTS])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, NUTS])", 
+         "START testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CANDY])", 
+         "FINISH testMethod(com.squareup.burst.MultipleFieldsTest[RC_COLA, CANDY])"); 
+     List<String> actual = new ArrayList<>(listener.journal()); 
+     Collections.sort(expected); 
+     Collections.sort(actual); 
+     assertThat(actual).containsExactlyElementsOf(expected); 
+ } 
+ 
+import:
+['import java.util.Arrays;\n ', 'import java.util.ArrayList;\n ', 'import java.util.Collections;\n ', 'import java.util.List;\n ']
+pom:

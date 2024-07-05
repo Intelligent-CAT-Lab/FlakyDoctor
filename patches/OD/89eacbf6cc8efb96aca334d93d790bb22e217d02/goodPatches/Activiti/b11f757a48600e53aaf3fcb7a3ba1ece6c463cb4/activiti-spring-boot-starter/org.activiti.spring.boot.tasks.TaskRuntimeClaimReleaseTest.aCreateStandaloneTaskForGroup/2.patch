@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'dCreateStandaloneTaskAndClaimAndReleaseUnAuthorized': 'public void dCreateStandaloneTaskAndClaimAndReleaseUnAuthorized() {\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("group task")\n            .withGroup("activitiTeam")\n            .build());\n\n    assertThat(standAloneTask.getAssignee()).isNull();\n    assertThat(standAloneTask.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n    currentTaskId = standAloneTask.getId();\n}\n', 'aCreateStandaloneTaskForGroup': 'public void aCreateStandaloneTaskForGroup() {\n\n    String authenticatedUserId = securityManager.getAuthenticatedUserId();\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("group task")\n            .withGroup("activitiTeam")\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n                                                     50));\n\n    List<Task> taskList = tasks.getContent().stream()\n            .filter(task -> task.getId().equals(standAloneTask.getId()))\n            .collect(Collectors.toList());\n\n    assertThat(taskList).hasSize(1);\n    Task task = taskList.get(0);\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n\n    currentTaskId = task.getId();\n\n}\n'}}victim
+:import:
+['import java.util.List;\n ', 'import java.util.stream.Collectors;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['dCreateStandaloneTaskAndClaimAndReleaseUnAuthorized', 'aCreateStandaloneTaskForGroup']}polluter
+:code:
+{'fields': {}, 'methods': {'dCreateStandaloneTaskAndClaimAndReleaseUnAuthorized': 'public void dCreateStandaloneTaskAndClaimAndReleaseUnAuthorized() {\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("group task")\n            .withGroup("activitiTeam")\n            .build());\n\n    assertThat(standAloneTask.getAssignee()).isNull();\n    assertThat(standAloneTask.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n    currentTaskId = standAloneTask.getId();\n}\n', 'aCreateStandaloneTaskForGroup': 'public void aCreateStandaloneTaskForGroup() {\n\n    String authenticatedUserId = securityManager.getAuthenticatedUserId();\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("group task")\n            .withGroup("activitiTeam")\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n                                                     50));\n\n    List<Task> taskList = tasks.getContent().stream()\n            .filter(task -> task.getId().equals(standAloneTask.getId()))\n            .collect(Collectors.toList());\n\n    assertThat(taskList).hasSize(1);\n    Task task = taskList.get(0);\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n\n    currentTaskId = task.getId();\n\n}\n'}}polluter
+:import:
+['import java.util.List;\n ', 'import java.util.stream.Collectors;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['dCreateStandaloneTaskAndClaimAndReleaseUnAuthorized', 'aCreateStandaloneTaskForGroup']}

@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n\n    // simple bind test, note that permission must have absolute path\n    WritableServiceBasedNamingStore.pushOwner(OWNER_FOO);\n    try {\n        permissions.add(new JndiPermission(store.getBaseName()+"/"+name,"bind,list,listBindings"));\n        store.bind(new CompositeName(name), value);\n    } finally {\n        WritableServiceBasedNamingStore.popOwner();\n    }\n\n    // rest of the code...\n\n    // reset the state of the namingStore and namingContext variables\n    \n\n    setup();\n    \n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n\n    final NamingContext namingContext = new NamingContext(store, null);\n    final String name = "a/b";\n    final Object value = new Object();\n    ArrayList<JndiPermission> permissions = new ArrayList<JndiPermission>();\n\n    // simple bind test, note that permission must have absolute path\n    WritableServiceBasedNamingStore.pushOwner(OWNER_FOO);\n    try {\n        permissions.add(new JndiPermission(store.getBaseName()+"/"+name,"bind,list,listBindings"));\n        store.bind(new CompositeName(name), value);\n    } finally {\n        WritableServiceBasedNamingStore.popOwner();\n    }\n\n    // rest of the code...\n\n    // reset the state of the namingStore and namingContext variables\n    \n\n    setup();\n    \n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}

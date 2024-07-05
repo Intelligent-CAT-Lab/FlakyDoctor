@@ -1,0 +1,31 @@
+test_before_fix:
+    public void testBasicUriGeneration() {
+        Rollover rollover = new Rollover.Builder("twitter").conditions(rolloverConditions).build();
+        assertEquals("POST", rollover.getRestMethodName());
+        assertEquals("twitter/_rollover", rollover.getURI(ElasticsearchVersion.UNKNOWN));
+        assertEquals("{\"conditions\":{\"max_age\":\"1d\",\"max_docs\":\"10000\"}}", rollover.getData(new Gson()));
+    }
+
+test_after_fix:
+
+code:
+public void testBasicUriGeneration() { 
+     Rollover rollover = new Rollover.Builder("twitter").conditions(rolloverConditions).build(); 
+     assertEquals("POST", rollover.getRestMethodName()); 
+     assertEquals("twitter/_rollover", rollover.getURI(ElasticsearchVersion.UNKNOWN)); 
+  
+     JsonParser parser = new JsonParser(); 
+     JsonObject expected = parser.parse("{\"conditions\":{\"max_age\":\"1d\",\"max_docs\":\"10000\"}}").getAsJsonObject(); 
+     JsonObject actual = parser.parse(rollover.getData(new Gson())).getAsJsonObject(); 
+     assertEquals(expected, actual); 
+ } 
+ 
+import:
+['import com.google.gson.JsonParser;\n ', 'import com.google.gson.JsonObject;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

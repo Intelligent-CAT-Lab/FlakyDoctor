@@ -1,0 +1,36 @@
+test_before_fix:
+    public void testQueryParams() {
+
+        Map<String, String[]> params = new HashMap<>();
+        params.put("sort", new String[]{"asc"});
+        params.put("items", new String[]{"10"});
+
+        when(servletRequest.getParameterMap()).thenReturn(params);
+
+        Set<String> result = request.queryParams();
+
+        assertArrayEquals("Should return the query parameter names", params.keySet().toArray(), result.toArray());
+
+    }
+
+test_after_fix:
+
+code:
+public void testQueryParams() { 
+  
+     Map<String, String[]> params = new LinkedHashMap<>(); 
+     params.put("sort", new String[]{"asc"}); 
+     params.put("items", new String[]{"10"}); 
+  
+     when(servletRequest.getParameterMap()).thenReturn(params); 
+  
+     Set<String> result = request.queryParams(); 
+  
+     assertArrayEquals("Should return the query parameter names", params.keySet().toArray(), result.toArray()); 
+  
+ } 
+ 
+import:
+[]
+pom:
+

@@ -1,0 +1,275 @@
+test_before_fix:
+    public void testCacheKeys() {
+        GetObjectRequest.Builder baseBuilder =
+                GetObjectRequest.builder()
+                        .namespaceName("namespace")
+                        .bucketName("bucket")
+                        .objectName("object")
+                        .ifMatch("ifMatch")
+                        .ifNoneMatch("*")
+                        .httpResponseContentType("application/json");
+
+        CachingObjectStorage.GetObjectRequestCacheKey key1 =
+                new CachingObjectStorage.GetObjectRequestCacheKey(baseBuilder.build());
+        CachingObjectStorage.GetObjectRequestCacheKey key1a =
+                new CachingObjectStorage.GetObjectRequestCacheKey(baseBuilder.build());
+        CachingObjectStorage.GetObjectRequestCacheKey key1b =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.opcClientRequestId("requestId").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key1c =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.opcClientRequestId("requestId2").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key2 =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.objectName("object2").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key2a =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.objectName("object2").opcClientRequestId("requestId3").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key2b =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.objectName("object2").opcClientRequestId("requestId4").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key3 =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.versionId("1234").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key3a =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.versionId("1234").opcClientRequestId("requestId5").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key3b =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.versionId("1234").opcClientRequestId("requestId6").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key4 =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.ifMatch("ifMatch2").build());
+        CachingObjectStorage.GetObjectRequestCacheKey key5 =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.range(new Range(1L, null)).build());
+        CachingObjectStorage.GetObjectRequestCacheKey key5a =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.range(new Range(1L, null)).build());
+        CachingObjectStorage.GetObjectRequestCacheKey key6 =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.range(new Range(1L, 123L)).build());
+        CachingObjectStorage.GetObjectRequestCacheKey key6a =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.range(new Range(1L, 123L)).build());
+        CachingObjectStorage.GetObjectRequestCacheKey key7 =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.range(new Range(null, 123L)).build());
+        CachingObjectStorage.GetObjectRequestCacheKey key7a =
+                new CachingObjectStorage.GetObjectRequestCacheKey(
+                        baseBuilder.range(new Range(null, 123L)).build());
+
+        // equals
+        assertEquals(key1, key1a);
+        assertEquals(key1, key1b);
+        assertEquals(key1, key1c);
+        assertEquals(key1a, key1b);
+        assertEquals(key1a, key1c);
+        assertEquals(key1b, key1c);
+
+        assertEquals(key2, key2a);
+        assertEquals(key2, key2b);
+        assertEquals(key2a, key2b);
+
+        assertEquals(key3, key3a);
+        assertEquals(key3, key3b);
+        assertEquals(key3a, key3b);
+
+        assertEquals(key5, key5a);
+        assertEquals(key6, key6a);
+        assertEquals(key7, key7a);
+
+        assertNotEquals(key1, key2);
+        assertNotEquals(key1, key3);
+        assertNotEquals(key1, key4);
+        assertNotEquals(key1, key5);
+        assertNotEquals(key1, key6);
+        assertNotEquals(key1, key7);
+        assertNotEquals(key2, key3);
+        assertNotEquals(key2, key4);
+        assertNotEquals(key2, key5);
+        assertNotEquals(key2, key6);
+        assertNotEquals(key2, key7);
+        assertNotEquals(key3, key4);
+        assertNotEquals(key3, key5);
+        assertNotEquals(key3, key6);
+        assertNotEquals(key3, key7);
+        assertNotEquals(key4, key5);
+        assertNotEquals(key4, key6);
+        assertNotEquals(key4, key7);
+        assertNotEquals(key5, key6);
+        assertNotEquals(key5, key7);
+        assertNotEquals(key6, key7);
+
+        // hashCode
+        assertEquals(key1.hashCode(), key1a.hashCode());
+        assertEquals(key1.hashCode(), key1b.hashCode());
+        assertEquals(key1.hashCode(), key1c.hashCode());
+        assertEquals(key1a.hashCode(), key1b.hashCode());
+        assertEquals(key1a.hashCode(), key1c.hashCode());
+        assertEquals(key1b.hashCode(), key1.hashCode());
+
+        assertEquals(key2.hashCode(), key2a.hashCode());
+        assertEquals(key2.hashCode(), key2b.hashCode());
+        assertEquals(key2a.hashCode(), key2b.hashCode());
+
+        assertEquals(key3.hashCode(), key3a.hashCode());
+        assertEquals(key3.hashCode(), key3b.hashCode());
+        assertEquals(key3a.hashCode(), key3b.hashCode());
+
+        assertEquals(key5.hashCode(), key5a.hashCode());
+        assertEquals(key6.hashCode(), key6a.hashCode());
+        assertEquals(key7.hashCode(), key7a.hashCode());
+
+        assertNotEquals(key1.hashCode(), key2.hashCode());
+        assertNotEquals(key1.hashCode(), key3.hashCode());
+        assertNotEquals(key1.hashCode(), key4.hashCode());
+        assertNotEquals(key1.hashCode(), key5.hashCode());
+        assertNotEquals(key1.hashCode(), key6.hashCode());
+        assertNotEquals(key1.hashCode(), key7.hashCode());
+        assertNotEquals(key2.hashCode(), key3.hashCode());
+        assertNotEquals(key2.hashCode(), key4.hashCode());
+        assertNotEquals(key2.hashCode(), key5.hashCode());
+        assertNotEquals(key2.hashCode(), key6.hashCode());
+        assertNotEquals(key2.hashCode(), key7.hashCode());
+        assertNotEquals(key3.hashCode(), key4.hashCode());
+        assertNotEquals(key3.hashCode(), key5.hashCode());
+        assertNotEquals(key3.hashCode(), key6.hashCode());
+        assertNotEquals(key3.hashCode(), key7.hashCode());
+        assertNotEquals(key4.hashCode(), key5.hashCode());
+        assertNotEquals(key4.hashCode(), key6.hashCode());
+        assertNotEquals(key4.hashCode(), key7.hashCode());
+        assertNotEquals(key5.hashCode(), key6.hashCode());
+        assertNotEquals(key5.hashCode(), key7.hashCode());
+        assertNotEquals(key6.hashCode(), key7.hashCode());
+        
+        // toString
+        assertEquals(key1.toString(), key1a.toString());
+        assertEquals(key1.toString(), key1b.toString());
+        assertEquals(key1.toString(), key1c.toString());
+        assertEquals(key1a.toString(), key1b.toString());
+        assertEquals(key1a.toString(), key1c.toString());
+        assertEquals(key1b.toString(), key1.toString());
+
+        assertEquals(key2.toString(), key2a.toString());
+        assertEquals(key2.toString(), key2b.toString());
+        assertEquals(key2a.toString(), key2b.toString());
+
+        assertEquals(key3.toString(), key3a.toString());
+        assertEquals(key3.toString(), key3b.toString());
+        assertEquals(key3a.toString(), key3b.toString());
+
+        assertNotEquals(key1.toString(), key2.toString());
+        assertNotEquals(key1.toString(), key3.toString());
+        assertNotEquals(key2.toString(), key3.toString());
+    }
+
+test_after_fix:
+
+code:
+public void testCacheKeys() {  
+      GetObjectRequest.Builder baseBuilder =  
+              GetObjectRequest.builder()  
+                      .namespaceName("namespace")  
+                      .bucketName("bucket")  
+                      .objectName("object")  
+                      .ifMatch("ifMatch")  
+                      .ifNoneMatch("*")  
+                      .httpResponseContentType("application/json");  
+    
+      CachingObjectStorage.GetObjectRequestCacheKey key1 =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(baseBuilder.build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key1a =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(baseBuilder.build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key1b =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.opcClientRequestId("requestId").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key1c =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.opcClientRequestId("requestId2").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key2 =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.objectName("object2").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key2a =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.objectName("object2").opcClientRequestId("requestId3").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key2b =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.objectName("object2").opcClientRequestId("requestId4").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key3 =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.versionId("1234").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key3a =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.versionId("1234").opcClientRequestId("requestId5").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key3b =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.versionId("1234").opcClientRequestId("requestId6").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key4 =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.ifMatch("ifMatch2").build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key5 =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.range(new Range(1L, null)).build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key5a =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.range(new Range(1L, null)).build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key6 =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.range(new Range(1L, 123L)).build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key6a =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.range(new Range(1L, 123L)).build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key7 =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.range(new Range(null, 123L)).build());  
+      CachingObjectStorage.GetObjectRequestCacheKey key7a =  
+              new CachingObjectStorage.GetObjectRequestCacheKey(  
+                      baseBuilder.range(new Range(null, 123L)).build());  
+    
+      // equals  
+      assertEquals(key1, key1a);  
+      assertEquals(key1, key1b);  
+      assertEquals(key1, key1c);  
+      assertEquals(key1a, key1b);  
+      assertEquals(key1a, key1c);  
+      assertEquals(key1b, key1c);  
+    
+      assertEquals(key2, key2a);  
+      assertEquals(key2, key2b);  
+      assertEquals(key2a, key2b);  
+    
+      assertEquals(key3, key3a);  
+      assertEquals(key3, key3b);  
+      assertEquals(key3a, key3b);  
+    
+      assertEquals(key5, key5a);  
+      assertEquals(key6, key6a);  
+      assertEquals(key7, key7a);  
+    
+      assertNotEquals(key1, key2);  
+      assertNotEquals(key1, key3);  
+      assertNotEquals(key1, key4);  
+      assertNotEquals(key1, key5);  
+      assertNotEquals(key1, key6);  
+      assertNotEquals(key1, key7);  
+      assertNotEquals(key2, key3);  
+      assertNotEquals(key2, key4);  
+      assertNotEquals(key2, key5);  
+      assertNotEquals(key2, key6);  
+      assertNotEquals(key2, key7);  
+      assertNotEquals(key3, key4);  
+      assertNotEquals(key3, key5);  
+      assertNotEquals(key3, key6);  
+      assertNotEquals(key3, key7);  
+      assertNotEquals(key4, key5);  
+      assertNotEquals(key4, key6);  
+      assertNotEquals(key4, key7);  
+      assertNotEquals(key5, key6);  
+      assertNotEquals(key5, key7);  
+      assertNotEquals(key6, key7);  
+ } 
+ 
+import:
+[]
+pom:

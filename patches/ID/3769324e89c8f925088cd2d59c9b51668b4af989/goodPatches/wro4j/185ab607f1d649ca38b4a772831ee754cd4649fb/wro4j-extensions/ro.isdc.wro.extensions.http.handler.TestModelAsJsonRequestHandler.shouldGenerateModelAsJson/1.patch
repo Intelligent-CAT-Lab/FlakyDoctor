@@ -1,0 +1,28 @@
+test_before_fix:
+  public void shouldGenerateModelAsJson()
+      throws Exception {
+    victim.handle(mockRequest, mockResponse);
+    assertEquals(readJsonFile("wroModel_simple.json"), outputStream.toString());
+  }
+
+test_after_fix:
+
+code:
+public void shouldGenerateModelAsJson() throws Exception { 
+     victim.handle(mockRequest, mockResponse); 
+     ObjectMapper mapper = new ObjectMapper(); 
+     mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true); 
+     ObjectNode expected = mapper.readValue(readJsonFile("wroModel_simple.json"), ObjectNode.class); 
+     ObjectNode actual = mapper.readValue(outputStream.toString(), ObjectNode.class); 
+     assertEquals(expected, actual); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import com.fasterxml.jackson.databind.SerializationFeature;\n ', 'import com.fasterxml.jackson.databind.node.ObjectNode;\n ', 'import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import com.fasterxml.jackson.databind.SerializationFeature;\n ', 'import com.fasterxml.jackson.databind.node.ObjectNode;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

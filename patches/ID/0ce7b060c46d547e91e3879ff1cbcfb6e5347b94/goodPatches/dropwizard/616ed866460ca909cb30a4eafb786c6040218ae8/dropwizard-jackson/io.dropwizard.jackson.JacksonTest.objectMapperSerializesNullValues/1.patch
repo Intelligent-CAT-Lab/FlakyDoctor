@@ -1,0 +1,30 @@
+test_before_fix:
+    public void objectMapperSerializesNullValues() throws IOException {
+        final ObjectMapper mapper = Jackson.newObjectMapper();
+        final Issue1627 pojo = new Issue1627(null, null);
+        final String json = "{\"string\":null,\"uuid\":null}";
+
+        assertThat(mapper.writeValueAsString(pojo)).isEqualTo(json);
+    }
+
+test_after_fix:
+
+code:
+public void objectMapperSerializesNullValues() throws IOException { 
+     final ObjectMapper mapper = Jackson.newObjectMapper(); 
+     mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true); 
+     final Issue1627 pojo = new Issue1627(null, null); 
+     final String json = "{\"string\":null,\"uuid\":null}"; 
+  
+     assertThat(mapper.writeValueAsString(pojo)).isEqualTo(json); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.MapperFeature;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

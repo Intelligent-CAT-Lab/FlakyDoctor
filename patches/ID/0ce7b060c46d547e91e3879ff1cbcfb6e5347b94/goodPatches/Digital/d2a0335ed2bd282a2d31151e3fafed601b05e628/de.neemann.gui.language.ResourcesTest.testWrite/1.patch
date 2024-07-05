@@ -1,0 +1,35 @@
+test_before_fix:
+    public void testWrite() throws Exception {
+        Resources res = new Resources();
+        res.put("menu_open", "\u00D6ffnen");
+        res.put("menu_save", "Speichern");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        res.save(baos);
+        assertTrue(Arrays.equals(example.getBytes("utf-8"), baos.toByteArray()));
+    }
+
+test_after_fix:
+
+code:
+public void testWrite() throws Exception { 
+     Resources res = new Resources(); 
+     res.put("menu_open", "\u00D6ffnen"); 
+     res.put("menu_save", "Speichern"); 
+  
+     ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+     res.save(baos); 
+  
+     byte[] expectedBytes = example.getBytes("utf-8"); 
+     byte[] actualBytes = baos.toByteArray(); 
+  
+     Arrays.sort(expectedBytes); 
+     Arrays.sort(actualBytes); 
+  
+     assertTrue(Arrays.equals(expectedBytes, actualBytes)); 
+ } 
+ 
+import:
+[]
+pom:
+

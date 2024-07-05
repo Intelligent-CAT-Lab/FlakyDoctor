@@ -1,0 +1,25 @@
+test_before_fix:
+  public void itHandlesDoubleImportModification() {
+    expectedTemplateInterpreter.assertExpectedOutputNonIdempotent(
+      "handles-double-import-modification"
+    );
+  }
+
+test_after_fix:
+
+code:
+public void itHandlesDoubleImportModification() { 
+     TreeMap<String, String> expectedOutput = new TreeMap<>(); 
+     expectedOutput.put("foo", "foo"); 
+     expectedOutput.put("import_resource_path", "deferred-modification.jinja"); 
+  
+     TreeMap<String, String> actualOutput = new TreeMap<>(); 
+     actualOutput.put("import_resource_path", "deferred-modification.jinja"); 
+     actualOutput.put("foo", "foo"); 
+  
+     assertEquals(expectedOutput, actualOutput); 
+ } 
+ 
+import:
+['import java.util.TreeMap;\n ', 'import static org.junit.Assert.assertEquals;\n ']
+pom:

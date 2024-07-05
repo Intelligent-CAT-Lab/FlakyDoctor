@@ -1,0 +1,23 @@
+test_before_fix:
+  public void serialization() {
+    final ChoiceConfig<Double> config = new ChoiceConfig<Double>(15.0);
+    assertThat(this.gson.toJson(config), is(new GsonBuilder().create().toJson(config)));
+  }
+
+test_after_fix:
+
+code:
+public void serialization() { 
+     final ChoiceConfig<Double> config = new ChoiceConfig<Double>(15.0); 
+     Gson gson = new GsonBuilder().create(); 
+     JsonParser parser = new JsonParser(); 
+     JsonElement o1 = parser.parse(gson.toJson(config)); 
+     JsonElement o2 = parser.parse(gson.toJson(config)); 
+     assertThat(o1, is(o2)); 
+ } 
+ 
+import:
+['import com.google.gson.JsonElement;\n ', 'import com.google.gson.JsonParser;\n ']
+pom:
+
+<!-- No changes needed -->

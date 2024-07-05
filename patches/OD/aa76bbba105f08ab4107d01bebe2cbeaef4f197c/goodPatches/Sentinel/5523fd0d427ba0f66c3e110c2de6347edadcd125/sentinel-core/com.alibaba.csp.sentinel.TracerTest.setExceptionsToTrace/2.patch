@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'test': '@Override        public boolean test(Throwable throwable) {\n            if (throwable instanceof TraceException || throwable instanceof TraceException2) {\n                return true;\n            } else {\n                return false;\n            }\n        }\n', 'setExceptionsToTrace': 'public void setExceptionsToTrace() {\n    \n\n    Predicate<Throwable> throwablePredicate = new Predicate<Throwable>() {\n        @Override\n        public boolean test(Throwable throwable) {\n            if (throwable instanceof TraceException || throwable instanceof TraceException2) {\n                return true;\n            } else {\n                return false;\n            }\n        }\n    };\n    Tracer.setExceptionPredicate(throwablePredicate);\n    \n\n\n    Tracer.ignoreClasses = null;\n    Tracer.traceClasses = null;\n    Tracer.setExceptionsToTrace(TraceException.class, TraceException2.class);\n    Assert.assertTrue(Tracer.shouldTrace(new TraceException2()));\n    Assert.assertTrue(Tracer.shouldTrace(new TraceExceptionSub()));\n    Assert.assertFalse(Tracer.shouldTrace(new Exception()));\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['test', 'setExceptionsToTrace']}polluter
+:code:
+{'fields': {}, 'methods': {'test': '@Override        public boolean test(Throwable throwable) {\n            if (throwable instanceof TraceException || throwable instanceof TraceException2) {\n                return true;\n            } else {\n                return false;\n            }\n        }\n', 'setExceptionsToTrace': 'public void setExceptionsToTrace() {\n    \n\n    Predicate<Throwable> throwablePredicate = new Predicate<Throwable>() {\n        @Override\n        public boolean test(Throwable throwable) {\n            if (throwable instanceof TraceException || throwable instanceof TraceException2) {\n                return true;\n            } else {\n                return false;\n            }\n        }\n    };\n    Tracer.setExceptionPredicate(throwablePredicate);\n    \n\n\n    Tracer.ignoreClasses = null;\n    Tracer.traceClasses = null;\n    Tracer.setExceptionsToTrace(TraceException.class, TraceException2.class);\n    Assert.assertTrue(Tracer.shouldTrace(new TraceException2()));\n    Assert.assertTrue(Tracer.shouldTrace(new TraceExceptionSub()));\n    Assert.assertFalse(Tracer.shouldTrace(new Exception()));\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['test', 'setExceptionsToTrace']}

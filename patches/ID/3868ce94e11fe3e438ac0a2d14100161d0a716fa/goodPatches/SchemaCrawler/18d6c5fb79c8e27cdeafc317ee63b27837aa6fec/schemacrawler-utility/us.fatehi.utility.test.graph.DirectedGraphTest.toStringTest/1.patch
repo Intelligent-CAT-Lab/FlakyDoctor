@@ -1,0 +1,26 @@
+test_before_fix:
+  public void toStringTest() throws Exception {
+    final DirectedGraph<String> graph = makeGraph();
+
+    assertThat(
+        graph.toString(),
+        is("digraph {\n  A;\n  B;\n  C;\n  D;\n  E;\n  A -> B;\n  B -> C;\n  A -> D;\n}\n"));
+  }
+
+test_after_fix:
+
+code:
+public void toStringTest() throws Exception { 
+     final DirectedGraph<String> graph = makeGraph(); 
+  
+     String graphString = graph.toString(); 
+     Set<String> graphElements = new LinkedHashSet<>(Arrays.asList(graphString.split("\n"))); 
+  
+     Set<String> expectedElements = new LinkedHashSet<>(Arrays.asList("digraph {", "  A;", "  B;", "  C;", "  D;", "  E;", "  A -> B;", "  B -> C;", "  A -> D;", "}")); 
+  
+     assertThat(graphElements, is(expectedElements)); 
+ } 
+ 
+import:
+['import java.util.LinkedHashSet;\n ', 'import java.util.Set;\n ']
+pom:

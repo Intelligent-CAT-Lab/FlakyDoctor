@@ -1,0 +1,109 @@
+test_before_fix:
+    public void queryUsesOnlyIndicesBelongingToStream() throws Exception {
+        final String stream1id = "stream1id";
+        final Stream stream1 = mock(Stream.class, RETURNS_DEEP_STUBS);
+        when(stream1.getId()).thenReturn(stream1id);
+
+        final String stream2id = "stream2id";
+        final Stream stream2 = mock(Stream.class, RETURNS_DEEP_STUBS);
+        when(stream2.getId()).thenReturn(stream2id);
+
+        final String stream3id = "stream3id";
+        final Stream stream3 = mock(Stream.class, RETURNS_DEEP_STUBS);
+        when(stream3.getId()).thenReturn(stream3id);
+
+        final String stream4id = "stream4id";
+        final Stream stream4 = mock(Stream.class, RETURNS_DEEP_STUBS);
+        when(stream4.getId()).thenReturn(stream4id);
+
+        when(stream4.getIndexSet().isManagedIndex(eq("index2"))).thenReturn(true);
+
+        final IndexRange indexRange1 = mock(IndexRange.class);
+        when(indexRange1.indexName()).thenReturn("index1");
+        when(indexRange1.streamIds()).thenReturn(Collections.singletonList(stream1id));
+        final IndexRange indexRange2 = mock(IndexRange.class);
+        when(indexRange2.indexName()).thenReturn("index2");
+        when(indexRange2.streamIds()).thenReturn(null);
+
+        final SortedSet<IndexRange> indexRanges = sortedSetOf(indexRange1, indexRange2);
+        when(indexRangeService.find(any(DateTime.class), any(DateTime.class))).thenReturn(indexRanges);
+
+        when(streamService.load(eq(stream1id))).thenReturn(stream1);
+        when(streamService.load(eq(stream2id))).thenReturn(stream2);
+        when(streamService.load(eq(stream3id))).thenReturn(stream3);
+        when(streamService.load(eq(stream4id))).thenReturn(stream4);
+
+        final Query query = dummyQuery(RelativeRange.create(600)).toBuilder()
+                .filter(AndFilter.and(StreamFilter.ofId(stream1id), StreamFilter.ofId(stream2id), StreamFilter.ofId(stream3id), StreamFilter.ofId(stream4id)))
+                .build();
+        final Search search = dummySearch(query);
+        final SearchJob job = new SearchJob("job1", search, "admin");
+        final ESGeneratedQueryContext context = backend.generate(job, query, Collections.emptySet());
+
+        backend.doRun(job, query, context, Collections.emptySet());
+
+        verify(jestClient, times(1)).execute(clientRequestCaptor.capture(), any());
+
+        final MultiSearch clientRequest = clientRequestCaptor.getValue();
+        assertThat(clientRequest).isNotNull();
+        assertThat(indicesOf(clientRequest).get(0)).isEqualTo("index1,index2");
+    }
+
+test_after_fix:
+
+code:
+public void queryUsesOnlyIndicesBelongingToStream() throws Exception { 
+     final String stream1id = "stream1id"; 
+     final Stream stream1 = mock(Stream.class, RETURNS_DEEP_STUBS); 
+     when(stream1.getId()).thenReturn(stream1id); 
+  
+     final String stream2id = "stream2id"; 
+     final Stream stream2 = mock(Stream.class, RETURNS_DEEP_STUBS); 
+     when(stream2.getId()).thenReturn(stream2id); 
+  
+     final String stream3id = "stream3id"; 
+     final Stream stream3 = mock(Stream.class, RETURNS_DEEP_STUBS); 
+     when(stream3.getId()).thenReturn(stream3id); 
+  
+     final String stream4id = "stream4id"; 
+     final Stream stream4 = mock(Stream.class, RETURNS_DEEP_STUBS); 
+     when(stream4.getId()).thenReturn(stream4id); 
+  
+     when(stream4.getIndexSet().isManagedIndex(eq("index2"))).thenReturn(true); 
+  
+     final IndexRange indexRange1 = mock(IndexRange.class); 
+     when(indexRange1.indexName()).thenReturn("index1"); 
+     when(indexRange1.streamIds()).thenReturn(Collections.singletonList(stream1id)); 
+     final IndexRange indexRange2 = mock(IndexRange.class); 
+     when(indexRange2.indexName()).thenReturn("index2"); 
+     when(indexRange2.streamIds()).thenReturn(null); 
+  
+     final SortedSet<IndexRange> indexRanges = sortedSetOf(indexRange1, indexRange2); 
+     when(indexRangeService.find(any(DateTime.class), any(DateTime.class))).thenReturn(indexRanges); 
+  
+     when(streamService.load(eq(stream1id))).thenReturn(stream1); 
+     when(streamService.load(eq(stream2id))).thenReturn(stream2); 
+     when(streamService.load(eq(stream3id))).thenReturn(stream3); 
+     when(streamService.load(eq(stream4id))).thenReturn(stream4); 
+  
+     final Query query = dummyQuery(RelativeRange.create(600)).toBuilder() 
+             .filter(AndFilter.and(StreamFilter.ofId(stream1id), StreamFilter.ofId(stream2id), StreamFilter.ofId(stream3id), StreamFilter.ofId(stream4id))) 
+             .build(); 
+     final Search search = dummySearch(query); 
+     final SearchJob job = new SearchJob("job1", search, "admin"); 
+     final ESGeneratedQueryContext context = backend.generate(job, query, Collections.emptySet()); 
+  
+     backend.doRun(job, query, context, Collections.emptySet()); 
+  
+     verify(jestClient, times(1)).execute(clientRequestCaptor.capture(), any()); 
+  
+     final MultiSearch clientRequest = clientRequestCaptor.getValue(); 
+     assertThat(clientRequest).isNotNull(); 
+     List<String> indices = Arrays.asList(indicesOf(clientRequest).get(0).split(",")); 
+     Collections.sort(indices); 
+     assertThat(indices).isEqualTo(Arrays.asList("index1", "index2")); 
+ } 
+ 
+import:
+[]
+pom:

@@ -1,0 +1,38 @@
+test_before_fix:
+    public void xmlConfigFileRemainsSameAfterReadWrite() throws IOException {
+        String solverConfigResource = "org/optaplanner/core/config/solver/testdataSolverConfig.xml";
+        String originalXml = IOUtils.toString(
+                getClass().getClassLoader().getResourceAsStream(solverConfigResource), StandardCharsets.UTF_8);
+        SolverConfig solverConfig = SolverConfig.createFromXmlResource(solverConfigResource);
+        assertNotNull(SolverFactory.create(solverConfig).buildSolver());
+        XStream xStream = XStreamConfigReader.buildXStream(getClass().getClassLoader());
+        xStream.setMode(XStream.NO_REFERENCES);
+        String savedXml = xStream.toXML(solverConfig);
+        assertEquals(originalXml.trim(), savedXml.trim());
+    }
+
+test_after_fix:
+
+code:
+void xmlConfigFileRemainsSameAfterReadWrite() throws IOException, ParserConfigurationException, SAXException { 
+     String solverConfigResource = "org/optaplanner/core/config/solver/testdataSolverConfig.xml"; 
+     String originalXml = IOUtils.toString( 
+             getClass().getClassLoader().getResourceAsStream(solverConfigResource), StandardCharsets.UTF_8); 
+     SolverConfig solverConfig = SolverConfig.createFromXmlResource(solverConfigResource); 
+     assertNotNull(SolverFactory.create(solverConfig).buildSolver()); 
+     XStream xStream = XStreamConfigReader.buildXStream(getClass().getClassLoader()); 
+     xStream.setMode(XStream.NO_REFERENCES); 
+     String savedXml = xStream.toXML(solverConfig); 
+  
+     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance(); 
+     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder(); 
+     Document doc1 = dBuilder.parse(new InputSource(new StringReader(originalXml.trim()))); 
+     Document doc2 = dBuilder.parse(new InputSource(new StringReader(savedXml.trim()))); 
+     doc1.normalizeDocument(); 
+     doc2.normalizeDocument(); 
+     assertEquals(doc1.getDocumentElement().getTextContent(), doc2.getDocumentElement().getTextContent()); 
+ } 
+ 
+import:
+['import javax.xml.parsers.ParserConfigurationException;\n ', 'import org.xml.sax.SAXException;\n ', 'import org.optaplanner.core.config.solver.SolverConfig;\n ', 'import static org.junit.Assert.assertEquals;\n ', 'import static org.junit.Assert.assertNotNull;\n ']
+pom:

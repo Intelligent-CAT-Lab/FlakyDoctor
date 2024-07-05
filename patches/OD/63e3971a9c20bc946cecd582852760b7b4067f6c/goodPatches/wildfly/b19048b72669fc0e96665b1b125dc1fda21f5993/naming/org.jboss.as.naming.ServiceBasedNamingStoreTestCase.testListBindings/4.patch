@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testListBindings': 'public void testListBindings() throws Exception {\n    \n\n    final Object value = new Object();\n    bindObject(ServiceName.JBOSS.append("TestBean"), value);\n    bindObject(ServiceName.JBOSS.append("foo", "TestBean"), value);\n    bindObject(ServiceName.JBOSS.append("foo", "bar", "TestBean"), value);\n    bindObject(ServiceName.JBOSS.append("foo", "bar", "baz", "TestBean"), value);\n\n    // Reset the state of the store object before the test\n    ServiceTarget serviceTarget = container.subTarget();\n    store = new WritableServiceBasedNamingStore(container, ServiceName.JBOSS, serviceTarget);\n    \n\n    // Rest of the test code...\n}\n'}}victim
+:import:
+['import org.jboss.msc.service.ServiceTarget;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testListBindings']}polluter
+:code:
+{'fields': {}, 'methods': {'testListBindings': 'public void testListBindings() throws Exception {\n    \n\n    final Object value = new Object();\n    bindObject(ServiceName.JBOSS.append("TestBean"), value);\n    bindObject(ServiceName.JBOSS.append("foo", "TestBean"), value);\n    bindObject(ServiceName.JBOSS.append("foo", "bar", "TestBean"), value);\n    bindObject(ServiceName.JBOSS.append("foo", "bar", "baz", "TestBean"), value);\n\n    // Reset the state of the store object before the test\n    ServiceTarget serviceTarget = container.subTarget();\n    store = new WritableServiceBasedNamingStore(container, ServiceName.JBOSS, serviceTarget);\n    \n\n    // Rest of the test code...\n}\n'}}polluter
+:import:
+['import org.jboss.msc.service.ServiceTarget;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testListBindings']}

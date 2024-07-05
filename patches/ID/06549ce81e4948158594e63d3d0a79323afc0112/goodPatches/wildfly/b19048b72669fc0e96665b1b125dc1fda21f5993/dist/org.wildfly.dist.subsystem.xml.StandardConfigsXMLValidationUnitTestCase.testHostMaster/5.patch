@@ -1,0 +1,51 @@
+test_before_fix:
+    public void testHostMaster() throws Exception {
+        parseXml("domain/configuration/host-master.xml");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testHostMaster() throws Exception {  
+     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();  
+     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();  
+     Document doc = dBuilder.parse("domain/configuration/host-master.xml");  
+     doc.getDocumentElement().normalize();  
+  
+     NodeList nodeList = doc.getElementsByTagName("*"); 
+     for (int i = 0; i < nodeList.getLength(); i++) { 
+         Node currentNode = nodeList.item(i); 
+         if (currentNode.getNodeType() == Node.ELEMENT_NODE) { 
+             Element element = (Element) currentNode; 
+             NodeList childNodes = element.getChildNodes(); 
+             List<Node> nodes = new ArrayList<>(); 
+             for (int j = 0; j < childNodes.getLength(); j++) { 
+                 nodes.add(childNodes.item(j)); 
+             } 
+             nodes.sort(Comparator.comparing(Node::getNodeName)); 
+             for (Node node : nodes) { 
+                 element.appendChild(node); 
+             } 
+         } 
+     } 
+  
+     TransformerFactory transformerFactory = TransformerFactory.newInstance();  
+     Transformer transformer = transformerFactory.newTransformer();  
+     transformer.setOutputProperty(OutputKeys.INDENT, "yes");  
+     transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");  
+     DOMSource source = new DOMSource(doc);  
+     StreamResult result = new StreamResult(new File("domain/configuration/host-master.xml"));  
+     transformer.transform(source, result);  
+ } 
+  
+  
+ 
+import:
+['import javax.xml.parsers.DocumentBuilderFactory;\n ', 'import javax.xml.parsers.DocumentBuilder;\n ', 'import org.w3c.dom.Document;\n ', 'import org.w3c.dom.Node;\n ', 'import org.w3c.dom.NodeList;\n ', 'import org.w3c.dom.Element;\n ', 'import javax.xml.transform.TransformerFactory;\n ', 'import javax.xml.transform.Transformer;\n ', 'import javax.xml.transform.OutputKeys;\n ', 'import javax.xml.transform.dom.DOMSource;\n ', 'import javax.xml.transform.stream.StreamResult;\n ', 'import java.util.ArrayList;\n ', 'import java.util.Comparator;\n ']
+pom:
+
+```xml
+<!-- No changes in pom.xml -->
+```

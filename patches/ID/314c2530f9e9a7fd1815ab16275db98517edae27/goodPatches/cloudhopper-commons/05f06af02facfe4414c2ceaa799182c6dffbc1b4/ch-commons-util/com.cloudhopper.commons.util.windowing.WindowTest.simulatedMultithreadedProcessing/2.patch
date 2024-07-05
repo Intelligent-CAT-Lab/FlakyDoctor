@@ -1,0 +1,96 @@
+test_before_fix:
+    public void simulatedMultithreadedProcessing() throws Exception {
+        final Window<Integer,String,String> window = new Window<Integer,String,String>(5);
+
+        final int requestThreadCount = 8;
+        final int requestsPerThread = 10000;
+        final BlockingQueue<Integer> requestQueue = new LinkedBlockingQueue<Integer>();
+
+        RequestThread[] requestThreads = new RequestThread[requestThreadCount];
+        for (int i = 0; i < requestThreadCount; i++) {
+            requestThreads[i] = new RequestThread(window, requestQueue, i, requestsPerThread);
+        }
+
+        ResponseThread responseThread = new ResponseThread(window, requestQueue, requestThreadCount*requestsPerThread);
+
+        // start 'em
+        for (RequestThread requestThread : requestThreads) {
+            requestThread.start();
+        }
+        responseThread.start();
+
+        // wait for them to finish
+        for (RequestThread requestThread : requestThreads) {
+            requestThread.join();
+        }
+        responseThread.join();
+
+        
+        // make sure everything was successful
+        for (int i = 0; i < requestThreadCount; i++) {
+            if (requestThreads[i].throwable != null) {
+                logger.error("", requestThreads[i].throwable);
+            }
+            Assert.assertNull("RequestThread " + i + " throwable wasn't null: " + requestThreads[i].throwable, requestThreads[i].throwable);
+        }
+
+        if (responseThread.throwable != null) {
+            logger.error("", responseThread.throwable);
+        }
+        Assert.assertNull("ResponseThread throwable wasn't null", responseThread.throwable);
+
+        Assert.assertEquals(0, window.getSize());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void simulatedMultithreadedProcessing() throws Exception {  
+      final Window<Integer,String,String> window = new Window<Integer,String,String>(5);  
+    
+      final int requestThreadCount = 8;  
+      final int requestsPerThread = 10000;  
+      final BlockingQueue<Integer> requestQueue = new LinkedBlockingQueue<Integer>();  
+    
+      RequestThread[] requestThreads = new RequestThread[requestThreadCount];  
+      for (int i = 0; i < requestThreadCount; i++) {  
+          requestThreads[i] = new RequestThread(window, requestQueue, i, requestsPerThread);  
+      }  
+    
+      ResponseThread responseThread = new ResponseThread(window, requestQueue, requestThreadCount*requestsPerThread);  
+    
+      // start 'em  
+      for (RequestThread requestThread : requestThreads) {  
+          requestThread.start();  
+      }  
+      responseThread.start();  
+    
+      // wait for them to finish  
+      for (RequestThread requestThread : requestThreads) {  
+          requestThread.join();  
+      }  
+      responseThread.join();  
+    
+      // make sure everything was successful  
+      for (int i = 0; i < requestThreadCount; i++) {  
+          if (requestThreads[i].throwable != null) {  
+              logger.error("", requestThreads[i].throwable);  
+          }  
+          Assert.assertNull("RequestThread " + i + " throwable wasn't null: " + requestThreads[i].throwable, requestThreads[i].throwable);  
+      }  
+    
+      if (responseThread.throwable != null) {  
+          logger.error("", responseThread.throwable);  
+      }  
+      Assert.assertNull("ResponseThread throwable wasn't null", responseThread.throwable);  
+    
+      Assert.assertEquals(0, window.getSize());  
+  }  
+  
+  
+ 
+import:
+[]
+pom:

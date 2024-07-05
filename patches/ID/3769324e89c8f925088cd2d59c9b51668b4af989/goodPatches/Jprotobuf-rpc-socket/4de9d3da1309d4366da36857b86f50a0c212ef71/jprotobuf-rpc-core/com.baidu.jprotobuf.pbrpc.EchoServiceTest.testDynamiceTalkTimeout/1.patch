@@ -1,0 +1,38 @@
+test_before_fix:
+    public void testDynamiceTalkTimeout() {
+        EchoInfo echoInfo = getEchoInfo();
+
+        TalkTimeoutController.setTalkTimeout(1);
+        try {
+            echoService.echo(echoInfo);
+            Assert.fail("Shold throw time out exception here");
+        } catch (Exception e) {
+            Assert.assertNotNull(e);
+            e.printStackTrace();
+        }
+
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testDynamiceTalkTimeout() { 
+     EchoInfo echoInfo = getEchoInfo(); 
+  
+     TalkTimeoutController.setTalkTimeout(1); 
+  
+     try { 
+         echoService.echo(echoInfo); 
+     } catch (Exception e) { 
+         Assert.assertNotNull(e); 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+

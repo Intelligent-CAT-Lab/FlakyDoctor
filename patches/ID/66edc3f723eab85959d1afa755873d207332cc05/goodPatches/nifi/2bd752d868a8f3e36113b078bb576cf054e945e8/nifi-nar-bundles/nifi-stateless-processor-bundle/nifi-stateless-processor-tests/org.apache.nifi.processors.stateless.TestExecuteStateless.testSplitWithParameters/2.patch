@@ -1,0 +1,50 @@
+test_before_fix:
+    public void testSplitWithParameters() {
+        runner.setProperty(ExecuteStateless.DATAFLOW_FILE, "src/test/resources/split-text.json");
+        runner.setProperty(ExecuteStateless.INPUT_PORT, "In");
+        runner.setProperty("Lines Per Split", "3");
+
+        runner.enqueue("The\nQuick\nBrown\nFox\nJumps\nOver\nThe\nLazy\nDog".getBytes(), Collections.singletonMap("abc", "xyz"));
+        runner.run();
+
+        runner.assertTransferCount(ExecuteStateless.REL_OUTPUT, 3);
+        final List<MockFlowFile> output = runner.getFlowFilesForRelationship(ExecuteStateless.REL_OUTPUT);
+        output.forEach(ff -> ff.assertAttributeEquals("abc", "xyz"));
+        output.get(0).assertContentEquals("The\nQuick\nBrown");
+        output.get(1).assertContentEquals("Fox\nJumps\nOver");
+        output.get(2).assertContentEquals("The\nLazy\nDog");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testSplitWithParameters() {  
+     runner.setProperty(ExecuteStateless.DATAFLOW_FILE, "src/test/resources/split-text.json");  
+     runner.setProperty(ExecuteStateless.INPUT_PORT, "In");  
+     runner.setProperty("Lines Per Split", "3");  
+  
+     runner.enqueue("The\nQuick\nBrown\nFox\nJumps\nOver\nThe\nLazy\nDog".getBytes(), Collections.singletonMap("abc", "xyz"));  
+     runner.run();  
+  
+     runner.assertTransferCount(ExecuteStateless.REL_OUTPUT, 3);  
+     final List<MockFlowFile> output = runner.getFlowFilesForRelationship(ExecuteStateless.REL_OUTPUT);  
+     output.forEach(ff -> ff.assertAttributeEquals("abc", "xyz"));  
+  
+     List<String> expectedContents = Arrays.asList("The\nQuick\nBrown", "Fox\nJumps\nOver", "The\nLazy\nDog");  
+     List<String> actualContents = output.stream().map(ff -> new String(ff.toByteArray(), StandardCharsets.UTF_8)).collect(Collectors.toList());  
+  
+     Collections.sort(expectedContents);  
+     Collections.sort(actualContents);  
+  
+     for (int i = 0; i < expectedContents.size(); i++) {  
+         assertEquals(expectedContents.get(i), actualContents.get(i));  
+     }  
+ } 
+  
+  
+ 
+import:
+['import java.nio.charset.StandardCharsets;\n ']
+pom:

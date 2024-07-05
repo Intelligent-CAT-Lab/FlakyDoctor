@@ -1,0 +1,84 @@
+test_before_fix:
+    public void testAllAtOnce() {
+        s = "https://www.Example.org/0/../1/././%7ea_b:c\\d_|e~f!g "
+                + "h/./^i^J[k]//l./m/n/o/../../p/q/r?cc=&dd=ee&bb=aa"
+                + "#fragment";
+        t = "http://example.org/1/~a_b:c%5Cd_%7Ce~f!g%20h/%5Ei%5EJ%5Bk%5D/l./"
+                + "m/p/q/r/?bb=aa&dd=ee";
+        //System.out.println("original  : " + s);
+
+        URLNormalizer n = new URLNormalizer(s)
+                .addDirectoryTrailingSlash()
+                .addWWW()
+                .removeFragment()
+                .decodeUnreservedCharacters()
+                .encodeNonURICharacters()
+                .lowerCaseSchemeHost()
+                .removeDefaultPort()
+                .removeDotSegments()
+                .removeDuplicateSlashes()
+                .removeEmptyParameters()
+                .removeSessionIds()
+                .removeTrailingQuestionMark()
+                .removeWWW()
+                .sortQueryParameters()
+                .unsecureScheme()
+                .upperCaseEscapeSequence()
+                ;
+//          System.out.println("toString(): " + n.toString());
+//          System.out.println("toURL()   : " + n.toURL());
+//          System.out.println("toURI()   : " + n.toURI());
+        assertEquals(t,  n.toString());
+        assertEquals(t,  n.toURL().toString());
+        assertEquals(t,  n.toURI().toString());
+    }
+
+test_after_fix:
+
+code:
+public void testAllAtOnce() {  
+     s = "https://www.Example.org/0/../1/././%7ea_b:c\\d_|e~f!g "   
+             + "h/./^i^J[k]//l./m/n/o/../../p/q/r?cc=&dd=ee&bb=aa"   
+             + "#fragment";   
+     t = "http://example.org/1/~a_b:c%5Cd_%7Ce~f!g%20h/%5Ei%5EJ%5Bk%5D/l./"   
+             + "m/p/q/r/?bb=aa&dd=ee";   
+  
+     URLNormalizer n = new URLNormalizer(s)   
+             .addDirectoryTrailingSlash()   
+             .addWWW()   
+             .removeFragment()   
+             .decodeUnreservedCharacters()   
+             .encodeNonURICharacters()   
+             .lowerCaseSchemeHost()   
+             .removeDefaultPort()   
+             .removeDotSegments()   
+             .removeDuplicateSlashes()   
+             .removeEmptyParameters()   
+             .removeSessionIds()   
+             .removeTrailingQuestionMark()   
+             .removeWWW()   
+             .sortQueryParameters()   
+             .unsecureScheme()   
+             .upperCaseEscapeSequence();   
+  
+     String normalizedURL = n.toString();   
+     URL url = n.toURL();   
+     URI uri = n.toURI();   
+  
+     assertEquals(t, normalizedURL);   
+     assertEquals(t, url.toString());   
+     String uriString = uri.toString(); 
+     String[] parts = uriString.split("\\?"); 
+     String base = parts[0]; 
+     String[] params = parts[1].split("&"); 
+     Arrays.sort(params); 
+     String sortedParams = String.join("&", params); 
+     String sortedUriString = base + "?" + sortedParams; 
+     assertEquals(t, sortedUriString);   
+ } 
+ 
+import:
+[]
+pom:
+
+<!-- No changes needed -->

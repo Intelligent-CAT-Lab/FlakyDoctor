@@ -1,0 +1,41 @@
+test_before_fix:
+    void nullAndObjectValuesInMap() {
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.put("foo", null);
+        queryParams.put("baz", "qux");
+
+        Unirest.get(MockServer.GET)
+                .queryString(queryParams)
+                .asObject(RequestCapture.class)
+                .getBody()
+                .assertParam("foo", "")
+                .assertParam("baz", "qux")
+                .assertQueryString("foo&baz=qux");
+    }
+
+test_after_fix:
+
+code:
+public void nullAndObjectValuesInMap() { 
+     Map<String, Object> queryParams = new LinkedHashMap<>(); 
+     queryParams.put("foo", null); 
+     queryParams.put("baz", "qux"); 
+  
+     Unirest.get(MockServer.GET) 
+             .queryString(queryParams) 
+             .asObject(RequestCapture.class) 
+             .getBody() 
+             .assertParam("foo", "") 
+             .assertParam("baz", "qux") 
+             .assertQueryString("foo&baz=qux"); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import java.util.LinkedHashMap;\n ']
+pom:
+
+<dependency>
+    <groupId>com.mashape.unirest</groupId>
+    <artifactId>unirest-java</artifactId>
+    <version>1.4.9</version>
+</dependency>

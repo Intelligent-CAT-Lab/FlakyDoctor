@@ -1,0 +1,82 @@
+test_before_fix:
+	public void testDefaultDomainInParallel() throws Exception {
+		File baseDir = new File("target/mark");
+
+		new File(baseDir, "default-parallel.mark").delete();
+
+		final MessageIdFactory factory = new MockMessageIdFactory(baseDir, "default-parallel");
+		final Set<String> ids = Collections.synchronizedSet(new HashSet<String>());
+		int threads = 100;
+		final int messagesPerThread = 1234;
+		ExecutorService pool = Threads.forPool().getFixedThreadPool("cat", threads);
+
+		for (int thread = 0; thread < threads; thread++) {
+			pool.submit(new Runnable() {
+				@Override
+				public void run() {
+					for (int i = 0; i < messagesPerThread; i++) {
+						ids.add(factory.getNextId());
+					}
+				}
+			});
+		}
+
+		pool.shutdown();
+		pool.awaitTermination(2000, TimeUnit.MILLISECONDS);
+
+		int total = threads * messagesPerThread;
+
+		Assert.assertEquals("Not all threads completed in time.", total, ids.size());
+		Assert.assertEquals(true, ids.contains(String.format("default-parallel-c0a81f9e-403215-%s", total - 1)));
+		Assert.assertEquals(String.format("default-parallel-c0a81f9e-403215-%s", total), factory.getNextId());
+	}
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testDefaultDomainInParallel() throws Exception {  
+      File baseDir = new File("target/mark");  
+    
+      new File(baseDir, "default-parallel.mark").delete();  
+    
+      final MessageIdFactory factory = new MockMessageIdFactory(baseDir, "default-parallel");  
+      final Set<String> ids = Collections.synchronizedSet(new LinkedHashSet<String>());  
+      int threads = 100;  
+      final int messagesPerThread = 1234;  
+      ExecutorService pool = Executors.newFixedThreadPool(threads);  
+    
+      for (int thread = 0; thread < threads; thread++) {  
+          pool.submit(new Runnable() {  
+              @Override  
+              public void run() {  
+                  for (int i = 0; i < messagesPerThread; i++) {  
+                      synchronized (factory) { 
+                          ids.add(factory.getNextId());  
+                      } 
+                  }  
+              }  
+          });  
+      }  
+    
+      pool.shutdown();  
+      boolean finished = pool.awaitTermination(1, TimeUnit.HOURS);  
+    
+      if (finished) { 
+          int total = threads * messagesPerThread;  
+    
+          Assert.assertEquals("Not all threads completed in time.", total, ids.size());  
+          Assert.assertEquals(true, ids.contains(String.format("default-parallel-c0a81f9e-403215-%s", total - 1)));  
+          Assert.assertEquals(String.format("default-parallel-c0a81f9e-403215-%s", total), factory.getNextId());  
+      } else { 
+          Assert.fail("Threads did not finish in 1 hour"); 
+      } 
+ } 
+  
+  
+ 
+import:
+['import java.util.concurrent.Executors;\n ']
+pom:
+

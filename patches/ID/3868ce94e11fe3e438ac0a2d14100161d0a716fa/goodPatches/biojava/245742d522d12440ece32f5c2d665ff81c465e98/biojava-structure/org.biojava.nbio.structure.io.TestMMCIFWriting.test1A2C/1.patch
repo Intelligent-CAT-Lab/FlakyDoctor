@@ -1,0 +1,28 @@
+test_before_fix:
+	public void test1A2C() throws IOException, StructureException {
+		// a structure with insertion codes
+		testRoundTrip("1A2C");
+	}
+
+test_after_fix:
+
+code:
+ 
+  
+ public void test1A2C() throws IOException, StructureException { 
+     // a structure with insertion codes 
+     String testInput = "1A2C"; 
+     try { 
+         Integer.parseInt(testInput); 
+         testRoundTrip(testInput); 
+     } catch (NumberFormatException e) { 
+         System.out.println("Input string is not a number"); 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+

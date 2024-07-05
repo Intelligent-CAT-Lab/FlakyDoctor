@@ -1,0 +1,40 @@
+test_before_fix:
+    public void testSearch() {
+        initDirectedAndDiffSpeed(graph);
+        PMap pMap = new PMap();
+        ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+        // limit to certain seconds
+        instance.setTimeLimit(60);
+        List<Set<Integer>> res = searchFromNode0Into5Buckets(instance);
+        assertEquals("[[0, 4], [6], [1, 7], [5], [2, 3]]", res.toString());
+
+        instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+        instance.setTimeLimit(30);
+        res = searchFromNode0Into5Buckets(instance);
+        assertEquals("[[0], [4], [], [6], [1, 7]]", res.toString());
+    }
+
+test_after_fix:
+
+code:
+public void testSearch() { 
+     initDirectedAndDiffSpeed(graph); 
+     PMap pMap = new PMap(); 
+     ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false); 
+     // limit to certain seconds 
+     instance.setTimeLimit(60); 
+     List<Set<Integer>> res = searchFromNode0Into5Buckets(instance); 
+     List<Set<Integer>> orderedRes = res.stream().map(TreeSet::new).collect(Collectors.toList()); 
+     assertEquals("[[0, 4], [6], [1, 7], [5], [2, 3]]", orderedRes.toString()); 
+  
+     instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false); 
+     instance.setTimeLimit(30); 
+     res = searchFromNode0Into5Buckets(instance); 
+     orderedRes = res.stream().map(TreeSet::new).collect(Collectors.toList()); 
+     assertEquals("[[0], [4], [], [6], [1, 7]]", orderedRes.toString()); 
+ } 
+ 
+import:
+['import java.util.TreeSet;\n ', 'import java.util.stream.Collectors;\n ']
+pom:
+

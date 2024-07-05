@@ -1,0 +1,44 @@
+test_before_fix:
+    public void testSerialize() throws SerializationException {
+        GetUserIdSerializableRequest request = new GetUserIdSerializableRequest();
+        request.setOperation(InstantAccessOperationValue.GETUSERID);
+        request.setInfoField1("nobody@amazon.com");
+        request.setInfoField2("AMZN");
+
+        String requestString = serializer.encode(request);
+
+        assertEquals("{\"operation\":\"GetUserId\",\"infoField1\":\"nobody@amazon.com\",\"infoField2\":\"AMZN\"}",
+                requestString);
+    }
+
+test_after_fix:
+
+code:
+public void testSerialize() throws SerializationException { 
+     GetUserIdSerializableRequest request = new GetUserIdSerializableRequest(); 
+     request.setOperation(InstantAccessOperationValue.GETUSERID); 
+     request.setInfoField1("nobody@amazon.com"); 
+     request.setInfoField2("AMZN"); 
+  
+     String requestString = serializer.encode(request); 
+  
+     Gson gson = new GsonBuilder().create(); 
+     JsonParser parser = new JsonParser(); 
+     JsonElement o1 = parser.parse("{\"operation\":\"GetUserId\",\"infoField1\":\"nobody@amazon.com\",\"infoField2\":\"AMZN\"}"); 
+     JsonElement o2 = parser.parse(requestString); 
+  
+     Map<String, Object> map1 = new Gson().fromJson(gson.toJson(o1), new TypeToken<HashMap<String, Object>>(){}.getType()); 
+     Map<String, Object> map2 = new Gson().fromJson(gson.toJson(o2), new TypeToken<HashMap<String, Object>>(){}.getType()); 
+  
+     assertEquals(map1, map2); 
+ } 
+ 
+import:
+['import com.google.gson.reflect.TypeToken;\n ', 'import java.util.HashMap;\n ', 'import java.util.Map;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

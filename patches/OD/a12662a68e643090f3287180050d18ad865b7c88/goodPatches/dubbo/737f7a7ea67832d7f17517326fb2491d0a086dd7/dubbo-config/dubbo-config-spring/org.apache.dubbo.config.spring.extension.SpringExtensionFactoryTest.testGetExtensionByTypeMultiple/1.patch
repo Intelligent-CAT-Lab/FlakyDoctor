@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testGetExtensionByTypeMultiple': 'public void testGetExtensionByTypeMultiple() {\n    \n\n    SpringExtensionFactory.clearContexts();\n    \n\n    try {\n        springExtensionFactory.getExtension(DemoService.class, "beanname-not-exist");\n    } catch (Exception e) {\n        e.printStackTrace();\n        Assert.assertTrue(e instanceof NoUniqueBeanDefinitionException);\n    }\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testGetExtensionByTypeMultiple']}polluter
+:code:
+{'fields': {}, 'methods': {'testGetExtensionByTypeMultiple': 'public void testGetExtensionByTypeMultiple() {\n    \n\n    SpringExtensionFactory.clearContexts();\n    \n\n    try {\n        springExtensionFactory.getExtension(DemoService.class, "beanname-not-exist");\n    } catch (Exception e) {\n        e.printStackTrace();\n        Assert.assertTrue(e instanceof NoUniqueBeanDefinitionException);\n    }\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testGetExtensionByTypeMultiple']}

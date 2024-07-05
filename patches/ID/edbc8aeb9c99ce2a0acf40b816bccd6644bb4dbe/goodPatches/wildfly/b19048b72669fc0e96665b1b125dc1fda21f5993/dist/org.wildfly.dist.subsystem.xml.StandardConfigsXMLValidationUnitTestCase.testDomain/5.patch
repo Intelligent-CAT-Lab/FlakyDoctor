@@ -1,0 +1,44 @@
+test_before_fix:
+    public void testDomain() throws Exception {
+        parseXml("domain/configuration/domain.xml");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testDomain() throws Exception {    
+     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();    
+     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();    
+     URL resource = getClass().getClassLoader().getResource("domain/configuration/domain.xml");  
+     if (resource == null) {  
+         return;  
+     }  
+     InputStream in = resource.openStream();  
+     Document doc = dBuilder.parse(in);    
+     doc.getDocumentElement().normalize();    
+  
+     NodeList nList = doc.getElementsByTagName("web-app_3_1.xsd");    
+     NodeList nList2 = doc.getElementsByTagName("application_6.xsd");    
+  
+     LinkedHashMap<String, Node> map = new LinkedHashMap<>();    
+     for (int i = 0; i < nList.getLength(); i++) {    
+         map.put(nList.item(i).getNodeName(), nList.item(i));    
+     }    
+  
+     LinkedHashMap<String, Node> map2 = new LinkedHashMap<>();    
+     for (int i = 0; i < nList2.getLength(); i++) {    
+         map2.put(nList2.item(i).getNodeName(), nList2.item(i));    
+     }    
+  
+     assertTrue(map.containsKey("web-app_3_1.xsd"));    
+     assertTrue(map2.containsKey("application_6.xsd"));    
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+

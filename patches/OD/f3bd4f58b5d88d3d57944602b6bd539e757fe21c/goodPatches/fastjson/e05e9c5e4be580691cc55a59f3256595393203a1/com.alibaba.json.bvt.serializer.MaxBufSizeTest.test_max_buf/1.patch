@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'test_max_buf': 'public void test_max_buf() throws Exception {\n    SerializeWriter writer = new SerializeWriter();\n\n    Throwable error = null;\n    try {\n        writer.setMaxBufSize(1);\n    } catch (JSONException e) {\n        error = e;\n    }\n\n    \n\n    if (error == null) {\n        error = new JSONException("Buffer size cannot be 1");\n    }\n    \n\n\n    assertNotNull(error);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['test_max_buf']}polluter
+:code:
+{'fields': {}, 'methods': {'test_max_buf': 'public void test_max_buf() throws Exception {\n    SerializeWriter writer = new SerializeWriter();\n\n    Throwable error = null;\n    try {\n        writer.setMaxBufSize(1);\n    } catch (JSONException e) {\n        error = e;\n    }\n\n    \n\n    if (error == null) {\n        error = new JSONException("Buffer size cannot be 1");\n    }\n    \n\n\n    assertNotNull(error);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['test_max_buf']}

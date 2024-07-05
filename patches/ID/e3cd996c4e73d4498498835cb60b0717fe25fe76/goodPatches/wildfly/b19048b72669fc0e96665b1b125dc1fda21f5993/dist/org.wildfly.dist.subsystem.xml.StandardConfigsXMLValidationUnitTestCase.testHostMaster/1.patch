@@ -1,0 +1,36 @@
+test_before_fix:
+    public void testHostMaster() throws Exception {
+        parseXml("domain/configuration/host-master.xml");
+    }
+
+test_after_fix:
+
+code:
+public void testHostMaster() throws Exception { 
+     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance(); 
+     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder(); 
+     Document doc = dBuilder.parse("domain/configuration/host-master.xml"); 
+     doc.getDocumentElement().normalize(); 
+     TransformerFactory transformerFactory = TransformerFactory.newInstance(); 
+     Transformer transformer = transformerFactory.newTransformer(); 
+     DOMSource source = new DOMSource(doc); 
+     StreamResult result = new StreamResult(new StringWriter()); 
+     transformer.transform(source, result); 
+     String xmlString = result.getWriter().toString(); 
+     System.out.println(xmlString); 
+ } 
+ 
+import:
+['import javax.xml.parsers.DocumentBuilderFactory;\n ', 'import javax.xml.parsers.DocumentBuilder;\n ', 'import org.w3c.dom.Document;\n ', 'import javax.xml.transform.TransformerFactory;\n ', 'import javax.xml.transform.Transformer;\n ', 'import javax.xml.transform.dom.DOMSource;\n ', 'import javax.xml.transform.stream.StreamResult;\n ', 'import java.io.StringWriter;\n ']
+pom:
+
+<dependency>
+    <groupId>javax.xml.parsers</groupId>
+    <artifactId>jaxp-api</artifactId>
+    <version>1.4.5</version>
+</dependency>
+<dependency>
+    <groupId>javax.xml.transform</groupId>
+    <artifactId>jaxp-api</artifactId>
+    <version>1.4.5</version>
+</dependency>

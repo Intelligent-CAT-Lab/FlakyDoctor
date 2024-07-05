@@ -1,0 +1,32 @@
+test_before_fix:
+	public void test_for_issue() {
+		org.json.JSONObject req = new org.json.JSONObject();
+		req.put("id", 1111);
+		req.put("name", "name11");
+		Assert.assertEquals("{\"name\":\"name11\",\"id\":1111}", JSON.toJSONString(req));
+	}
+
+test_after_fix:
+
+code:
+public void test_for_issue() { 
+     org.json.JSONObject req = new org.json.JSONObject(); 
+     req.put("id", 1111); 
+     req.put("name", "name11"); 
+  
+     com.google.gson.JsonParser parser = new com.google.gson.JsonParser(); 
+     com.google.gson.JsonElement expected = parser.parse("{\"name\":\"name11\",\"id\":1111}"); 
+     com.google.gson.JsonElement result = parser.parse(JSON.toJSONString(req)); 
+  
+     Assert.assertEquals(expected, result); 
+ } 
+ 
+import:
+['import com.google.gson.JsonParser;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

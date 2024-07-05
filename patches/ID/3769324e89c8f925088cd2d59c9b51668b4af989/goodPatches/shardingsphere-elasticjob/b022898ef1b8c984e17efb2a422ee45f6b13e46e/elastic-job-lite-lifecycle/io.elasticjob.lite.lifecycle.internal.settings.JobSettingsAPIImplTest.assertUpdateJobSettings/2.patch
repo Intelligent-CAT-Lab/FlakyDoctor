@@ -1,0 +1,72 @@
+test_before_fix:
+    public void assertUpdateJobSettings() {
+        when(regCenter.get("/test_job/config")).thenReturn(LifecycleJsonConstants.getDataflowJobJson());
+        JobSettings jobSettings = new JobSettings();
+        jobSettings.setJobName("test_job");
+        jobSettings.setJobClass("io.elasticjob.lite.fixture.TestDataflowJob");
+        jobSettings.setShardingTotalCount(10);
+        jobSettings.setMaxTimeDiffSeconds(-1);
+        jobSettings.setMonitorExecution(true);
+        jobSettings.setCron("0/1 * * * * ?");
+        jobSettings.setStreamingProcess(true);
+        jobSettings.setFailover(false);
+        jobSettings.setMisfire(true);
+        jobSettings.getJobProperties().put(JobPropertiesEnum.EXECUTOR_SERVICE_HANDLER.getKey(), DefaultExecutorServiceHandler.class.getCanonicalName());
+        jobSettings.getJobProperties().put(JobPropertiesEnum.JOB_EXCEPTION_HANDLER.getKey(), DefaultJobExceptionHandler.class.getCanonicalName());
+        jobSettings.setReconcileIntervalMinutes(70);
+        jobSettingsAPI.updateJobSettings(jobSettings);
+        verify(regCenter).update("/test_job/config", "{\"jobName\":\"test_job\",\"jobClass\":\"io.elasticjob.lite.fixture.TestDataflowJob\","
+                + "\"cron\":\"0/1 * * * * ?\",\"shardingTotalCount\":10,\"monitorExecution\":true,\"streamingProcess\":true,"
+                + "\"maxTimeDiffSeconds\":-1,\"monitorPort\":-1,\"failover\":false,\"misfire\":true,"
+                + "\"jobProperties\":{\"executor_service_handler\":\"" + DefaultExecutorServiceHandler.class.getCanonicalName() + "\","
+                + "\"job_exception_handler\":\"" + DefaultJobExceptionHandler.class.getCanonicalName() + "\"},\"reconcileIntervalMinutes\":70}");
+    }
+
+test_after_fix:
+
+code:
+public void assertUpdateJobSettings() { 
+     when(regCenter.get("/test_job/config")).thenReturn(LifecycleJsonConstants.getDataflowJobJson()); 
+     JobSettings jobSettings = new JobSettings(); 
+     jobSettings.setJobName("test_job"); 
+     jobSettings.setJobClass("io.elasticjob.lite.fixture.TestDataflowJob"); 
+     jobSettings.setShardingTotalCount(10); 
+     jobSettings.setMaxTimeDiffSeconds(-1); 
+     jobSettings.setMonitorExecution(true); 
+     jobSettings.setCron("0/1 * * * * ?"); 
+     jobSettings.setStreamingProcess(true); 
+     jobSettings.setFailover(false); 
+     jobSettings.setMisfire(true); 
+     jobSettings.getJobProperties().put(JobPropertiesEnum.EXECUTOR_SERVICE_HANDLER.getKey(), DefaultExecutorServiceHandler.class.getCanonicalName()); 
+     jobSettings.getJobProperties().put(JobPropertiesEnum.JOB_EXCEPTION_HANDLER.getKey(), DefaultJobExceptionHandler.class.getCanonicalName()); 
+     jobSettings.setReconcileIntervalMinutes(70); 
+     jobSettingsAPI.updateJobSettings(jobSettings); 
+  
+     Map<String, Object> expectedMap = new LinkedHashMap<>(); 
+     expectedMap.put("jobName", "test_job"); 
+     expectedMap.put("jobClass", "io.elasticjob.lite.fixture.TestDataflowJob"); 
+     expectedMap.put("cron", "0/1 * * * * ?"); 
+     expectedMap.put("shardingTotalCount", 10); 
+     expectedMap.put("monitorExecution", true); 
+     expectedMap.put("streamingProcess", true); 
+     expectedMap.put("maxTimeDiffSeconds", -1); 
+     expectedMap.put("monitorPort", -1); 
+     expectedMap.put("failover", false); 
+     expectedMap.put("misfire", true); 
+     expectedMap.put("jobProperties", jobSettings.getJobProperties()); 
+     expectedMap.put("reconcileIntervalMinutes", 70); 
+  
+     Gson gson = new GsonBuilder().setPrettyPrinting().create(); 
+     String expectedJson = gson.toJson(expectedMap); 
+  
+     ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class); 
+     verify(regCenter).update(eq("/test_job/config"), argumentCaptor.capture()); 
+     JsonParser parser = new JsonParser(); 
+     JsonElement actual = parser.parse(argumentCaptor.getValue()); 
+     JsonElement expected = parser.parse(expectedJson); 
+     assertEquals(expected, actual); 
+ } 
+ 
+import:
+['import com.google.gson.JsonElement;\n ', 'import com.google.gson.JsonParser;\n ', 'import org.mockito.ArgumentCaptor;\n ', 'import static org.junit.Assert.assertEquals;\n ', 'import static org.mockito.Mockito.eq;\n ']
+pom:

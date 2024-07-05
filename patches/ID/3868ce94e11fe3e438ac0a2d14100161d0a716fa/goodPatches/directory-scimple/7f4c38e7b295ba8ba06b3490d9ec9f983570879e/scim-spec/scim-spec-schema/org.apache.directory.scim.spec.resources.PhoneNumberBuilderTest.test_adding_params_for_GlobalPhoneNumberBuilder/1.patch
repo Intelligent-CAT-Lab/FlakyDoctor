@@ -1,0 +1,43 @@
+test_before_fix:
+  public void test_adding_params_for_GlobalPhoneNumberBuilder() throws PhoneNumberParseException {
+    PhoneNumber phoneNumber = new GlobalPhoneNumberBuilder().globalNumber("+1-888-888-5555")
+        .extension("1234")
+        .param("example", "gh234")
+        .param("milhouse", "simpson")
+        .build();
+    
+    assertNull(phoneNumber.getSubAddress(), "SubAddress should be null");
+    assertNull(phoneNumber.getPhoneContext(), "PhoneContext should be null");
+
+    assertEquals("+1-888-888-5555", phoneNumber.getNumber());
+    assertEquals("1234", phoneNumber.getExtension());
+    assertEquals(("tel:+1-888-888-5555;ext=1234;milhouse=simpson;example=gh234"), phoneNumber.getValue());
+  }
+
+test_after_fix:
+
+code:
+public void test_adding_params_for_GlobalPhoneNumberBuilder() throws PhoneNumberParseException { 
+     PhoneNumber phoneNumber = new GlobalPhoneNumberBuilder().globalNumber("+1-888-888-5555") 
+         .extension("1234") 
+         .param("example", "gh234") 
+         .param("milhouse", "simpson") 
+         .build(); 
+      
+     assertNull(phoneNumber.getSubAddress(), "SubAddress should be null"); 
+     assertNull(phoneNumber.getPhoneContext(), "PhoneContext should be null"); 
+  
+     assertEquals("+1-888-888-5555", phoneNumber.getNumber()); 
+     assertEquals("1234", phoneNumber.getExtension()); 
+  
+     String actualValue = phoneNumber.getValue(); 
+     String expectedValue1 = "tel:+1-888-888-5555;ext=1234;milhouse=simpson;example=gh234"; 
+     String expectedValue2 = "tel:+1-888-888-5555;ext=1234;example=gh234;milhouse=simpson"; 
+  
+     assertTrue(actualValue.equals(expectedValue1) || actualValue.equals(expectedValue2), "Phone number value does not match expected values"); 
+ } 
+ 
+import:
+[]
+pom:
+

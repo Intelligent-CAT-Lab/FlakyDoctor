@@ -1,0 +1,36 @@
+test_before_fix:
+    public void testToJSON() {
+        String userStatusJson = userStatus.toJSON();
+        assertNotNull(userStatusJson);
+        assertEquals(userStatusJson, "{\"phoneNumber\":\"456 758 8990\"," +
+                "\"devices\":\"[deviceA, deviceB]\",\"success\":\"true\"," +
+                "\"countryCode\":\"1\",\"registered\":\"true\",\"userId\":\"1234\",\"confirmed\":\"true\"}");
+    }
+
+test_after_fix:
+
+code:
+public void testToJSON() { 
+     String userStatusJson = userStatus.toJSON(); 
+     assertNotNull(userStatusJson); 
+  
+     JsonObject jsonObject = new JsonParser().parse(userStatusJson).getAsJsonObject(); 
+  
+     assertEquals(jsonObject.get("phoneNumber").getAsString(), "456 758 8990"); 
+     assertEquals(jsonObject.get("devices").getAsString(), "[deviceA, deviceB]"); 
+     assertEquals(jsonObject.get("success").getAsString(), "true"); 
+     assertEquals(jsonObject.get("countryCode").getAsString(), "1"); 
+     assertEquals(jsonObject.get("registered").getAsString(), "true"); 
+     assertEquals(jsonObject.get("userId").getAsString(), "1234"); 
+     assertEquals(jsonObject.get("confirmed").getAsString(), "true"); 
+ } 
+ 
+import:
+['import com.google.gson.JsonObject;\n ', 'import com.google.gson.JsonParser;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

@@ -1,0 +1,38 @@
+test_before_fix:
+  void convertToDatabaseColumn_twoElement() throws IOException {
+    Map<String, String> map = new HashMap<>(8);
+    map.put("a", "1");
+    map.put("disableCheck", "true");
+
+    String expected = readAllContentOf("json/converter/element.2.json");
+    assertEquals(expected, this.converter.convertToDatabaseColumn(map));
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+ void convertToDatabaseColumn_twoElement() throws IOException { 
+     Map<String, String> map = new LinkedHashMap<>(8); 
+     map.put("a", "1"); 
+     map.put("disableCheck", "true"); 
+  
+     String expected = readAllContentOf("json/converter/element.2.json"); 
+     ObjectMapper mapper = new ObjectMapper(); 
+     Map<String, String> expectedMap = mapper.readValue(expected, new TypeReference<Map<String, String>>() {}); 
+     Map<String, String> resultMap = mapper.readValue(this.converter.convertToDatabaseColumn(map), new TypeReference<Map<String, String>>() {}); 
+     assertEquals(expectedMap, resultMap); 
+ } 
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import com.fasterxml.jackson.core.type.TypeReference;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

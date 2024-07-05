@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'cCreateStandaloneGroupTaskClaimAndDeleteFail': 'public void cCreateStandaloneGroupTaskClaimAndDeleteFail() {\n    \n\n    // Create a task\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("simple task")\n            .withGroup("activitiTeam")\n            .build());\n\n    // Get the list of tasks\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // Assert that there are 2 tasks (the one created in this test and the one created in aCreateStandaloneTaskForGroup)\n    assertThat(tasks.getContent()).hasSize(2);\n\n    // Get the task created in this test\n    Task task = tasks.getContent().stream()\n            .filter(t -> t.getName().equals("simple task"))\n            .findFirst()\n            .orElse(null);\n\n    // Assert that the task is not null and has the expected properties\n    assertThat(task).isNotNull();\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n    \n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['cCreateStandaloneGroupTaskClaimAndDeleteFail']}polluter
+:code:
+{'fields': {}, 'methods': {'cCreateStandaloneGroupTaskClaimAndDeleteFail': 'public void cCreateStandaloneGroupTaskClaimAndDeleteFail() {\n    \n\n    // Create a task\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("simple task")\n            .withGroup("activitiTeam")\n            .build());\n\n    // Get the list of tasks\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // Assert that there are 2 tasks (the one created in this test and the one created in aCreateStandaloneTaskForGroup)\n    assertThat(tasks.getContent()).hasSize(2);\n\n    // Get the task created in this test\n    Task task = tasks.getContent().stream()\n            .filter(t -> t.getName().equals("simple task"))\n            .findFirst()\n            .orElse(null);\n\n    // Assert that the task is not null and has the expected properties\n    assertThat(task).isNotNull();\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n    \n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['cCreateStandaloneGroupTaskClaimAndDeleteFail']}

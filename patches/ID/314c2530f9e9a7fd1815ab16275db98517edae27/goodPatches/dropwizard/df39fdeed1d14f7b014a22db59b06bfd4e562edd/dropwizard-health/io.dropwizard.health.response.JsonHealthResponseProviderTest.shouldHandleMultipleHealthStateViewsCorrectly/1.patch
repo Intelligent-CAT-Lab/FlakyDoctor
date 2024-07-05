@@ -1,0 +1,68 @@
+test_before_fix:
+    void shouldHandleMultipleHealthStateViewsCorrectly() throws IOException {
+        // given
+        final HealthStateView fooView = new HealthStateView("foo", true, HealthCheckType.READY, true);
+        final HealthStateView barView = new HealthStateView("bar", true, HealthCheckType.ALIVE, true);
+        final HealthStateView bazView = new HealthStateView("baz", false, HealthCheckType.READY, false);
+        final Collection<String> names = new ArrayList<>();
+        names.add(fooView.getName());
+        names.add(barView.getName());
+        names.add(bazView.getName());
+        final Map<String, Collection<String>> queryParams = Collections.singletonMap(
+            JsonHealthResponseProvider.NAME_QUERY_PARAM, names);
+
+        // when
+        when(healthStateAggregator.healthStateView(fooView.getName())).thenReturn(Optional.of(fooView));
+        when(healthStateAggregator.healthStateView(barView.getName())).thenReturn(Optional.of(barView));
+        when(healthStateAggregator.healthStateView(bazView.getName())).thenReturn(Optional.of(bazView));
+        when(healthStatusChecker.isHealthy(isNull())).thenReturn(true);
+        final HealthResponse response = jsonHealthResponseProvider.healthResponse(queryParams);
+
+        // then
+        assertThat(response.isHealthy()).isTrue();
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
+        assertThat(response.getMessage()).isEqualToIgnoringWhitespace(fixture("/json/multiple-healthy-responses.json"));
+    }
+
+test_after_fix:
+
+code:
+void shouldHandleMultipleHealthStateViewsCorrectly() throws IOException { 
+     // given 
+     final HealthStateView fooView = new HealthStateView("foo", true, HealthCheckType.READY, true); 
+     final HealthStateView barView = new HealthStateView("bar", true, HealthCheckType.ALIVE, true); 
+     final HealthStateView bazView = new HealthStateView("baz", false, HealthCheckType.READY, false); 
+     final Collection<String> names = new ArrayList<>(); 
+     names.add(fooView.getName()); 
+     names.add(barView.getName()); 
+     names.add(bazView.getName()); 
+     final Map<String, Collection<String>> queryParams = Collections.singletonMap( 
+         JsonHealthResponseProvider.NAME_QUERY_PARAM, names); 
+  
+     // when 
+     when(healthStateAggregator.healthStateView(fooView.getName())).thenReturn(Optional.of(fooView)); 
+     when(healthStateAggregator.healthStateView(barView.getName())).thenReturn(Optional.of(barView)); 
+     when(healthStateAggregator.healthStateView(bazView.getName())).thenReturn(Optional.of(bazView)); 
+     when(healthStatusChecker.isHealthy(isNull())).thenReturn(true); 
+     final HealthResponse response = jsonHealthResponseProvider.healthResponse(queryParams); 
+  
+     // then 
+     assertThat(response.isHealthy()).isTrue(); 
+     assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON); 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     ArrayNode expected = (ArrayNode) mapper.readTree(fixture("/json/multiple-healthy-responses.json")); 
+     ArrayNode actual = (ArrayNode) mapper.readTree(response.getMessage()); 
+  
+     assertThat(actual).isEqualTo(expected); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.node.ArrayNode;\n ', 'import com.fasterxml.jackson.databind.node.ObjectNode;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

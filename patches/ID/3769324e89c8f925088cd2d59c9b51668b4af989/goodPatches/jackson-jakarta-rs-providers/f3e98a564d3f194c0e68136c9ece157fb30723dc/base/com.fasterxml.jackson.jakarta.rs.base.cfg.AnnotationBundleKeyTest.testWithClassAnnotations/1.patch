@@ -1,0 +1,20 @@
+test_before_fix:
+    public void testWithClassAnnotations() throws Exception
+    {
+        _checkWith(Helper.class.getAnnotations(), Helper.class.getAnnotations());
+    }
+
+test_after_fix:
+
+code:
+public void testWithClassAnnotations() throws Exception 
+ { 
+     Annotation[] annotations = Helper.class.getAnnotations(); 
+     Arrays.sort(annotations, Comparator.comparing(Annotation::toString)); 
+     _checkWith(annotations, annotations); 
+ } 
+ 
+import:
+['import java.util.Arrays;\n ', 'import java.util.Comparator;\n ']
+pom:
+

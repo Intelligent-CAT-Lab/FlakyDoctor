@@ -1,0 +1,27 @@
+test_before_fix:
+    public void assertToJSONString() {
+        Assert.assertNull(JSONUtil.toJSONString(null));
+        Assert.assertEquals(EXPECTED_FOO_JSON, JSONUtil.toJSONString(EXPECTED_FOO));
+    }
+
+test_after_fix:
+
+code:
+public void assertToJSONString() { 
+     Assert.assertNull(JSONUtil.toJSONString(null)); 
+     String actualJson = JSONUtil.toJSONString(EXPECTED_FOO); 
+     com.google.gson.JsonParser parser = new com.google.gson.JsonParser(); 
+     com.google.gson.JsonElement actual = parser.parse(actualJson); 
+     com.google.gson.JsonElement expected = parser.parse(EXPECTED_FOO_JSON); 
+     Assert.assertEquals(expected, actual); 
+ } 
+ 
+import:
+['import com.google.gson.JsonParser;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

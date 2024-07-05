@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testLoadRegistries': 'public void testLoadRegistries() throws Exception {\n    System.setProperty("dubbo.registry.address", "addr1");\n    InterfaceConfig interfaceConfig = new InterfaceConfig();\n    List<URL> urls = interfaceConfig.loadRegistries(true);\n    TestCase.assertEquals(1, urls.size());\n    URL url = urls.get(0);\n    TestCase.assertEquals("registry", url.getProtocol());\n    TestCase.assertEquals("addr1:9090", url.getAddress());\n    TestCase.assertEquals(RegistryService.class.getName(), url.getPath());\n    TestCase.assertTrue(url.getParameters().containsKey("timestamp"));\n    TestCase.assertTrue(url.getParameters().containsKey("pid"));\n    TestCase.assertTrue(url.getParameters().containsKey("registry"));\n    TestCase.assertTrue(url.getParameters().containsKey("dubbo"));\n    \n    \n\n    System.clearProperty("dubbo.registry.address");\n    \n\n}\n', 'testCheckRegistry2': 'public void testCheckRegistry2() throws Exception {\n    InterfaceConfig interfaceConfig = new InterfaceConfig();\n    interfaceConfig.checkRegistry();\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testLoadRegistries', 'testCheckRegistry2']}polluter
+:code:
+{'fields': {}, 'methods': {'testLoadRegistries': 'public void testLoadRegistries() throws Exception {\n    System.setProperty("dubbo.registry.address", "addr1");\n    InterfaceConfig interfaceConfig = new InterfaceConfig();\n    List<URL> urls = interfaceConfig.loadRegistries(true);\n    TestCase.assertEquals(1, urls.size());\n    URL url = urls.get(0);\n    TestCase.assertEquals("registry", url.getProtocol());\n    TestCase.assertEquals("addr1:9090", url.getAddress());\n    TestCase.assertEquals(RegistryService.class.getName(), url.getPath());\n    TestCase.assertTrue(url.getParameters().containsKey("timestamp"));\n    TestCase.assertTrue(url.getParameters().containsKey("pid"));\n    TestCase.assertTrue(url.getParameters().containsKey("registry"));\n    TestCase.assertTrue(url.getParameters().containsKey("dubbo"));\n    \n    \n\n    System.clearProperty("dubbo.registry.address");\n    \n\n}\n', 'testCheckRegistry2': 'public void testCheckRegistry2() throws Exception {\n    InterfaceConfig interfaceConfig = new InterfaceConfig();\n    interfaceConfig.checkRegistry();\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testLoadRegistries', 'testCheckRegistry2']}

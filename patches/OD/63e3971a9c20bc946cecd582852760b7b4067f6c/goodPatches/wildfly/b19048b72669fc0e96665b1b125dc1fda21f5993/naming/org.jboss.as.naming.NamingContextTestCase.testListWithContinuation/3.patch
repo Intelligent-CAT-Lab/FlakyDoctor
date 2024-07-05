@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'cleanup': 'public void cleanup() throws Exception {\n    namingStore.close();\n    NamingContext.setActiveNamingStore(new InMemoryNamingStore());\n\n    // Reset the NamingManager in the cleanup\n    NamingContext.initializeNamingManager();\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    // ... existing test code ...\n\n    // Reset the NamingManager after the test\n    NamingContext.initializeNamingManager();\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['cleanup', 'testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'cleanup': 'public void cleanup() throws Exception {\n    namingStore.close();\n    NamingContext.setActiveNamingStore(new InMemoryNamingStore());\n\n    // Reset the NamingManager in the cleanup\n    NamingContext.initializeNamingManager();\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    // ... existing test code ...\n\n    // Reset the NamingManager after the test\n    NamingContext.initializeNamingManager();\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['cleanup', 'testPermissions']}

@@ -1,0 +1,25 @@
+test_before_fix:
+  public void testGetAllLoggers() {
+    List<String> allLoggers = LoggerUtils.getAllLoggers();
+    assertEquals(allLoggers.size(), 2);
+    assertEquals(allLoggers.get(0), ROOT);
+    assertEquals(allLoggers.get(1), PINOT);
+  }
+
+test_after_fix:
+
+code:
+public void testGetAllLoggers() {  
+     List<String> allLoggers = LoggerUtils.getAllLoggers();  
+     Collections.sort(allLoggers);  
+     int expectedSize = 2; 
+     String expectedFirstElement = "root"; 
+     String expectedSecondElement = "org.apache.pinot"; 
+     assertEquals(expectedSize, allLoggers.size());  
+     assertTrue(allLoggers.contains(expectedFirstElement));  
+     assertTrue(allLoggers.contains(expectedSecondElement));  
+ } 
+ 
+import:
+[]
+pom:

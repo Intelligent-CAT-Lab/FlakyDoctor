@@ -1,0 +1,48 @@
+test_before_fix:
+    public void testSubMap() throws IOException {
+        final String key = "keySubMap";
+        final String value = "valueSubMap";
+        for (int i = 0; (i < 3); ++i) {
+            client.put(key + i, value + i, serializer, serializer);
+        }
+        final Set<String> keys = new HashSet<>(Arrays.asList("keySubMap0", "keySubMap1", "keySubMap2"));
+        final Map<String, String> subMap = client.subMap(keys, serializer, deserializer);
+        assertEquals(3, subMap.size());
+        for (int i = 0; (i < 3); ++i) {
+            assertEquals(value + i, subMap.get(key + i));
+        }
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+  
+  
+  
+  
+  
+  
+ public void testSubMap() throws IOException {  
+     final String key = "keySubMap";  
+     final String value = "valueSubMap";  
+     Map<String, String> map = new LinkedHashMap<>();  
+     for (int i = 0; (i < 3); ++i) {  
+         client.put(key + i, value + i, serializer, serializer);  
+         map.put(key + i, value + i);  
+     }  
+     final Set<String> keys = new LinkedHashSet<>(Arrays.asList("keySubMap0", "keySubMap1", "keySubMap2"));  
+     final Map<String, String> subMap = client.subMap(keys, serializer, deserializer);  
+     assertEquals(3, subMap.size());  
+     for (Map.Entry<String, String> entry : map.entrySet()) {  
+         assertEquals(entry.getValue(), subMap.get(entry.getKey()));  
+     }  
+ } 
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import java.util.LinkedHashSet;\n ']
+pom:
+

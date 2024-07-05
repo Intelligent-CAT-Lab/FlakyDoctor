@@ -1,0 +1,67 @@
+test_before_fix:
+    public void testToJsonBytes() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("string", "你好，中国！");
+        map.put("integer", 999);
+        RestResult<Map<String, Object>> restResult = new RestResult();
+        restResult.setData(map);
+
+        byte[] bytes = JacksonUtils.toJsonBytes(restResult);
+        String jsonFromBytes = ByteUtils.toString(bytes);
+        String expectedJson = "{\"code\":0,\"data\":{\"string\":\"你好，中国！\",\"integer\":999}}";
+        Assert.assertEquals(expectedJson, jsonFromBytes);
+
+        // old `toJsonBytes` method implementation:
+        //     public static byte[] toJsonBytes(Object obj) {
+        //        try {
+        //            return ByteUtils.toBytes(mapper.writeValueAsString(obj));
+        //        } catch (JsonProcessingException e) {
+        //            throw new NacosSerializationException(obj.getClass(), e);
+        //        }
+        //    }
+
+        // here is a verification to compare with the old implementation
+        byte[] bytesFromOldImplementation = ByteUtils.toBytes(JacksonUtils.toJson(restResult));
+        Assert.assertEquals(expectedJson, new String(bytesFromOldImplementation, Charset.forName(Constants.ENCODE)));
+    }
+
+test_after_fix:
+
+code:
+public void testToJsonBytes() throws IOException { 
+     Map<String, Object> map = new LinkedHashMap<String, Object>(); 
+     map.put("string", "你好，中国！"); 
+     map.put("integer", 999); 
+     RestResult<Map<String, Object>> restResult = new RestResult(); 
+     restResult.setData(map); 
+  
+     byte[] bytes = JacksonUtils.toJsonBytes(restResult); 
+     String jsonFromBytes = new String(bytes, Charset.forName(Constants.ENCODE)); 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     JsonNode tree1 = mapper.readTree(jsonFromBytes); 
+     JsonNode tree2 = mapper.readTree("{\"code\":0,\"data\":{\"string\":\"你好，中国！\",\"integer\":999}}"); 
+     Assert.assertTrue(tree1.equals(tree2)); 
+  
+     byte[] bytesFromOldImplementation = ByteUtils.toBytes(JacksonUtils.toJson(restResult)); 
+     JsonNode tree3 = mapper.readTree(new String(bytesFromOldImplementation, Charset.forName(Constants.ENCODE))); 
+     Assert.assertTrue(tree2.equals(tree3)); 
+ } 
+ 
+import:
+['import java.io.IOException;\n ', 'import java.io.IOException;\n ']
+pom:
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.9.8</version>
+</dependency>
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+    <scope>test</scope>
+</dependency>
+```

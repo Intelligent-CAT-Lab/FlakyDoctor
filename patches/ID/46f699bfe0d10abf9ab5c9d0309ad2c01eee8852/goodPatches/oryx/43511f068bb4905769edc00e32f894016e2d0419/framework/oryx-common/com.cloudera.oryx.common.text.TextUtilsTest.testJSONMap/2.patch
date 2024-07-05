@@ -1,0 +1,33 @@
+test_before_fix:
+  public void testJSONMap() {
+    Map<Object,Object> map = new HashMap<>();
+    map.put(1, "bar");
+    map.put("foo", 2);
+    assertEquals("[\"A\",{\"1\":\"bar\",\"foo\":2},\"B\"]",
+                 TextUtils.joinJSON(Arrays.asList("A", map, "B")));
+  }
+
+test_after_fix:
+
+code:
+public void testJSONMap() { 
+     Map<Object,Object> map = new LinkedHashMap<>(); 
+     map.put("1", "bar"); 
+     map.put("foo", "2"); 
+  
+     Gson gson = new GsonBuilder().create(); 
+     String jsonString = gson.toJson(Arrays.asList("A", map, "B")); 
+  
+     assertEquals("[\"A\",{\"1\":\"bar\",\"foo\":\"2\"},\"B\"]", jsonString); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import com.google.gson.Gson;\n ', 'import com.google.gson.GsonBuilder;\n ', 'import com.google.gson.Gson;\n ', 'import com.google.gson.GsonBuilder;\n ', 'import java.util.LinkedHashMap;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+    <scope>test</scope>
+</dependency>

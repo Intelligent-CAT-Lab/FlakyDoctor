@@ -1,0 +1,20 @@
+test_before_fix:
+    public void test_getMethodNames_ContainExtendsParentMethods() throws Exception {
+        assertArrayEquals(new String[]{"hello", "world"}, Wrapper.getWrapper(Son.class).getMethodNames());
+    }
+
+test_after_fix:
+
+code:
+public void test_getMethodNames_ContainExtendsParentMethods() throws Exception { 
+     List<String> expectedMethodNames = Arrays.asList("hello", "world"); 
+     List<String> actualMethodNames = Arrays.asList(Wrapper.getWrapper(Son.class).getMethodNames()); 
+     Collections.sort(expectedMethodNames); 
+     Collections.sort(actualMethodNames); 
+     assertArrayEquals(expectedMethodNames.toArray(), actualMethodNames.toArray()); 
+ } 
+ 
+import:
+['import java.util.Arrays;\n ', 'import java.util.Collections;\n ', 'import java.util.List;\n ']
+pom:
+

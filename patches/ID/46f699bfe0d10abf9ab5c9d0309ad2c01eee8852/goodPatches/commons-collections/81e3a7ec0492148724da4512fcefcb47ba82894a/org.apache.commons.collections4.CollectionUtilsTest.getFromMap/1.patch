@@ -1,0 +1,91 @@
+test_before_fix:
+    public void getFromMap() {
+        // Unordered map, entries exist
+        final Map<String, String> expected = new HashMap<>();
+        expected.put("zeroKey", "zero");
+        expected.put("oneKey", "one");
+
+        final Map<String, String> found = new HashMap<>();
+        Map.Entry<String, String> entry = CollectionUtils.get(expected, 0);
+        found.put(entry.getKey(), entry.getValue());
+        entry = CollectionUtils.get(expected, 1);
+        found.put(entry.getKey(), entry.getValue());
+        assertEquals(expected, found);
+
+        // Map index out of range
+        try {
+            CollectionUtils.get(expected, 2);
+            fail("Expecting IndexOutOfBoundsException.");
+        } catch (final IndexOutOfBoundsException e) {
+            // expected
+        }
+        try {
+            CollectionUtils.get(expected, -2);
+            fail("Expecting IndexOutOfBoundsException.");
+        } catch (final IndexOutOfBoundsException e) {
+            // expected
+        }
+
+        // Sorted map, entries exist, should respect order
+        final SortedMap<String, String> map = new TreeMap<>();
+        map.put("zeroKey", "zero");
+        map.put("oneKey", "one");
+        Map.Entry<String, String> test = CollectionUtils.get(map, 1);
+        assertEquals("zeroKey", test.getKey());
+        assertEquals("zero", test.getValue());
+        test = CollectionUtils.get(map, 0);
+        assertEquals("oneKey", test.getKey());
+        assertEquals("one", test.getValue());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void getFromMap() { 
+     // Unordered map, entries exist 
+     final Map<String, String> expected = new LinkedHashMap<>(); 
+     expected.put("zeroKey", "zero"); 
+     expected.put("oneKey", "one"); 
+  
+     final Map<String, String> found = new LinkedHashMap<>(); 
+     Map.Entry<String, String> entry = CollectionUtils.get(expected, 0); 
+     found.put(entry.getKey(), entry.getValue()); 
+     entry = CollectionUtils.get(expected, 1); 
+     found.put(entry.getKey(), entry.getValue()); 
+     assertEquals(expected, found); 
+  
+     // Map index out of range 
+     try { 
+         CollectionUtils.get(expected, 2); 
+         fail("Expecting IndexOutOfBoundsException."); 
+     } catch (final IndexOutOfBoundsException e) { 
+         // expected 
+     } 
+     try { 
+         CollectionUtils.get(expected, -2); 
+         fail("Expecting IndexOutOfBoundsException."); 
+     } catch (final IndexOutOfBoundsException e) { 
+         // expected 
+     } 
+  
+     // Sorted map, entries exist, should respect order 
+     final SortedMap<String, String> map = new TreeMap<>(); 
+     map.put("zeroKey", "zero"); 
+     map.put("oneKey", "one"); 
+     Map.Entry<String, String> test = CollectionUtils.get(map, 1); 
+     assertEquals("zeroKey", test.getKey()); 
+     assertEquals("zero", test.getValue()); 
+     test = CollectionUtils.get(map, 0); 
+     assertEquals("oneKey", test.getKey()); 
+     assertEquals("one", test.getValue()); 
+ } 
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import org.apache.commons.collections4.CollectionUtils;\n ']
+pom:
+
+<!-- No changes needed -->

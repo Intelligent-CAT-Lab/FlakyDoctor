@@ -1,0 +1,62 @@
+test_before_fix:
+    public void testIndexLabelV49() {
+        IndexLabel.Builder builder = new IndexLabel.BuilderImpl("personByAge",
+                                                                null);
+        IndexLabel indexLabel = builder.onV("person")
+                                       .secondary()
+                                       .by("age")
+                                       .build();
+
+        IndexLabel.IndexLabelV49 indexLabelV49 = indexLabel.switchV49();
+        // Without userdata
+        String json = "{\"id\":0,\"name\":\"personByAge\"," +
+                      "\"check_exist\":true,\"base_type\":\"VERTEX_LABEL\"," +
+                      "\"base_value\":\"person\"," +
+                      "\"index_type\":\"SECONDARY\",\"fields\":[\"age\"]}";
+        Assert.assertEquals(json, JsonUtil.toJson(indexLabelV49));
+        Assert.assertEquals(HugeType.INDEX_LABEL.string(),
+                            indexLabelV49.type());
+
+        Assert.assertThrows(NotSupportException.class, indexLabelV49::userdata);
+    }
+
+test_after_fix:
+
+code:
+public void testIndexLabelV49() {   
+       IndexLabel.Builder builder = new IndexLabel.BuilderImpl("personByAge", null);   
+       IndexLabel indexLabel = builder.onV("person")   
+                                      .secondary()   
+                                      .by("age")   
+                                      .build();   
+      
+       IndexLabel.IndexLabelV49 indexLabelV49 = indexLabel.switchV49();   
+      
+       String json = "{\"id\":0,\"name\":\"personByAge\"," +   
+                     "\"check_exist\":true,\"base_type\":\"VERTEX_LABEL\"," +   
+                     "\"base_value\":\"person\"," +   
+                     "\"index_type\":\"SECONDARY\",\"fields\":[\"age\"]}";   
+      
+       Gson gson = new GsonBuilder().create();   
+       String sortedJson = gson.toJson(indexLabelV49);   
+    
+       JsonParser parser = new JsonParser();  
+       JsonObject o1 = parser.parse(json).getAsJsonObject();  
+       JsonObject o2 = parser.parse(sortedJson).getAsJsonObject();  
+        
+       Assert.assertEquals(o1.get("id"), o2.get("id"));   
+       Assert.assertEquals(o1.get("name"), o2.get("name"));   
+       Assert.assertEquals(o1.get("check_exist"), o2.get("checkExist"));   
+       Assert.assertEquals(o1.get("base_type"), o2.get("baseType"));   
+       Assert.assertEquals(o1.get("base_value"), o2.get("baseValue"));   
+       Assert.assertEquals(o1.get("index_type"), o2.get("indexType"));   
+       Assert.assertEquals(o1.get("fields").getAsJsonArray(), o2.get("fields").getAsJsonArray());   
+      
+       Assert.assertEquals(HugeType.INDEX_LABEL.string(), indexLabelV49.type());   
+      
+       Assert.assertThrows(NotSupportException.class, indexLabelV49::userdata);   
+   } 
+ 
+import:
+['import com.google.gson.JsonObject;\n ']
+pom:

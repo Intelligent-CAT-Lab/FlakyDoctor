@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testFindAndSetAttributesManyToOne': 'public void testFindAndSetAttributesManyToOne() {\n   ExaminerJPA jpaExaminer = new ExaminerJPA();\n   JavaSource javaSource;\n   Dependency dependency;\n   String sourceCode;\n\n   // Many to one\n   javaSource = JavaSourceFactory.getInstance().newJavaSource("MyTestClass");\n   sourceCode = TestDataProvider.getTestSourceCodeBeforeBody()\n           + "@ManyToOne(cascade = { CascadeType.DETACH })\\n"\n           + "@JoinColumn(name = \\"ALBUMID\\", nullable = false)\\n"\n           + "@NotNull(groups = PersistenceConstraint.class)\\n"\n           + "private Album album;\\n";\n   \n   \n\n   if(javaSource != null){\n       javaSource.setSourceCode(sourceCode);\n       jpaExaminer.examine(javaSource);\n       dependency = DependencyContainer.getInstance().getDependencies(javaSource).get(0);\n       assertEquals(1, DependencyContainer.getInstance().getDependencies(javaSource).size());\n       assertEquals(DependencyType.MANY_TO_ONE, dependency.getDependencyType());\n       assertEquals("MyTestClass", dependency.getJavaSourceFrom().getName());\n       assertEquals("Album", dependency.getJavaSourceTo().getName());\n   }\n   \n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testFindAndSetAttributesManyToOne']}polluter
+:code:
+{'fields': {}, 'methods': {'testFindAndSetAttributesManyToOne': 'public void testFindAndSetAttributesManyToOne() {\n   ExaminerJPA jpaExaminer = new ExaminerJPA();\n   JavaSource javaSource;\n   Dependency dependency;\n   String sourceCode;\n\n   // Many to one\n   javaSource = JavaSourceFactory.getInstance().newJavaSource("MyTestClass");\n   sourceCode = TestDataProvider.getTestSourceCodeBeforeBody()\n           + "@ManyToOne(cascade = { CascadeType.DETACH })\\n"\n           + "@JoinColumn(name = \\"ALBUMID\\", nullable = false)\\n"\n           + "@NotNull(groups = PersistenceConstraint.class)\\n"\n           + "private Album album;\\n";\n   \n   \n\n   if(javaSource != null){\n       javaSource.setSourceCode(sourceCode);\n       jpaExaminer.examine(javaSource);\n       dependency = DependencyContainer.getInstance().getDependencies(javaSource).get(0);\n       assertEquals(1, DependencyContainer.getInstance().getDependencies(javaSource).size());\n       assertEquals(DependencyType.MANY_TO_ONE, dependency.getDependencyType());\n       assertEquals("MyTestClass", dependency.getJavaSourceFrom().getName());\n       assertEquals("Album", dependency.getJavaSourceTo().getName());\n   }\n   \n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testFindAndSetAttributesManyToOne']}

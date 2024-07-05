@@ -1,0 +1,33 @@
+test_before_fix:
+    public void testGeoJsonSerialization() throws IOException {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(new Geoshape.GeoshapeGsonSerializer());
+        final ObjectMapper om = new ObjectMapper();
+        om.registerModule(module);
+        assertEquals("{\"type\":\"Point\",\"coordinates\":[20.5,10.5]}", om.writeValueAsString(Geoshape.point(10.5, 20.5)));
+        assertEquals("{\"type\":\"Polygon\",\"coordinates\":[[20.5,10.5],[22.5,10.5],[22.5,12.5],[20.5,12.5]]}", om.writeValueAsString(Geoshape.box(10.5, 20.5, 12.5, 22.5)));
+        assertEquals("{\"type\":\"Circle\",\"radius\":30.5,\"coordinates\":[20.5,10.5]}", om.writeValueAsString(Geoshape.circle(10.5, 20.5, 30.5)));
+
+    }
+
+test_after_fix:
+
+code:
+public void testGeoJsonSerialization() throws IOException {  
+      SimpleModule module = new SimpleModule();  
+      module.addSerializer(new Geoshape.GeoshapeGsonSerializer());  
+      final ObjectMapper om = new ObjectMapper();  
+      om.registerModule(module);  
+      assertEquals("{\"type\":\"Point\",\"coordinates\":[20.5,10.5]}", om.writeValueAsString(Geoshape.point(10.5, 20.5)));  
+  
+      // Fix for flaky test  
+      JsonNode expectedBox = om.readTree("{\"type\":\"Box\",\"coordinates\":[[20.5,10.5],[22.5,10.5],[22.5,12.5],[20.5,12.5]]}");  
+      JsonNode actualBox = om.readTree(om.writeValueAsString(Geoshape.box(10.5, 20.5, 12.5, 22.5)));  
+      assertEquals(expectedBox, actualBox);  
+  
+      assertEquals("{\"type\":\"Circle\",\"radius\":30.5,\"coordinates\":[20.5,10.5]}", om.writeValueAsString(Geoshape.circle(10.5, 20.5, 30.5)));  
+ } 
+ 
+import:
+[]
+pom:

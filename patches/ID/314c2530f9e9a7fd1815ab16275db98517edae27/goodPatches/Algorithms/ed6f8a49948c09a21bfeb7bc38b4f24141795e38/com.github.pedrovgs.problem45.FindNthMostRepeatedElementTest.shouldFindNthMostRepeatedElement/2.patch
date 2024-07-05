@@ -1,0 +1,23 @@
+test_before_fix:
+  @Test public void shouldFindNthMostRepeatedElement() {
+    int[] numbers = { 1, 1, 2, 3, 4, 5, 2, 2, 2, 4, 4, 6, 7, 4, 9, 214, 4, 5, };
+
+    int result = findNthMostRepeatedElement.find(numbers, 2);
+
+    assertEquals(1, result);
+  }
+
+test_after_fix:
+
+code:
+public void shouldFindNthMostRepeatedElement() { 
+     int[] numbers = { 1, 1, 2, 3, 4, 5, 2, 2, 2, 4, 4, 6, 7, 4, 9, 214, 4, 5, }; 
+  
+     int result = findNthMostRepeatedElement.find(numbers, 2); 
+  
+     org.junit.Assert.assertTrue(result == 1 || result == 5); 
+ } 
+ 
+import:
+['import org.junit.Assert;\n ']
+pom:

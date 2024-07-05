@@ -1,0 +1,47 @@
+test_before_fix:
+    public void testRoundtrip() throws IOException {
+
+        Map<String, String> source = new HashMap<>();
+        source.put(k1, v1);
+        source.put(k2, v2);
+
+        String json = JsonMapper.toJSON(source);
+
+        Assert.assertNotNull(json);
+        Assert.assertEquals(JSON_SOURCE, json);
+
+        Map cloned = JsonMapper.fromJSON(json, Map.class);
+        Assert.assertNotNull(cloned);
+
+        Assert.assertEquals(source, cloned);
+    }
+
+test_after_fix:
+
+code:
+public void testRoundtrip() throws IOException { 
+  
+     Map<String, String> source = new LinkedHashMap<>(); 
+     source.put(k1, v1); 
+     source.put(k2, v2); 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     String json = mapper.writeValueAsString(source); 
+  
+     Assert.assertNotNull(json); 
+  
+     Map cloned = mapper.readValue(json, Map.class); 
+     Assert.assertNotNull(cloned); 
+  
+     Assert.assertEquals(source, cloned); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import com.fasterxml.jackson.core.JsonProcessingException;\n ', 'import com.fasterxml.jackson.databind.ObjectMapper;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

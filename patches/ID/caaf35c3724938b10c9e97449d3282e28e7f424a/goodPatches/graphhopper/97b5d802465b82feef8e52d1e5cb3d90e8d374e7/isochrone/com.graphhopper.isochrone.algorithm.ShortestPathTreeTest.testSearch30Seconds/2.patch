@@ -1,0 +1,38 @@
+test_before_fix:
+    public void testSearch30Seconds() {
+        fillTestGraph(graph);
+        ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, new PMap()), false);
+        instance.setTimeLimit(30);
+        List<Set<Integer>> res = searchFromNode0Into5Buckets(instance);
+        assertEquals("[[0], [4], [], [6], [1, 7]]", res.toString());
+    }
+
+test_after_fix:
+
+code:
+public void testSearch30Seconds() { 
+     fillTestGraph(graph); 
+     ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, new PMap()), false); 
+     instance.setTimeLimit(30); 
+     List<Set<Integer>> res = searchFromNode0Into5Buckets(instance); 
+     List<Set<Integer>> expected = new ArrayList<>(); 
+     Set<Integer> set1 = new LinkedHashSet<>(); 
+     set1.add(0); 
+     expected.add(set1); 
+     Set<Integer> set2 = new LinkedHashSet<>(); 
+     set2.add(4); 
+     expected.add(set2); 
+     expected.add(new LinkedHashSet<>()); 
+     Set<Integer> set3 = new LinkedHashSet<>(); 
+     set3.add(6); 
+     expected.add(set3); 
+     Set<Integer> set4 = new LinkedHashSet<>(); 
+     set4.add(1); 
+     set4.add(7); 
+     expected.add(set4); 
+     assertEquals(expected, res); 
+ } 
+ 
+import:
+['import java.util.Arrays;\n ']
+pom:

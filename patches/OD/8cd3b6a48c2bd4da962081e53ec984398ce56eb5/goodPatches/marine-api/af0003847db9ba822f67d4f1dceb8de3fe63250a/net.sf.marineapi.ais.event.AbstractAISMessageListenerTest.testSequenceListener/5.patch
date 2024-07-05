@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'setUp': 'public void setUp() throws Exception {\n    \n\n    SentenceFactory sf = SentenceFactory.getInstance();\n    \n\n\n    sf.reset();\n}\n', 'testRegisterParserWithAlternativeBeginChar': 'public void testRegisterParserWithAlternativeBeginChar() {\n    \n\n    SentenceFactory sf = SentenceFactory.getInstance();\n    \n\n\n    try {\n        sf.registerParser("VDM", VDMParser.class);\n        assertTrue(sf.hasParser("VDM"));\n    } catch (Exception e) {\n        fail("parser registering failed");\n    }\n\n    Sentence s = sf.createParser("!AIVDM,1,2,3");\n    assertNotNull(s);\n    assertTrue(s instanceof Sentence);\n    assertTrue(s instanceof SentenceParser);\n    assertTrue(s instanceof VDMParser);\n    sf.unregisterParser(VDMParser.class);\n    assertFalse(sf.hasParser("VDM"));\n\n    // Reset the SentenceFactory instance after the test\n    sf.reset();\n}\n', 'testSequenceListener': 'public void testSequenceListener() {\n    \n\n    SentenceFactory sf = SentenceFactory.getInstance();\n    \n\n\n    // Reset the SentenceFactory instance before the test\n    sf.reset();\n\n    SequenceListener sl = new SequenceListener();\n\n    sl.sentenceRead(AIS_05_1);\n    assertNull(sl.received);\n\n    sl.sentenceRead(AIS_05_2);\n    assertEquals(sl.received.toString(), MSG_05.toString());\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['setUp', 'testRegisterParserWithAlternativeBeginChar', 'testSequenceListener']}polluter
+:code:
+{'fields': {}, 'methods': {'setUp': 'public void setUp() throws Exception {\n    \n\n    SentenceFactory sf = SentenceFactory.getInstance();\n    \n\n\n    sf.reset();\n}\n', 'testRegisterParserWithAlternativeBeginChar': 'public void testRegisterParserWithAlternativeBeginChar() {\n    \n\n    SentenceFactory sf = SentenceFactory.getInstance();\n    \n\n\n    try {\n        sf.registerParser("VDM", VDMParser.class);\n        assertTrue(sf.hasParser("VDM"));\n    } catch (Exception e) {\n        fail("parser registering failed");\n    }\n\n    Sentence s = sf.createParser("!AIVDM,1,2,3");\n    assertNotNull(s);\n    assertTrue(s instanceof Sentence);\n    assertTrue(s instanceof SentenceParser);\n    assertTrue(s instanceof VDMParser);\n    sf.unregisterParser(VDMParser.class);\n    assertFalse(sf.hasParser("VDM"));\n\n    // Reset the SentenceFactory instance after the test\n    sf.reset();\n}\n', 'testSequenceListener': 'public void testSequenceListener() {\n    \n\n    SentenceFactory sf = SentenceFactory.getInstance();\n    \n\n\n    // Reset the SentenceFactory instance before the test\n    sf.reset();\n\n    SequenceListener sl = new SequenceListener();\n\n    sl.sentenceRead(AIS_05_1);\n    assertNull(sl.received);\n\n    sl.sentenceRead(AIS_05_2);\n    assertEquals(sl.received.toString(), MSG_05.toString());\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['setUp', 'testRegisterParserWithAlternativeBeginChar', 'testSequenceListener']}

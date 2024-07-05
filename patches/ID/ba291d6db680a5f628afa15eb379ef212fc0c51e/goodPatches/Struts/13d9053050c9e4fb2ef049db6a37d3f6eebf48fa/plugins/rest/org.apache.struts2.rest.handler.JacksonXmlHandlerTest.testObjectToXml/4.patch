@@ -1,0 +1,91 @@
+test_before_fix:
+    public void testObjectToXml() throws Exception {
+        // given
+        SimpleBean obj = new SimpleBean();
+        obj.setName("Jan");
+        obj.setAge(12L);
+        obj.setParents(Arrays.asList("Adam", "Ewa"));
+
+        // when
+        Writer stream = new StringWriter();
+        handler.fromObject(ai, obj, null, stream);
+
+        // then
+        stream.flush();
+        assertEquals(xml, stream.toString());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testObjectToXml() throws Exception {  
+      // given  
+      SimpleBean obj = new SimpleBean();  
+      obj.setName("Jan");  
+      obj.setAge(12L);  
+      obj.setParents(Arrays.asList("Adam", "Ewa"));  
+    
+      // when  
+      Writer stream = new StringWriter();  
+      handler.fromObject(ai, obj, null, stream);  
+    
+      // then  
+      stream.flush();  
+      String result = stream.toString();  
+      String expected = xml;  
+    
+      // Parse XML to Document for comparison  
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+      DocumentBuilder db = dbf.newDocumentBuilder();  
+      Document docExpected = db.parse(new InputSource(new StringReader(expected)));  
+      Document docResult = db.parse(new InputSource(new StringReader(result)));  
+    
+      // Normalize and compare  
+      docExpected.getDocumentElement().normalize();  
+      docResult.getDocumentElement().normalize();  
+    
+      // Convert to NodeList for comparison  
+      NodeList expectedNodes = docExpected.getDocumentElement().getChildNodes();  
+      NodeList resultNodes = docResult.getDocumentElement().getChildNodes();  
+    
+      // Check if lengths are equal  
+      assertEquals(expectedNodes.getLength(), resultNodes.getLength());  
+    
+      // Convert NodeList to List for sorting and comparison  
+      List<Node> expectedNodeList = new ArrayList<>();  
+      List<Node> resultNodeList = new ArrayList<>();  
+    
+      for (int i = 0; i < expectedNodes.getLength(); i++) {  
+          expectedNodeList.add(expectedNodes.item(i));  
+          resultNodeList.add(resultNodes.item(i));  
+      }  
+    
+      // Sort the lists  
+      Collections.sort(expectedNodeList, new Comparator<Node>() { 
+          @Override 
+          public int compare(Node o1, Node o2) { 
+              return o1.getNodeName().compareTo(o2.getNodeName()); 
+          } 
+      }); 
+      Collections.sort(resultNodeList, new Comparator<Node>() { 
+          @Override 
+          public int compare(Node o1, Node o2) { 
+              return o1.getNodeName().compareTo(o2.getNodeName()); 
+          } 
+      }); 
+    
+      // Compare each node  
+      for (int i = 0; i < expectedNodeList.size(); i++) {  
+          assertEquals(expectedNodeList.get(i).getTextContent(), resultNodeList.get(i).getTextContent());  
+      }  
+  }  
+  
+  
+ 
+import:
+['import java.util.Collections;\n ']
+pom:
+
+<!-- No changes needed -->

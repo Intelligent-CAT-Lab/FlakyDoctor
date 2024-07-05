@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n    final NamingContext namingContext = new NamingContext(null); // create an instance of NamingContext\n    final NamingStore originalStore = namingContext.getNamingStore(); // call the method on the instance\n\n    try {\n        // rest of your code\n    } finally {\n        NamingContext.setActiveNamingStore(originalStore); \n    }\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'testPermissions': 'public void testPermissions() throws Exception {\n    final NamingContext namingContext = new NamingContext(null); // create an instance of NamingContext\n    final NamingStore originalStore = namingContext.getNamingStore(); // call the method on the instance\n\n    try {\n        // rest of your code\n    } finally {\n        NamingContext.setActiveNamingStore(originalStore); \n    }\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testPermissions']}

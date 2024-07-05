@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testIsOkExcludeFalse': '   public void testIsOkExcludeFalse() {\n      ClassFilter filter = new ClassFilter();\n      filter.setFilterToken("DatabaseProducer");\n      filter.setExclude(true);\n      FilterContainer.getInstance().add(filter);\n\n      assertEquals(false, FilterContainer.getInstance().isOk(javaSource));\n   }\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testIsOkExcludeFalse']}polluter
+:code:
+{'fields': {}, 'methods': {'testIsOkExcludeFalse': '   public void testIsOkExcludeFalse() {\n      ClassFilter filter = new ClassFilter();\n      filter.setFilterToken("DatabaseProducer");\n      filter.setExclude(true);\n      FilterContainer.getInstance().add(filter);\n\n      assertEquals(false, FilterContainer.getInstance().isOk(javaSource));\n   }\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testIsOkExcludeFalse']}

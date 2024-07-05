@@ -1,0 +1,43 @@
+test_before_fix:
+    public void testMapApplicationSuffix() throws IOException {
+        String suffix = "generate-mcm-10";
+        String serviceYaml = serviceYamlFormat.replaceAll("_sufix", "");
+        String expetedMappedServiceYaml = serviceYamlFormat.replaceAll("_sufix", "-" + suffix);
+
+        KubernetesDescription kd = new KubernetesDescription();
+        kd.kubernetesEntity = serviceYaml;
+
+        kd = KubernetesUtil.mapApplicationAffix(kd, suffix);
+
+        assertEquals(expetedMappedServiceYaml, kd.kubernetesEntity);
+    }
+
+test_after_fix:
+
+code:
+public void testMapApplicationSuffix() throws IOException { 
+     String suffix = "generate-mcm-10"; 
+     String serviceYaml = serviceYamlFormat.replaceAll("_sufix", ""); 
+     String expectedMappedServiceYaml = serviceYamlFormat.replaceAll("_sufix", "-" + suffix); 
+  
+     KubernetesDescription kd = new KubernetesDescription(); 
+     kd.kubernetesEntity = serviceYaml; 
+  
+     kd = KubernetesUtil.mapApplicationAffix(kd, suffix); 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     JsonNode expectedNode = mapper.readTree(expectedMappedServiceYaml); 
+     JsonNode actualNode = mapper.readTree(kd.kubernetesEntity); 
+  
+     assertEquals(expectedNode, actualNode); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ', 'import com.fasterxml.jackson.databind.ObjectMapper;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

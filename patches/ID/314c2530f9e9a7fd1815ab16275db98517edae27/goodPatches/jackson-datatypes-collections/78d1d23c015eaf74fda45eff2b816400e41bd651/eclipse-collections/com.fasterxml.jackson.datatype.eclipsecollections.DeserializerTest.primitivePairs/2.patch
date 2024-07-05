@@ -1,0 +1,139 @@
+test_before_fix:
+    public void primitivePairs() throws Exception {
+        List<Class<?>> types = Arrays.asList(
+                Object.class,
+                boolean.class,
+                byte.class,
+                short.class,
+                char.class,
+                int.class,
+                float.class,
+                long.class,
+                double.class);
+
+        for (Class<?> oneType : types) {
+            for (Class<?> twoType : types) {
+                Class<?> pairClass;
+                Method factory;
+                if (oneType == Object.class && twoType == Object.class) {
+                    pairClass = Pair.class;
+                    factory = Tuples.class.getMethod("pair", Object.class, Object.class);
+                } else {
+                    pairClass = Class.forName("org.eclipse.collections.api.tuple.primitive." +
+                                              capitalize(oneType.getSimpleName()) +
+                                              capitalize(twoType.getSimpleName()) +
+                                              "Pair");
+                    factory = PrimitiveTuples.class.getMethod("pair", oneType, twoType);
+                }
+
+                Object sampleOne = randomSample(oneType);
+                Object sampleTwo = randomSample(twoType);
+
+                JavaType pairType;
+                // possibly generify with the sample type
+                if (oneType == Object.class) {
+                    if (twoType == Object.class) {
+                        pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                pairClass, sampleOne.getClass(), sampleTwo.getClass());
+                    } else {
+                        pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                pairClass, sampleOne.getClass());
+                    }
+                } else {
+                    if (twoType == Object.class) {
+                        pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                pairClass, sampleTwo.getClass());
+                    } else {
+                        pairType = mapperWithModule().constructType(pairClass);
+                    }
+                }
+
+                String expectedJson = "{\"one\":" + mapperWithModule().writeValueAsString(sampleOne)
+                                      + ",\"two\":" + mapperWithModule().writeValueAsString(sampleTwo) + "}";
+                Object samplePair = factory.invoke(null, sampleOne, sampleTwo);
+
+                Assert.assertEquals(expectedJson, mapperWithModule().writeValueAsString(samplePair));
+                Assert.assertEquals(samplePair, mapperWithModule().readValue(expectedJson, pairType));
+            }
+        }
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+  
+ public void primitivePairs() throws Exception { 
+     List<Class<?>> types = Arrays.asList( 
+             Object.class, 
+             boolean.class, 
+             byte.class, 
+             short.class, 
+             char.class, 
+             int.class, 
+             float.class, 
+             long.class, 
+             double.class); 
+  
+     for (Class<?> oneType : types) { 
+         for (Class<?> twoType : types) { 
+             Class<?> pairClass; 
+             Method factory; 
+             if (oneType == Object.class && twoType == Object.class) { 
+                 pairClass = Pair.class; 
+                 factory = Tuples.class.getMethod("pair", Object.class, Object.class); 
+             } else { 
+                 pairClass = Class.forName("org.eclipse.collections.api.tuple.primitive." + 
+                         capitalize(oneType.getSimpleName()) + 
+                         capitalize(twoType.getSimpleName()) + 
+                         "Pair"); 
+                 factory = PrimitiveTuples.class.getMethod("pair", oneType, twoType); 
+             } 
+  
+             Object sampleOne = randomSample(oneType); 
+             Object sampleTwo = randomSample(twoType); 
+  
+             JavaType pairType; 
+             if (oneType == Object.class) { 
+                 if (twoType == Object.class) { 
+                     pairType = mapperWithModule().getTypeFactory().constructParametricType( 
+                             pairClass, sampleOne.getClass(), sampleTwo.getClass()); 
+                 } else { 
+                     pairType = mapperWithModule().getTypeFactory().constructParametricType( 
+                             pairClass, sampleOne.getClass()); 
+                 } 
+             } else { 
+                 if (twoType == Object.class) { 
+                     pairType = mapperWithModule().getTypeFactory().constructParametricType( 
+                             pairClass, sampleTwo.getClass()); 
+                 } else { 
+                     pairType = mapperWithModule().constructType(pairClass); 
+                 } 
+             } 
+  
+             Object samplePair = factory.invoke(null, sampleOne, sampleTwo); 
+  
+             ObjectMapper mapper = mapperWithModule(); 
+             ObjectNode node = mapper.createObjectNode(); 
+             node.set("one", mapper.valueToTree(sampleOne)); 
+             node.set("two", mapper.valueToTree(sampleTwo)); 
+             ObjectWriter writer = mapper.writer(); 
+             String expectedJson = writer.writeValueAsString(node); 
+  
+             String actualJson = writer.writeValueAsString(samplePair); 
+             JsonNode expectedNode = mapper.readTree(expectedJson); 
+             JsonNode actualNode = mapper.readTree(actualJson); 
+  
+             Assert.assertEquals(expectedNode, actualNode); 
+             Assert.assertEquals(samplePair, mapper.readValue(expectedJson, pairType)); 
+         } 
+     } 
+ } 
+  
+  
+  
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ']
+pom:

@@ -1,0 +1,45 @@
+test_before_fix:
+    public void testToJSONObject_reversibility() {
+        final String originalXml = "<readResult><errors someAttr=\"arrtValue\"><code>400</code></errors><errors><code>402</code></errors></readResult>";
+        final JSONObject originalObject=JSONML.toJSONObject(originalXml,false);
+        final String originalJson = originalObject.toString();
+        final String xml = JSONML.toString(originalObject);
+        final JSONObject revertedObject = JSONML.toJSONObject(xml, false);
+        final String newJson = revertedObject.toString();
+        assertTrue("JSON Objects are not similar",originalObject.similar(revertedObject));
+        assertEquals("original JSON does not equal the new JSON",originalJson, newJson);
+    }
+
+test_after_fix:
+
+code:
+public void testToJSONObject_reversibility() { 
+     final String originalXml = "<readResult><errors someAttr=\"arrtValue\"><code>400</code></errors><errors><code>402</code></errors></readResult>"; 
+     final JSONObject originalObject = JSONML.toJSONObject(originalXml, false); 
+     final String originalJson = originalObject.toString(); 
+     final String xml = JSONML.toString(originalObject); 
+     final JSONObject revertedObject = JSONML.toJSONObject(xml, false); 
+     final String newJson = revertedObject.toString(); 
+  
+     Gson gson = new GsonBuilder().create(); 
+     JsonParser parser = new JsonParser(); 
+     JsonElement o1 = parser.parse(originalJson); 
+     JsonElement o2 = parser.parse(newJson); 
+  
+     assertTrue("JSON Objects are not similar", originalObject.similar(revertedObject)); 
+  
+     Map<String, Object> map1 = new Gson().fromJson(gson.toJson(o1), new TypeToken<HashMap<String, Object>>() {}.getType()); 
+     Map<String, Object> map2 = new Gson().fromJson(gson.toJson(o2), new TypeToken<HashMap<String, Object>>() {}.getType()); 
+  
+     assertTrue("original JSON does not equal the new JSON", map1.equals(map2)); 
+ } 
+ 
+import:
+['import com.google.gson.reflect.TypeToken;\n ', 'import org.json.JSONObject;\n ', 'import org.json.JSONML;\n ', 'import java.util.HashMap;\n ', 'import java.util.Map;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

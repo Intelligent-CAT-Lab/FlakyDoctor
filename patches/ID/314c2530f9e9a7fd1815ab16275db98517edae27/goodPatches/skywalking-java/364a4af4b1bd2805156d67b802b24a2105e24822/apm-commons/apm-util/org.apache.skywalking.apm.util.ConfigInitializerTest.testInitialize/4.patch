@@ -1,0 +1,130 @@
+test_before_fix:
+    public void testInitialize() throws IllegalAccessException {
+        Properties properties = new Properties();
+        properties.put("Level1Object.STR_ATTR".toLowerCase(), "stringValue");
+        properties.put("Level1Object.Level2Object.INT_ATTR".toLowerCase(), "1000");
+        properties.put("Level1Object.Level2Object.LONG_ATTR".toLowerCase(), "1000");
+        properties.put("Level1Object.Level2Object.BOOLEAN_ATTR".toLowerCase(), "true");
+        properties.put("Level1Object.LIST_STR_ATTR".toLowerCase(), "a,b,c");
+        properties.put("Level1Object.LIST_INT_ATTR".toLowerCase(), "1,2,3");
+        properties.put("Level1Object.LIST_STR_EMPTY_ATTR".toLowerCase(), "");
+        properties.put("Level1Object.LIST_BOOL_ATTR".toLowerCase(), "true,false");
+        properties.put("Level1Object.LIST_INT_ATTR_ED".toLowerCase(), ""); // clear list
+        properties.put("Level1Object.Level2Object.ENUM_ATTR".toLowerCase(), "RED");
+        properties.put("Level1Object.SET_STR_ATTR".toLowerCase(), "a,b,c,d,b");
+        properties.put("Level1Object.SET_STR_EMPTY_ATTR".toLowerCase(), "");
+        properties.put("Level1Object.SET_INT_ATTR".toLowerCase(), "1,2,3,4,4");
+        properties.put("Level1Object.SET_BOOL_ATTR".toLowerCase(), "true,true");
+        properties.put("Level1Object.MAP_1[a]".toLowerCase(), "1");
+        properties.put("Level1Object.MAP_1[b]".toLowerCase(), "2");
+        properties.put("Level1Object.MAP_2[]".toLowerCase(), ""); // clear map
+        properties.put("Level1Object.MAP_4[c]".toLowerCase(), "3");
+
+        ConfigInitializer.initialize(properties, TestPropertiesObject.class);
+
+        Assert.assertEquals("stringValue", TestPropertiesObject.Level1Object.STR_ATTR);
+        Assert.assertEquals(1000, TestPropertiesObject.Level1Object.Level2Object.INT_ATTR);
+        Assert.assertEquals(1000, TestPropertiesObject.Level1Object.Level2Object.INT_ATTR_100);
+        Assert.assertEquals(1000L, TestPropertiesObject.Level1Object.Level2Object.LONG_ATTR);
+        Assert.assertTrue(TestPropertiesObject.Level1Object.Level2Object.BOOLEAN_ATTR);
+        Assert.assertTrue(TestPropertiesObject.Level1Object.Level2Object.BOOLEAN_ATTR_TRUE);
+        Assert.assertArrayEquals(new String[]{}, TestPropertiesObject.Level1Object.LIST_STR_EMPTY_ATTR.toArray());
+        Assert.assertArrayEquals(new String[]{"a", "b", "c"}, TestPropertiesObject.Level1Object.LIST_STR_ATTR.toArray());
+        Assert.assertArrayEquals(new Integer[]{1, 2, 3}, TestPropertiesObject.Level1Object.LIST_INT_ATTR.toArray());
+        Assert.assertArrayEquals(new Integer[]{}, TestPropertiesObject.Level1Object.LIST_INT_ATTR_ED.toArray());
+        Assert.assertArrayEquals(new Integer[]{1, 2, 3, 4}, TestPropertiesObject.Level1Object.LIST_INT_ATTR_ED2.toArray());
+        Assert.assertArrayEquals(new String[]{}, TestPropertiesObject.Level1Object.SET_STR_EMPTY_ATTR.toArray());
+        Assert.assertArrayEquals(new Boolean[]{true, false}, TestPropertiesObject.Level1Object.LIST_BOOL_ATTR.toArray());
+        Assert.assertArrayEquals(new String[]{"a", "b", "c", "d"}, TestPropertiesObject.Level1Object.SET_STR_ATTR.toArray());
+        Assert.assertArrayEquals(new Integer[]{1, 2, 3, 4}, TestPropertiesObject.Level1Object.SET_INT_ATTR.toArray());
+        Assert.assertArrayEquals(new Boolean[]{true}, TestPropertiesObject.Level1Object.SET_BOOL_ATTR.toArray());
+        Assert.assertEquals(TestColorEnum.RED, TestPropertiesObject.Level1Object.Level2Object.ENUM_ATTR);
+        //make sure that when descs is empty,toString() work right;
+        Assert.assertEquals(new ConfigDesc().toString(), "");
+
+        HashMap<String, Integer> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("a", 1);
+        objectObjectHashMap.put("b", 2);
+        Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_1, objectObjectHashMap);
+        Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_2, new HashMap<>());
+
+        Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_3.size(), 2);
+        Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_3.get("a"), Integer.valueOf(1));
+        Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_3.get("b"), Integer.valueOf(2));
+
+        Assert.assertEquals(Integer.valueOf(TestPropertiesObject.Level1Object.MAP_4.size()), Integer.valueOf(1));
+        Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_4.get("c"), Integer.valueOf(3));
+    }
+
+test_after_fix:
+
+code:
+public void testInitialize() throws IllegalAccessException {  
+      Properties properties = new Properties();  
+      properties.put("Level1Object.STR_ATTR".toLowerCase(), "stringValue");  
+      properties.put("Level1Object.Level2Object.INT_ATTR".toLowerCase(), "1000");  
+      properties.put("Level1Object.Level2Object.LONG_ATTR".toLowerCase(), "1000");  
+      properties.put("Level1Object.Level2Object.BOOLEAN_ATTR".toLowerCase(), "true");  
+      properties.put("Level1Object.LIST_STR_ATTR".toLowerCase(), "a,b,c");  
+      properties.put("Level1Object.LIST_INT_ATTR".toLowerCase(), "1,2,3");  
+      properties.put("Level1Object.LIST_STR_EMPTY_ATTR".toLowerCase(), "");  
+      properties.put("Level1Object.LIST_BOOL_ATTR".toLowerCase(), "true,false");  
+      properties.put("Level1Object.LIST_INT_ATTR_ED".toLowerCase(), ""); // clear list  
+      properties.put("Level1Object.Level2Object.ENUM_ATTR".toLowerCase(), "RED");  
+      properties.put("Level1Object.SET_STR_ATTR".toLowerCase(), "a,b,c,d,b");  
+      properties.put("Level1Object.SET_STR_EMPTY_ATTR".toLowerCase(), "");  
+      properties.put("Level1Object.SET_INT_ATTR".toLowerCase(), "1,2,3,4,4");  
+      properties.put("Level1Object.SET_BOOL_ATTR".toLowerCase(), "true,true");  
+      properties.put("Level1Object.MAP_1[a]".toLowerCase(), "1");  
+      properties.put("Level1Object.MAP_1[b]".toLowerCase(), "2");  
+      properties.put("Level1Object.MAP_2[]".toLowerCase(), ""); // clear map  
+      properties.put("Level1Object.MAP_4[c]".toLowerCase(), "3");  
+    
+      ConfigInitializer.initialize(properties, TestPropertiesObject.class);  
+    
+      Assert.assertEquals("stringValue", TestPropertiesObject.Level1Object.STR_ATTR);  
+      Assert.assertEquals(1000, TestPropertiesObject.Level1Object.Level2Object.INT_ATTR);  
+      Assert.assertEquals(1000, TestPropertiesObject.Level1Object.Level2Object.INT_ATTR_100);  
+      Assert.assertEquals(1000L, TestPropertiesObject.Level1Object.Level2Object.LONG_ATTR);  
+      Assert.assertTrue(TestPropertiesObject.Level1Object.Level2Object.BOOLEAN_ATTR);  
+      Assert.assertTrue(TestPropertiesObject.Level1Object.Level2Object.BOOLEAN_ATTR_TRUE);  
+    
+      Assert.assertArrayEquals(new String[]{}, TestPropertiesObject.Level1Object.LIST_STR_EMPTY_ATTR.toArray(new String[0]));  
+      Assert.assertArrayEquals(new String[]{"a", "b", "c"}, TestPropertiesObject.Level1Object.LIST_STR_ATTR.toArray(new String[0]));  
+      Assert.assertArrayEquals(new Integer[]{1, 2, 3}, TestPropertiesObject.Level1Object.LIST_INT_ATTR.toArray(new Integer[0]));  
+      Assert.assertArrayEquals(new Integer[]{}, TestPropertiesObject.Level1Object.LIST_INT_ATTR_ED.toArray(new Integer[0]));  
+      Assert.assertArrayEquals(new Integer[]{1, 2, 3, 4}, TestPropertiesObject.Level1Object.LIST_INT_ATTR_ED2.toArray(new Integer[0]));  
+      Assert.assertArrayEquals(new String[]{}, TestPropertiesObject.Level1Object.SET_STR_EMPTY_ATTR.toArray(new String[0]));  
+      Assert.assertArrayEquals(new Boolean[]{true, false}, TestPropertiesObject.Level1Object.LIST_BOOL_ATTR.toArray(new Boolean[0]));  
+    
+      List<String> setStrAttr = new ArrayList<>(TestPropertiesObject.Level1Object.SET_STR_ATTR);  
+      Collections.sort(setStrAttr);  
+      Assert.assertArrayEquals(new String[]{"a", "b", "c", "d"}, setStrAttr.toArray(new String[0]));  
+    
+      List<Integer> setIntAttr = new ArrayList<>(TestPropertiesObject.Level1Object.SET_INT_ATTR);  
+      Collections.sort(setIntAttr);  
+      Assert.assertArrayEquals(new Integer[]{1, 2, 3, 4}, setIntAttr.toArray(new Integer[0]));  
+    
+      List<Boolean> setBoolAttr = new ArrayList<>(TestPropertiesObject.Level1Object.SET_BOOL_ATTR);  
+      Collections.sort(setBoolAttr, Comparator.comparing(String::valueOf));  
+      Assert.assertArrayEquals(new Boolean[]{true}, setBoolAttr.toArray(new Boolean[0]));  
+    
+      Assert.assertEquals(TestColorEnum.RED, TestPropertiesObject.Level1Object.Level2Object.ENUM_ATTR);  
+    
+      LinkedHashMap<String, Integer> objectObjectHashMap = new LinkedHashMap<>();  
+      objectObjectHashMap.put("a", 1);  
+      objectObjectHashMap.put("b", 2);  
+      Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_1, objectObjectHashMap);  
+      Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_2, new LinkedHashMap<>());  
+    
+      Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_3.size(), 2);  
+      Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_3.get("a"), Integer.valueOf(1));  
+      Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_3.get("b"), Integer.valueOf(2));  
+    
+      Assert.assertEquals(Integer.valueOf(TestPropertiesObject.Level1Object.MAP_4.size()), Integer.valueOf(1));  
+      Assert.assertEquals(TestPropertiesObject.Level1Object.MAP_4.get("c"), Integer.valueOf(3));  
+  } 
+ 
+import:
+[]
+pom:

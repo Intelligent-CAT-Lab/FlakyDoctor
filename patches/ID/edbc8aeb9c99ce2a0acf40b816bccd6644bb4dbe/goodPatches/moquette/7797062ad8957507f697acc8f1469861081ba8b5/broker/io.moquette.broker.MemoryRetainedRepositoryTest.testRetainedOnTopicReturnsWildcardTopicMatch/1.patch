@@ -1,0 +1,76 @@
+test_before_fix:
+    public void testRetainedOnTopicReturnsWildcardTopicMatch() {
+        MemoryRetainedRepository repository = new MemoryRetainedRepository();
+        Topic retainedTopic = new Topic("foo/bar/baz");
+        Topic otherRetainedTopic = new Topic("foo/baz/bar");
+
+        repository.retain(retainedTopic, MqttMessageBuilders
+            .publish()
+            .qos(MqttQoS.AT_LEAST_ONCE)
+            .topicName("foo/bar/baz")
+            .retained(true)
+            .payload(Unpooled.buffer(0))
+            .build());
+        repository.retain(otherRetainedTopic, MqttMessageBuilders
+            .publish()
+            .qos(MqttQoS.AT_LEAST_ONCE)
+            .topicName("foo/baz/bar")
+            .retained(true)
+            .payload(Unpooled.buffer(0))
+            .build());
+
+        List<RetainedMessage> retainedMessages = repository.retainedOnTopic("foo/bar/#");
+
+        assertEquals(1, retainedMessages.size());
+        assertEquals("foo/bar/baz", retainedMessages.get(0).getTopic().toString());
+
+        retainedMessages = repository.retainedOnTopic("foo/#");
+
+        assertEquals(2, retainedMessages.size());
+        assertEquals("foo/bar/baz", retainedMessages.get(0).getTopic().toString());
+        assertEquals("foo/baz/bar", retainedMessages.get(1).getTopic().toString());
+    }
+
+test_after_fix:
+
+code:
+public void testRetainedOnTopicReturnsWildcardTopicMatch() { 
+     MemoryRetainedRepository repository = new MemoryRetainedRepository(); 
+     Topic retainedTopic = new Topic("foo/bar/baz"); 
+     Topic otherRetainedTopic = new Topic("foo/baz/bar"); 
+  
+     repository.retain(retainedTopic, MqttMessageBuilders 
+         .publish() 
+         .qos(MqttQoS.AT_LEAST_ONCE) 
+         .topicName("foo/bar/baz") 
+         .retained(true) 
+         .payload(Unpooled.buffer(0)) 
+         .build()); 
+     repository.retain(otherRetainedTopic, MqttMessageBuilders 
+         .publish() 
+         .qos(MqttQoS.AT_LEAST_ONCE) 
+         .topicName("foo/baz/bar") 
+         .retained(true) 
+         .payload(Unpooled.buffer(0)) 
+         .build()); 
+  
+     Map<String, RetainedMessage> retainedMessagesMap = repository.retainedOnTopic("foo/bar/#") 
+         .stream() 
+         .collect(Collectors.toMap(retainedMessage -> retainedMessage.getTopic().toString(), retainedMessage -> retainedMessage, (a, b) -> a, LinkedHashMap::new)); 
+  
+     assertEquals(1, retainedMessagesMap.size()); 
+     assertTrue(retainedMessagesMap.containsKey("foo/bar/baz")); 
+  
+     retainedMessagesMap = repository.retainedOnTopic("foo/#") 
+         .stream() 
+         .collect(Collectors.toMap(retainedMessage -> retainedMessage.getTopic().toString(), retainedMessage -> retainedMessage, (a, b) -> a, LinkedHashMap::new)); 
+  
+     assertEquals(2, retainedMessagesMap.size()); 
+     assertTrue(retainedMessagesMap.containsKey("foo/bar/baz")); 
+     assertTrue(retainedMessagesMap.containsKey("foo/baz/bar")); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import java.util.Map;\n ', 'import java.util.stream.Collectors;\n ']
+pom:
+

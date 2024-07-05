@@ -1,0 +1,35 @@
+test_before_fix:
+    public void testOnlyJsonContentType() {
+        final Response response = target("/json").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(String.class)).isEqualTo("{\"title\":\"Title#TEST\",\"content\":\"Content#TEST\"}");
+    }
+
+test_after_fix:
+
+code:
+public void testOnlyJsonContentType() throws Exception { 
+     final Response response = target("/json").request().accept(MediaType.APPLICATION_JSON_TYPE).get(); 
+     assertThat(response.getStatus()).isEqualTo(200); 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     String responseEntity = response.readEntity(String.class); 
+     Map<String, String> responseMap = mapper.readValue(responseEntity, new TypeReference<Map<String, String>>(){}); 
+  
+     Map<String, String> expectedMap = new LinkedHashMap<>(); 
+     expectedMap.put("title", "Title#TEST"); 
+     expectedMap.put("content", "Content#TEST"); 
+  
+     assertThat(responseMap).isEqualTo(expectedMap); 
+ } 
+ 
+import:
+[]
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

@@ -1,0 +1,32 @@
+test_before_fix:
+  public void testAddlPropsNull() {
+    ModelAPString model = createModelAPString();
+    model.put("basketball", null);
+
+    String json = serialize(model);
+    display("Serialized: " + json);
+    assertTrue(json.contains("\"basketball\": null"));
+
+    ModelAPString newModel = deserialize(json, ModelAPString.class);
+    assertEquals(newModel, model);
+  }
+
+test_after_fix:
+
+code:
+public void testAddlPropsNull() { 
+     ModelAPString model = createModelAPString(); 
+     model.put("basketball", null); 
+  
+     String json = serialize(model); 
+     display("Serialized: " + json); 
+     assertTrue(json.contains("\"basketball\": null")); 
+  
+     ModelAPString newModel = deserialize(json, ModelAPString.class); 
+     assertTrue(newModel.get("basketball") == null && model.get("basketball") == null); 
+ } 
+ 
+import:
+[]
+pom:
+

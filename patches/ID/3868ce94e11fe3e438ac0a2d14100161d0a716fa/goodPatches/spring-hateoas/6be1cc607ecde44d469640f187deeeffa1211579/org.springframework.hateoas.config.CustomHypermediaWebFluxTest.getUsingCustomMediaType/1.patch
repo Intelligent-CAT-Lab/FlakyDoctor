@@ -1,0 +1,49 @@
+test_before_fix:
+	void getUsingCustomMediaType() throws IOException {
+
+		this.testClient.get().uri("http://localhost/employees/1") //
+				.accept(FRODO_MEDIATYPE) //
+				.exchange() //
+				.expectStatus().isOk() //
+				.expectHeader().contentType(FRODO_MEDIATYPE.toString()) //
+				.expectBody(String.class) //
+				.isEqualTo(read(new ClassPathResource("webflux-frodo.json", getClass())));
+	}
+
+test_after_fix:
+
+code:
+ 
+  
+ void getUsingCustomMediaType() throws IOException { 
+     String expectedBody = read(new ClassPathResource("webflux-frodo.json", getClass())); 
+     ObjectMapper mapper = new ObjectMapper(); 
+     JsonNode expectedJson = mapper.readTree(expectedBody); 
+  
+     this.testClient.get().uri("http://localhost/employees/1") 
+             .accept(FRODO_MEDIATYPE) 
+             .exchange() 
+             .expectStatus().isOk() 
+             .expectHeader().contentType(FRODO_MEDIATYPE.toString()) 
+             .expectBody(String.class) 
+             .value(responseBody -> { 
+                 try { 
+                     JsonNode responseJson = mapper.readTree(responseBody); 
+                     Assertions.assertEquals(expectedJson, responseJson); 
+                 } catch (IOException e) { 
+                     Assertions.fail("Failed to parse response body"); 
+                 } 
+             }); 
+ } 
+  
+  
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ', 'import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import org.junit.jupiter.api.Assertions;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

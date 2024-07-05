@@ -1,0 +1,69 @@
+test_before_fix:
+  public void testVulnerabilitiesAvailable() throws IOException {
+    VulnerabilitiesFromOwaspDependencyCheck provider =
+        new VulnerabilitiesFromOwaspDependencyCheck();
+    provider = spy(provider);
+
+    String content =
+        getClass().getResource("VulnerabilitiesFromOwaspDependencyCheck.json").getFile();
+    Optional<OwaspDependencyCheckEntry> entry =
+        Optional.of(Json.mapper().readValue(new File(content), OwaspDependencyCheckEntry.class));
+
+    doReturn(entry).when(provider).scan(MAVEN_ARTIFACT);
+
+    ValueHashSet values = new ValueHashSet();
+    assertEquals(0, values.size());
+
+    provider.update(MAVEN_ARTIFACT, values);
+
+    assertEquals(1, values.size());
+    assertTrue(values.has(VULNERABILITIES_IN_ARTIFACT));
+    assertTrue(values.of(VULNERABILITIES_IN_ARTIFACT).isPresent());
+    assertFalse(values.of(VULNERABILITIES_IN_ARTIFACT).get().isUnknown());
+
+    Vulnerabilities vulnerabilities = values.of(VULNERABILITIES_IN_ARTIFACT).get().get();
+    assertEquals(3, vulnerabilities.size());
+
+    Vulnerability vulnerability = vulnerabilities.entries().iterator().next();
+    assertEquals("CVE-2018-11307", vulnerability.id());
+  }
+
+test_after_fix:
+
+code:
+public void testVulnerabilitiesAvailable() throws IOException {  
+      VulnerabilitiesFromOwaspDependencyCheck provider =  
+          new VulnerabilitiesFromOwaspDependencyCheck();  
+      provider = spy(provider);  
+    
+      String content =  
+          getClass().getResource("VulnerabilitiesFromOwaspDependencyCheck.json").getFile();  
+      Optional<OwaspDependencyCheckEntry> entry =  
+          Optional.of(Json.mapper().readValue(new File(content), OwaspDependencyCheckEntry.class));  
+    
+      doReturn(entry).when(provider).scan(MAVEN_ARTIFACT);  
+    
+      ValueHashSet values = new ValueHashSet();  
+      assertEquals(0, values.size());  
+    
+      provider.update(MAVEN_ARTIFACT, values);  
+    
+      assertEquals(1, values.size());  
+      assertTrue(values.has(VULNERABILITIES_IN_ARTIFACT));  
+      assertTrue(values.of(VULNERABILITIES_IN_ARTIFACT).isPresent());  
+      assertFalse(values.of(VULNERABILITIES_IN_ARTIFACT).get().isUnknown());  
+    
+      Vulnerabilities vulnerabilities = values.of(VULNERABILITIES_IN_ARTIFACT).get().get();  
+      assertEquals(3, vulnerabilities.size());  
+    
+      List<Vulnerability> vulnerabilityList = new ArrayList<>(vulnerabilities.entries());  
+      Collections.sort(vulnerabilityList, Comparator.comparing(Vulnerability::id));  
+    
+      boolean isVulnerabilityPresent = vulnerabilityList.stream().anyMatch(v -> v.id().equals("CVE-2018-11307")); 
+      assertTrue(isVulnerabilityPresent); 
+ } 
+ 
+import:
+[]
+pom:
+

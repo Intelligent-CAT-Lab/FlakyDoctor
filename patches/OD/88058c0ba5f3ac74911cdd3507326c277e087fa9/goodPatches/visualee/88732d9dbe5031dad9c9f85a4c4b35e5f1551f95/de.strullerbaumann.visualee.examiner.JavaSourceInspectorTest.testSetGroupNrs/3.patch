@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testSetGroupNrs': 'public void testSetGroupNrs() {\n    JavaSourceContainer.getInstance().clear();\n\n    JavaSource javaSource1 = JavaSourceFactory.getInstance().newJavaSource("JavaSource1");\n    if(javaSource1 != null) {\n        javaSource1.setName("TestClass1");\n        javaSource1.setPackagePath("package de.strullerbaumann.visualee.test.1;");\n        JavaSourceContainer.getInstance().add(javaSource1);\n    }\n\n    JavaSource javaSource2 = JavaSourceFactory.getInstance().newJavaSource("JavaSource2");\n    if(javaSource2 != null) {\n        javaSource2.setName("TestClass2");\n        javaSource2.setPackagePath("package de.strullerbaumann.visualee.test.2;");\n        JavaSourceContainer.getInstance().add(javaSource2);\n    }\n\n    JavaSource javaSource3 = JavaSourceFactory.getInstance().newJavaSource("JavaSource3");\n    if(javaSource3 != null) {\n        javaSource3.setName("TestClass3");\n        javaSource3.setPackagePath("package de.strullerbaumann.visualee.test.1;");\n        JavaSourceContainer.getInstance().add(javaSource3);\n    }\n\n    JavaSourceInspector.getInstance().setGroupNrs();\n\n    if(javaSource1 != null && javaSource2 != null && javaSource3 != null) {\n        assertEquals(1, javaSource1.getGroup());\n        assertEquals(javaSource1.getGroup(), javaSource3.getGroup());\n        assertEquals(2, javaSource2.getGroup());\n    }\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testSetGroupNrs']}polluter
+:code:
+{'fields': {}, 'methods': {'testSetGroupNrs': 'public void testSetGroupNrs() {\n    JavaSourceContainer.getInstance().clear();\n\n    JavaSource javaSource1 = JavaSourceFactory.getInstance().newJavaSource("JavaSource1");\n    if(javaSource1 != null) {\n        javaSource1.setName("TestClass1");\n        javaSource1.setPackagePath("package de.strullerbaumann.visualee.test.1;");\n        JavaSourceContainer.getInstance().add(javaSource1);\n    }\n\n    JavaSource javaSource2 = JavaSourceFactory.getInstance().newJavaSource("JavaSource2");\n    if(javaSource2 != null) {\n        javaSource2.setName("TestClass2");\n        javaSource2.setPackagePath("package de.strullerbaumann.visualee.test.2;");\n        JavaSourceContainer.getInstance().add(javaSource2);\n    }\n\n    JavaSource javaSource3 = JavaSourceFactory.getInstance().newJavaSource("JavaSource3");\n    if(javaSource3 != null) {\n        javaSource3.setName("TestClass3");\n        javaSource3.setPackagePath("package de.strullerbaumann.visualee.test.1;");\n        JavaSourceContainer.getInstance().add(javaSource3);\n    }\n\n    JavaSourceInspector.getInstance().setGroupNrs();\n\n    if(javaSource1 != null && javaSource2 != null && javaSource3 != null) {\n        assertEquals(1, javaSource1.getGroup());\n        assertEquals(javaSource1.getGroup(), javaSource3.getGroup());\n        assertEquals(2, javaSource2.getGroup());\n    }\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testSetGroupNrs']}

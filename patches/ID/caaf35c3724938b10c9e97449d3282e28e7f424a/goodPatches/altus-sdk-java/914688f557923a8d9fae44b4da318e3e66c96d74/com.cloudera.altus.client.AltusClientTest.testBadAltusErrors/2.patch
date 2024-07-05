@@ -1,0 +1,181 @@
+test_before_fix:
+  public void testBadAltusErrors() throws Exception {
+    // No body at all.
+    Response mockResponse = mockResponse(500, "requestId");
+    when(mockResponse.readEntity(String.class)).thenReturn(null);
+    TestClient client = new TestClient(mockResponse);
+    try {
+      client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});
+      fail();
+    } catch (AltusHTTPException e) {
+      assertEquals(1, client.apiCalls);
+      assertEquals(500, e.getHttpCode());
+      assertEquals("500: null", e.getMessage());
+    }
+    // A non-JSON body.
+    when(mockResponse.readEntity(String.class)).thenReturn("NOT JSON!");
+    client = new TestClient(mockResponse);
+    try {
+      client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});
+      fail();
+    } catch (AltusHTTPException e) {
+      assertEquals(1, client.apiCalls);
+      assertEquals(500, e.getHttpCode());
+      assertEquals("500: NOT JSON!", e.getMessage());
+    }
+    // A JSON body with no content.
+    Map<String, String> error = Maps.newHashMap();
+    when(mockResponse.readEntity(String.class)).thenReturn(
+        MAPPER.writeValueAsString(error));
+    client = new TestClient(mockResponse);
+    try {
+      client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});
+      fail();
+    } catch (AltusHTTPException e) {
+      assertEquals(1, client.apiCalls);
+      assertEquals(500, e.getHttpCode());
+      assertEquals("500: {}", e.getMessage());
+    }
+    // A JSON body with only the code.
+    error.put("code", "CODE");
+    when(mockResponse.readEntity(String.class)).thenReturn(
+        MAPPER.writeValueAsString(error));
+    client = new TestClient(mockResponse);
+    try {
+      client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});
+      fail();
+    } catch (AltusHTTPException e) {
+      assertEquals(1, client.apiCalls);
+      assertEquals(500, e.getHttpCode());
+      assertEquals("500: " + MAPPER.writeValueAsString(error), e.getMessage());
+    }
+    // A JSON body with only the message.
+    error.clear();
+    error.put("message", "MESSAGE!");
+    when(mockResponse.readEntity(String.class)).thenReturn(
+        MAPPER.writeValueAsString(error));
+    client = new TestClient(mockResponse);
+    try {
+      client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});
+      fail();
+    } catch (AltusHTTPException e) {
+      assertEquals(1, client.apiCalls);
+      assertEquals(500, e.getHttpCode());
+      assertEquals("500: " + MAPPER.writeValueAsString(error), e.getMessage());
+    }
+    // A JSON error but no request ID.
+    mockResponse = mockResponse(500, null);
+    error.put("code", "CODE");
+    error.put("message", "message!");
+    when(mockResponse.readEntity(String.class)).thenReturn(
+        MAPPER.writeValueAsString(error));
+    client = new TestClient(mockResponse);
+    try {
+      client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});
+      fail();
+    } catch (AltusHTTPException e) {
+      assertEquals(1, client.apiCalls);
+      assertEquals(500, e.getHttpCode());
+      assertEquals("500: " + MAPPER.writeValueAsString(error), e.getMessage());
+    }
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+  
+  
+  
+  
+  
+  
+ public void testBadAltusErrors() throws Exception {  
+      ObjectMapper MAPPER = new ObjectMapper(); 
+      // No body at all.  
+      Response mockResponse = mockResponse(500, "requestId");  
+      when(mockResponse.readEntity(String.class)).thenReturn(null);  
+      TestClient client = new TestClient(mockResponse);  
+      try {  
+        client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});  
+        fail();  
+      } catch (AltusHTTPException e) {  
+        assertEquals(1, client.apiCalls);  
+        assertEquals(500, e.getHttpCode());  
+        assertEquals("500: null", e.getMessage());  
+      }  
+      // A non-JSON body.  
+      when(mockResponse.readEntity(String.class)).thenReturn("NOT JSON!");  
+      client = new TestClient(mockResponse);  
+      try {  
+        client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});  
+        fail();  
+      } catch (AltusHTTPException e) {  
+        assertEquals(1, client.apiCalls);  
+        assertEquals(500, e.getHttpCode());  
+        assertEquals("500: NOT JSON!", e.getMessage());  
+      }  
+      // A JSON body with no content.  
+      Map<String, String> error = new LinkedHashMap<>();  
+      when(mockResponse.readEntity(String.class)).thenReturn(  
+          MAPPER.writeValueAsString(error));  
+      client = new TestClient(mockResponse);  
+      try {  
+        client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});  
+        fail();  
+      } catch (AltusHTTPException e) {  
+        assertEquals(1, client.apiCalls);  
+        assertEquals(500, e.getHttpCode());  
+        assertEquals("500: {}", e.getMessage());  
+      }  
+      // A JSON body with only the code.  
+      error.put("code", "CODE");  
+      when(mockResponse.readEntity(String.class)).thenReturn(  
+          MAPPER.writeValueAsString(error));  
+      client = new TestClient(mockResponse);  
+      try {  
+        client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});  
+        fail();  
+      } catch (AltusHTTPException e) {  
+        assertEquals(1, client.apiCalls);  
+        assertEquals(500, e.getHttpCode());  
+        assertEquals("500: " + MAPPER.writeValueAsString(error), e.getMessage());  
+      }  
+      // A JSON body with only the message.  
+      error.clear();  
+      error.put("message", "MESSAGE!");  
+      when(mockResponse.readEntity(String.class)).thenReturn(  
+          MAPPER.writeValueAsString(error));  
+      client = new TestClient(mockResponse);  
+      try {  
+        client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});  
+        fail();  
+      } catch (AltusHTTPException e) {  
+        assertEquals(1, client.apiCalls);  
+        assertEquals(500, e.getHttpCode());  
+        assertEquals("500: " + MAPPER.writeValueAsString(error), e.getMessage());  
+      }  
+      // A JSON error but no request ID.  
+      mockResponse = mockResponse(500, null);  
+      error.clear();  
+      error.put("code", "CODE");  
+      error.put("message", "message!");  
+      when(mockResponse.readEntity(String.class)).thenReturn(  
+          MAPPER.writeValueAsString(error));  
+      client = new TestClient(mockResponse);  
+      try {  
+        client.invokeAPI("somePath", "", new GenericType<TestAltusResponse>(){});  
+        fail();  
+      } catch (AltusHTTPException e) {  
+        assertEquals(1, client.apiCalls);  
+        assertEquals(500, e.getHttpCode());  
+        assertEquals("500: " + MAPPER.writeValueAsString(error), e.getMessage());  
+      }  
+    }  
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ']
+pom:

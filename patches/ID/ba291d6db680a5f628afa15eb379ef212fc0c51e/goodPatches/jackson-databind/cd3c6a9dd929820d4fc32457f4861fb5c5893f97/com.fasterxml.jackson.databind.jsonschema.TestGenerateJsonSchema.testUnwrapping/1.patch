@@ -1,0 +1,37 @@
+test_before_fix:
+    public void testUnwrapping()  throws Exception
+    {
+        JsonSchema jsonSchema = MAPPER.generateJsonSchema(UnwrappingRoot.class);
+        String json = jsonSchema.toString().replaceAll("\"", "'");
+        String EXP = "{'type':'object',"
+                +"'properties':{'age':{'type':'integer'},"
+                +"'name.first':{'type':'string'},'name.last':{'type':'string'}}}";
+        assertEquals(EXP, json);
+    }
+
+test_after_fix:
+
+code:
+public void testUnwrapping() throws Exception { 
+     JsonSchema jsonSchema = MAPPER.generateJsonSchema(UnwrappingRoot.class); 
+     String json = jsonSchema.toString().replaceAll("\"", "'"); 
+     String EXP = "{'type':'object'," 
+             +"'properties':{'age':{'type':'integer'}," 
+             +"'name.first':{'type':'string'},'name.last':{'type':'string'}}}"; 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     Map<String, Object> expectedMap = mapper.readValue(EXP, new TypeReference<Map<String, Object>>() {}); 
+     Map<String, Object> resultMap = mapper.readValue(json, new TypeReference<Map<String, Object>>() {}); 
+  
+     assertEquals(expectedMap, resultMap); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.core.type.TypeReference;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testIsOkExcludeFalse': 'public void testIsOkExcludeFalse() {\n   \n\n   FilterContainer.getInstance().clear();\n   \n\n\n   SourcecodeFilter filter = new SourcecodeFilter();\n   filter.setFilterToken(".ag XYZ oncal.");\n   filter.setExclude(true);\n   FilterContainer.getInstance().add(filter);\n\n   assertEquals(true, FilterContainer.getInstance().isOk(javaSource));\n}\n', 'testIsOkExcludeTrue': 'public void testIsOkExcludeTrue() {\n   \n\n   FilterContainer.getInstance().clear();\n   \n\n\n   SourcecodeFilter filter = new SourcecodeFilter();\n   filter.setFilterToken(".agoncal.");\n   filter.setExclude(true);\n   FilterContainer.getInstance().add(filter);\n\n   assertEquals(false, FilterContainer.getInstance().isOk(javaSource));\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testIsOkExcludeFalse', 'testIsOkExcludeTrue']}polluter
+:code:
+{'fields': {}, 'methods': {'testIsOkExcludeFalse': 'public void testIsOkExcludeFalse() {\n   \n\n   FilterContainer.getInstance().clear();\n   \n\n\n   SourcecodeFilter filter = new SourcecodeFilter();\n   filter.setFilterToken(".ag XYZ oncal.");\n   filter.setExclude(true);\n   FilterContainer.getInstance().add(filter);\n\n   assertEquals(true, FilterContainer.getInstance().isOk(javaSource));\n}\n', 'testIsOkExcludeTrue': 'public void testIsOkExcludeTrue() {\n   \n\n   FilterContainer.getInstance().clear();\n   \n\n\n   SourcecodeFilter filter = new SourcecodeFilter();\n   filter.setFilterToken(".agoncal.");\n   filter.setExclude(true);\n   FilterContainer.getInstance().add(filter);\n\n   assertEquals(false, FilterContainer.getInstance().isOk(javaSource));\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testIsOkExcludeFalse', 'testIsOkExcludeTrue']}

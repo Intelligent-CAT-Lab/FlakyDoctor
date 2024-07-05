@@ -1,0 +1,80 @@
+test_before_fix:
+    public void toMetaFieldInfoArray() throws Exception {
+        Administrator emp = new Administrator();
+        MetaFieldInfo[] fields = MetaFieldUtil.toMetaFieldInfoArray(emp);
+        Assert.assertEquals(12, fields.length);
+        Assert.assertEquals("First Name", fields[0].name);
+        Assert.assertEquals("Last Name", fields[1].name);
+        Assert.assertEquals("email", fields[2].name);
+        Assert.assertEquals("ID", fields[3].name);
+        Assert.assertEquals("Active?", fields[4].name);
+        Assert.assertEquals("loginCounter", fields[5].name);
+        Assert.assertEquals("The first name of this user", fields[0].description);
+        Assert.assertEquals("", fields[1].description);
+        Assert.assertEquals("", fields[2].description);
+        // set some values
+        emp.setFirstName("John");
+        emp.setLastName("Doe");
+        fields = MetaFieldUtil.toMetaFieldInfoArray(emp, "EMPTY");
+        //for (MetaFieldInfo field : fields) {
+        //    logger.debug("field name=" + field.name + ", value=" + field.value + ", description=" + field.description);
+        //}
+        Assert.assertEquals("John", fields[0].value);
+        Assert.assertEquals("Doe", fields[1].value);
+        Assert.assertEquals("EMPTY", fields[2].value);
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void toMetaFieldInfoArray() throws Exception {  
+      Administrator emp = new Administrator();  
+      MetaFieldInfo[] fields = MetaFieldUtil.toMetaFieldInfoArray(emp);  
+      Map<String, MetaFieldInfo> fieldMap = new LinkedHashMap<String, MetaFieldInfo>();  
+      for (MetaFieldInfo field : fields) {  
+          fieldMap.put(field.name, field);  
+      }  
+      Assert.assertEquals(12, fieldMap.size());  
+      Assert.assertEquals("First Name", fieldMap.get("First Name").name);  
+      Assert.assertEquals("Last Name", fieldMap.get("Last Name").name);  
+      Assert.assertEquals("email", fieldMap.get("email").name);  
+      Assert.assertEquals("ID", fieldMap.get("ID").name);  
+      Assert.assertEquals("Active?", fieldMap.get("Active?").name);  
+      Assert.assertEquals("loginCounter", fieldMap.get("loginCounter").name);  
+      Assert.assertEquals("The first name of this user", fieldMap.get("First Name").description);  
+      Assert.assertEquals("", fieldMap.get("Last Name").description);  
+      Assert.assertEquals("", fieldMap.get("email").description);  
+      // set some values  
+      emp.setFirstName("John");  
+      emp.setLastName("Doe");  
+      fields = MetaFieldUtil.toMetaFieldInfoArray(emp, "EMPTY");  
+      fieldMap.clear();  
+      for (MetaFieldInfo field : fields) {  
+          fieldMap.put(field.name, field);  
+      }  
+      Assert.assertEquals("John", fieldMap.get("First Name").value);  
+      Assert.assertEquals("Doe", fieldMap.get("Last Name").value);  
+      Assert.assertEquals("EMPTY", fieldMap.get("email").value);  
+  }  
+  
+  
+ 
+import:
+['import org.junit.Assert;\n ']
+pom:
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <source>1.7</source>
+                <target>1.7</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>

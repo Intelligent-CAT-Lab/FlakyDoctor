@@ -1,0 +1,72 @@
+test_before_fix:
+    public void testGetValidatorsForInterface() {
+        List validatorList = annotationActionValidatorManager.getValidators(AnnotationDataAware2.class, alias);
+
+        // 1 in interface hierarchy, 2 from parent interface (1 default + 1 context)
+        assertEquals(3, validatorList.size());
+
+        final FieldValidator dataValidator1 = (FieldValidator) validatorList.get(0);
+        assertEquals("data", dataValidator1.getFieldName());
+        assertTrue(dataValidator1 instanceof RequiredFieldValidator);
+
+        final FieldValidator dataValidator2 = (FieldValidator) validatorList.get(1);
+        assertEquals("data", dataValidator2.getFieldName());
+        assertTrue(dataValidator2 instanceof RequiredStringValidator);
+
+        final FieldValidator blingValidator = (FieldValidator) validatorList.get(2);
+        assertEquals("bling", blingValidator.getFieldName());
+        assertTrue(blingValidator instanceof RequiredStringValidator);
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ public void testGetValidatorsForInterface() {   
+     List validatorList = annotationActionValidatorManager.getValidators(AnnotationDataAware2.class, alias);   
+  
+     assertEquals(3, validatorList.size());   
+  
+     Map<String, List<FieldValidator>> validatorMap = new LinkedHashMap<>();   
+     for (Object validator : validatorList) {   
+         FieldValidator fieldValidator = (FieldValidator) validator;   
+         validatorMap.computeIfAbsent(fieldValidator.getFieldName(), k -> new ArrayList<>()).add(fieldValidator);  
+     }   
+  
+     final List<FieldValidator> dataValidators = validatorMap.get("data");   
+     assertEquals(2, dataValidators.size());  
+  
+     boolean isRequiredFieldValidatorPresent = false;  
+     boolean isRequiredStringValidatorPresent = false;  
+  
+     for (FieldValidator validator : dataValidators) {  
+         if (validator instanceof RequiredFieldValidator) {  
+             isRequiredFieldValidatorPresent = true;  
+         } else if (validator instanceof RequiredStringValidator) {  
+             isRequiredStringValidatorPresent = true;  
+         }  
+     }  
+  
+     assertTrue(isRequiredFieldValidatorPresent);  
+     assertTrue(isRequiredStringValidatorPresent);  
+  
+     final List<FieldValidator> blingValidators = validatorMap.get("bling");   
+     assertEquals(1, blingValidators.size());  
+     assertTrue(blingValidators.get(0) instanceof RequiredStringValidator);   
+ } 
+  
+  
+ 
+import:
+['import java.util.ArrayList;\n ', 'import java.util.ArrayList;\n ']
+pom:

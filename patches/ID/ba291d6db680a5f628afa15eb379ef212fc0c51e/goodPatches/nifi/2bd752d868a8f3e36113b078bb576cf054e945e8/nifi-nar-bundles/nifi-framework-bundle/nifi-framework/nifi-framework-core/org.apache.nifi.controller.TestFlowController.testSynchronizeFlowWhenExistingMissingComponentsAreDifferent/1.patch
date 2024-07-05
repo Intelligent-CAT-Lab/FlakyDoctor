@@ -1,0 +1,101 @@
+test_before_fix:
+    public void testSynchronizeFlowWhenExistingMissingComponentsAreDifferent() throws IOException {
+        final PropertyEncryptor encryptor = PropertyEncryptorFactory.getPropertyEncryptor(nifiProperties);
+        final FlowSynchronizer standardFlowSynchronizer = new StandardFlowSynchronizer(encryptor, nifiProperties, extensionManager);
+
+        final ProcessorNode mockProcessorNode = mock(ProcessorNode.class);
+        when(mockProcessorNode.getIdentifier()).thenReturn("1");
+        when(mockProcessorNode.isExtensionMissing()).thenReturn(true);
+
+        final ControllerServiceNode mockControllerServiceNode = mock(ControllerServiceNode.class);
+        when(mockControllerServiceNode.getIdentifier()).thenReturn("2");
+        when(mockControllerServiceNode.isExtensionMissing()).thenReturn(true);
+
+        final ReportingTaskNode mockReportingTaskNode = mock(ReportingTaskNode.class);
+        when(mockReportingTaskNode.getIdentifier()).thenReturn("3");
+        when(mockReportingTaskNode.isExtensionMissing()).thenReturn(true);
+
+        final ProcessGroup mockRootGroup = mock(ProcessGroup.class);
+        when(mockRootGroup.findAllProcessors()).thenReturn(Collections.singletonList(mockProcessorNode));
+
+        final SnippetManager mockSnippetManager = mock(SnippetManager.class);
+        when(mockSnippetManager.export()).thenReturn(new byte[0]);
+
+        final FlowManager flowManager = mock(FlowManager.class);
+
+        final FlowController mockFlowController = mock(FlowController.class);
+        when(mockFlowController.getFlowManager()).thenReturn(flowManager);
+
+        when(flowManager.getRootGroup()).thenReturn(mockRootGroup);
+        when(flowManager.getAllControllerServices()).thenReturn(new HashSet<>(Arrays.asList(mockControllerServiceNode)));
+        when(flowManager.getAllReportingTasks()).thenReturn(new HashSet<>(Arrays.asList(mockReportingTaskNode)));
+        when(mockFlowController.getAuthorizer()).thenReturn(authorizer);
+        when(mockFlowController.getSnippetManager()).thenReturn(mockSnippetManager);
+
+        final DataFlow proposedDataFlow = mock(DataFlow.class);
+        when(proposedDataFlow.getMissingComponents()).thenReturn(new HashSet<>());
+
+        try {
+            standardFlowSynchronizer.sync(mockFlowController, proposedDataFlow, encryptor, mock(FlowService.class));
+            Assert.fail("Should have thrown exception");
+        } catch (UninheritableFlowException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("Current flow has missing components that are not considered missing in the proposed flow (1,2,3)"));
+        }
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testSynchronizeFlowWhenExistingMissingComponentsAreDifferent() throws IOException { 
+     final PropertyEncryptor encryptor = PropertyEncryptorFactory.getPropertyEncryptor(nifiProperties); 
+     final FlowSynchronizer standardFlowSynchronizer = new StandardFlowSynchronizer(encryptor, nifiProperties, extensionManager); 
+  
+     final ProcessorNode mockProcessorNode = mock(ProcessorNode.class); 
+     when(mockProcessorNode.getIdentifier()).thenReturn("1"); 
+     when(mockProcessorNode.isExtensionMissing()).thenReturn(true); 
+  
+     final ControllerServiceNode mockControllerServiceNode = mock(ControllerServiceNode.class); 
+     when(mockControllerServiceNode.getIdentifier()).thenReturn("2"); 
+     when(mockControllerServiceNode.isExtensionMissing()).thenReturn(true); 
+  
+     final ReportingTaskNode mockReportingTaskNode = mock(ReportingTaskNode.class); 
+     when(mockReportingTaskNode.getIdentifier()).thenReturn("3"); 
+     when(mockReportingTaskNode.isExtensionMissing()).thenReturn(true); 
+  
+     final ProcessGroup mockRootGroup = mock(ProcessGroup.class); 
+     when(mockRootGroup.findAllProcessors()).thenReturn(Collections.singletonList(mockProcessorNode)); 
+  
+     final SnippetManager mockSnippetManager = mock(SnippetManager.class); 
+     when(mockSnippetManager.export()).thenReturn(new byte[0]); 
+  
+     final FlowManager flowManager = mock(FlowManager.class); 
+  
+     final FlowController mockFlowController = mock(FlowController.class); 
+     when(mockFlowController.getFlowManager()).thenReturn(flowManager); 
+  
+     when(flowManager.getRootGroup()).thenReturn(mockRootGroup); 
+     when(flowManager.getAllControllerServices()).thenReturn(new LinkedHashSet<>(Arrays.asList(mockControllerServiceNode))); 
+     when(flowManager.getAllReportingTasks()).thenReturn(new LinkedHashSet<>(Arrays.asList(mockReportingTaskNode))); 
+     when(mockFlowController.getAuthorizer()).thenReturn(authorizer); 
+     when(mockFlowController.getSnippetManager()).thenReturn(mockSnippetManager); 
+  
+     final DataFlow proposedDataFlow = mock(DataFlow.class); 
+     when(proposedDataFlow.getMissingComponents()).thenReturn(new LinkedHashSet<>()); 
+  
+     try { 
+         standardFlowSynchronizer.sync(mockFlowController, proposedDataFlow, encryptor, mock(FlowService.class)); 
+         Assert.fail("Should have thrown exception"); 
+     } catch (UninheritableFlowException e) { 
+         List<String> expectedMissingComponents = Arrays.asList("1", "2", "3"); 
+         String errorMessage = e.getMessage(); 
+         assertTrue(errorMessage, expectedMissingComponents.stream().allMatch(errorMessage::contains)); 
+     } 
+ } 
+  
+  
+ 
+import:
+['import java.util.List;\n ', 'import java.util.stream.Collectors;\n ']
+pom:

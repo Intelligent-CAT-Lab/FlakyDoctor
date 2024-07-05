@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testLookupEmptyName': 'public void testLookupEmptyName() throws Exception {\n    Object result = namingContext.lookup(new CompositeName());\n    assertTrue(result instanceof NamingContext);\n    result = namingContext.lookup(new CompositeName(""));\n    assertTrue(result instanceof NamingContext);\n\n    //the same with security permissions\n    result = testActionPermission(JndiPermission.ACTION_LOOKUP, namingContext, null);\n    assertTrue(result instanceof NamingContext);\n    result = testActionPermission(JndiPermission.ACTION_LOOKUP, namingContext, "");\n    assertTrue(result instanceof NamingContext);\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    // rest of the code...\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testLookupEmptyName', 'testPermissions']}polluter
+:code:
+{'fields': {}, 'methods': {'testLookupEmptyName': 'public void testLookupEmptyName() throws Exception {\n    Object result = namingContext.lookup(new CompositeName());\n    assertTrue(result instanceof NamingContext);\n    result = namingContext.lookup(new CompositeName(""));\n    assertTrue(result instanceof NamingContext);\n\n    //the same with security permissions\n    result = testActionPermission(JndiPermission.ACTION_LOOKUP, namingContext, null);\n    assertTrue(result instanceof NamingContext);\n    result = testActionPermission(JndiPermission.ACTION_LOOKUP, namingContext, "");\n    assertTrue(result instanceof NamingContext);\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    // rest of the code...\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testLookupEmptyName', 'testPermissions']}

@@ -1,0 +1,71 @@
+test_before_fix:
+    public void testNoElementWrapper() throws Exception
+    {
+        XmlMapper jaxbMapper = mapperBuilder()
+                .annotationIntrospector(jakartaXMLBindAnnotationIntrospector())
+                .build();
+
+        MyPerson2 person = new MyPerson2();
+        person.name = "Jay";
+
+        MyPerson2 child = new MyPerson2();
+        child.name = "Junior";
+        
+        person.child.add(child);
+
+        String xml = jaxbMapper.writeValueAsString(person);
+        
+        String expected = "<p><name>Jay</name><child><name>Junior</name></child></p>";
+        assertEquals(expected, xml);
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testNoElementWrapper() throws Exception   
+  {   
+      XmlMapper jaxbMapper = mapperBuilder()   
+              .annotationIntrospector(jakartaXMLBindAnnotationIntrospector())   
+              .build();   
+    
+      MyPerson2 person = new MyPerson2();   
+      person.name = "Jay";   
+    
+      MyPerson2 child = new MyPerson2();   
+      child.name = "Junior";   
+    
+      person.child.add(child);   
+    
+      String xml = jaxbMapper.writeValueAsString(person);   
+    
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();   
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();   
+      Document doc = dBuilder.parse(new InputSource(new StringReader(xml)));   
+      doc.getDocumentElement().normalize();   
+    
+      NodeList nodeList = doc.getElementsByTagName("p");   
+      Node node = nodeList.item(0);   
+      Element element = (Element) node;   
+    
+      NodeList nameList = element.getElementsByTagName("name");  
+      String personName = nameList.item(0).getTextContent();   
+      String childName = nameList.item(nameList.getLength() - 1).getTextContent();   
+    
+      if(personName.equals("Jay")) { 
+          assertEquals("Jay", personName);   
+          assertEquals("Junior", childName);   
+      } else { 
+          assertEquals("Junior", personName);   
+          assertEquals("Jay", childName);   
+      } 
+  } 
+  
+  
+ 
+import:
+[]
+pom:
+
+<!-- No changes needed -->

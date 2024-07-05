@@ -1,0 +1,35 @@
+test_before_fix:
+  public void mergeDuplicate_neitherPresentAtAllLocations() {
+    CatalogObject master = createCatalogObjectPresentAtLocations("L1", "L2");
+    CatalogObject dup = createCatalogObjectPresentAtLocations("L2", "L3");
+
+    DuplicateTaxInfo taxInfo = new DuplicateTaxInfo(master);
+    taxInfo.mergeDuplicate(dup, logger);
+
+    CatalogObject result = taxInfo.getMasterTax();
+    assertThat(result.getPresentAtAllLocations()).isFalse();
+    assertThat(result.getPresentAtLocationIds()).containsExactly("L1", "L2", "L3");
+    assertThat(result.getAbsentAtLocationIds()).isNullOrEmpty();
+  }
+
+test_after_fix:
+
+code:
+public void mergeDuplicate_neitherPresentAtAllLocations() {  
+      CatalogObject master = createCatalogObjectPresentAtLocations("L1", "L2");  
+      CatalogObject dup = createCatalogObjectPresentAtLocations("L2", "L3");  
+  
+      DuplicateTaxInfo taxInfo = new DuplicateTaxInfo(master);  
+      taxInfo.mergeDuplicate(dup, logger);  
+  
+      CatalogObject result = taxInfo.getMasterTax();  
+      assertThat(result.getPresentAtAllLocations()).isFalse();  
+      List<String> locationIds = new ArrayList<>(result.getPresentAtLocationIds());  
+      Collections.sort(locationIds);  
+      assertThat(locationIds).containsExactly("L1", "L2", "L3");  
+      assertThat(result.getAbsentAtLocationIds()).isNullOrEmpty();  
+ } 
+ 
+import:
+['import java.util.ArrayList;\n ', 'import java.util.Collections;\n ', 'import java.util.List;\n ', 'import java.util.ArrayList;\n ', 'import java.util.Collections;\n ', 'import java.util.List;\n ']
+pom:

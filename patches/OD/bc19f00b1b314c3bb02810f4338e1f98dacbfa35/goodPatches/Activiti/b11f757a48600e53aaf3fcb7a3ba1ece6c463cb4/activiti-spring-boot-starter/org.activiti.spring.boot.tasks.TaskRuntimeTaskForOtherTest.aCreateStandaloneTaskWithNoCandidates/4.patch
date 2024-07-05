@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'aCreateStandaloneTaskWithNoCandidates': 'public void aCreateStandaloneTaskWithNoCandidates() {\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("task with no candidates besides owner")\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // <fix start>\n    // Get the count of tasks with the specific name\n    long count = tasks.getContent().stream()\n            .filter(task -> task.getName().equals("task with no candidates besides owner"))\n            .count();\n\n    assertThat(count).isEqualTo(1);\n\n    // Get the task with the specific name\n    Task task = tasks.getContent().stream()\n            .filter(t -> t.getName().equals("task with no candidates besides owner"))\n            .findFirst()\n            .orElse(null);\n    // <fix end>\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n} \n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['aCreateStandaloneTaskWithNoCandidates']}polluter
+:code:
+{'fields': {}, 'methods': {'aCreateStandaloneTaskWithNoCandidates': 'public void aCreateStandaloneTaskWithNoCandidates() {\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("task with no candidates besides owner")\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // <fix start>\n    // Get the count of tasks with the specific name\n    long count = tasks.getContent().stream()\n            .filter(task -> task.getName().equals("task with no candidates besides owner"))\n            .count();\n\n    assertThat(count).isEqualTo(1);\n\n    // Get the task with the specific name\n    Task task = tasks.getContent().stream()\n            .filter(t -> t.getName().equals("task with no candidates besides owner"))\n            .findFirst()\n            .orElse(null);\n    // <fix end>\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n} \n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['aCreateStandaloneTaskWithNoCandidates']}

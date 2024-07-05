@@ -1,0 +1,20 @@
+test_before_fix:
+  public void shouldConvertFromSet() {
+    Set<Integer> source = new HashSet<Integer>(Arrays.asList(3, 4, 5));
+    String[] dest = (String[]) convert(source, String[].class);
+    assertEquals(Arrays.asList(dest), Arrays.asList("3", "4", "5"));
+  }
+
+test_after_fix:
+
+code:
+public void shouldConvertFromSet() { 
+     Set<Integer> source = new LinkedHashSet<Integer>(Arrays.asList(3, 4, 5)); 
+     String[] dest = (String[]) convert(source, String[].class); 
+     assertEquals(Arrays.asList(dest), Arrays.asList("3", "4", "5")); 
+ } 
+ 
+import:
+['import java.util.LinkedHashSet;\n ']
+pom:
+

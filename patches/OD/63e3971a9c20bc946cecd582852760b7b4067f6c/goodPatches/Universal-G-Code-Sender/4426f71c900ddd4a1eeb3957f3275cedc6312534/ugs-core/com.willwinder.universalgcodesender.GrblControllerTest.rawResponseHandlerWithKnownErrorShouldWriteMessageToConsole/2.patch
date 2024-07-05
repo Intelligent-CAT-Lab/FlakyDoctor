@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'rawResponseHandlerWithKnownErrorShouldWriteMessageToConsole': 'public void rawResponseHandlerWithKnownErrorShouldWriteMessageToConsole() throws Exception {\n    \n\n    Localization.initialize("en", "US");\n\n    // Given\n    GrblController instance = new GrblController(mgc);\n    instance.openCommPort(getSettings().getConnectionDriver(), "foo", 2400);\n    instance.commandSent(new GcodeCommand("G0"));\n\n    MessageService messageService = mock(MessageService.class);\n    instance.setMessageService(messageService);\n\n    // When\n    instance.rawResponseHandler("error:1");\n\n    //Then\n    String genericErrorMessage = "Error while processing response <error:1>\\n";\n    verify(messageService, times(0)).dispatchMessage(MessageType.ERROR, genericErrorMessage);\n\n    String errorMessage = "An error was detected while sending \'G0\': (error:1) G-code words consist of a letter and a value. Letter was not found. Streaming has been paused.\\n";\n    verify(messageService).dispatchMessage(MessageType.ERROR, errorMessage);\n\n    verify(messageService, times(1)).dispatchMessage(any(), anyString());\n\n    assertFalse(instance.getActiveCommand().isPresent());\n    \n\n}\n'}}victim
+:import:
+['import com.willwinder.universalgcodesender.i18n.Localization;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['rawResponseHandlerWithKnownErrorShouldWriteMessageToConsole']}polluter
+:code:
+{'fields': {}, 'methods': {'rawResponseHandlerWithKnownErrorShouldWriteMessageToConsole': 'public void rawResponseHandlerWithKnownErrorShouldWriteMessageToConsole() throws Exception {\n    \n\n    Localization.initialize("en", "US");\n\n    // Given\n    GrblController instance = new GrblController(mgc);\n    instance.openCommPort(getSettings().getConnectionDriver(), "foo", 2400);\n    instance.commandSent(new GcodeCommand("G0"));\n\n    MessageService messageService = mock(MessageService.class);\n    instance.setMessageService(messageService);\n\n    // When\n    instance.rawResponseHandler("error:1");\n\n    //Then\n    String genericErrorMessage = "Error while processing response <error:1>\\n";\n    verify(messageService, times(0)).dispatchMessage(MessageType.ERROR, genericErrorMessage);\n\n    String errorMessage = "An error was detected while sending \'G0\': (error:1) G-code words consist of a letter and a value. Letter was not found. Streaming has been paused.\\n";\n    verify(messageService).dispatchMessage(MessageType.ERROR, errorMessage);\n\n    verify(messageService, times(1)).dispatchMessage(any(), anyString());\n\n    assertFalse(instance.getActiveCommand().isPresent());\n    \n\n}\n'}}polluter
+:import:
+['import com.willwinder.universalgcodesender.i18n.Localization;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['rawResponseHandlerWithKnownErrorShouldWriteMessageToConsole']}

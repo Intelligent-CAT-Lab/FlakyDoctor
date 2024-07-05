@@ -1,0 +1,24 @@
+test_before_fix:
+  public void test() throws Exception {
+    String filename = "metrics/executable_lines.php";
+    PhpFile file = FileTestUtils.getFile(new File("src/test/resources/"+filename));
+    Set<Integer> executableLines = new ExecutableLineVisitor(parse(filename)).getExecutableLines();
+    assertThat(executableLines).containsExactlyElementsOf(expectedExecutableLines(file));
+  }
+
+test_after_fix:
+
+code:
+public void test() throws Exception {  
+      String filename = "metrics/executable_lines.php";  
+      PhpFile file = FileTestUtils.getFile(new File("src/test/resources/"+filename));  
+      List<Integer> executableLines = new ArrayList<>(new ExecutableLineVisitor(parse(filename)).getExecutableLines());  
+      List<Integer> expectedLines = new ArrayList<>(expectedExecutableLines(file));  
+      Collections.sort(executableLines); 
+      Collections.sort(expectedLines); 
+      assertThat(executableLines).isEqualTo(expectedLines);  
+  } 
+ 
+import:
+['import java.util.ArrayList;\n ', 'import java.util.Collections;\n ']
+pom:

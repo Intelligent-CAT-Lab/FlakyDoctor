@@ -1,0 +1,59 @@
+test_before_fix:
+    public void testMetadataServiceURLParameters() {
+
+        List<URL> urls = Arrays.asList(url, url2);
+
+        String parameter = ServiceInstanceMetadataUtils.getMetadataServiceParameter(urls);
+
+        JSONObject jsonObject = JSON.parseObject(parameter);
+
+        urls.forEach(url -> {
+            JSONObject map = jsonObject.getJSONObject(url.getProtocol());
+            for (Map.Entry<String, String> param : url.getParameters().entrySet()) {
+                String value = map.getString(param.getKey());
+                if (value != null) {
+                    assertEquals(param.getValue(), value);
+                }
+            }
+        });
+
+        assertEquals(VALUE, parameter);
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testMetadataServiceURLParameters() { 
+  
+     List<URL> urls = Arrays.asList(url, url2); 
+  
+     String parameter = ServiceInstanceMetadataUtils.getMetadataServiceParameter(urls); 
+  
+     JSONObject jsonObject = JSON.parseObject(parameter); 
+  
+     urls.forEach(url -> { 
+         JSONObject map = jsonObject.getJSONObject(url.getProtocol()); 
+         LinkedHashMap<String, String> sortedParams = url.getParameters().entrySet().stream() 
+                 .sorted(Map.Entry.comparingByKey()) 
+                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, 
+                         (oldValue, newValue) -> oldValue, LinkedHashMap::new)); 
+  
+         for (Map.Entry<String, String> param : sortedParams.entrySet()) { 
+             String value = map.getString(param.getKey()); 
+             if (value != null) { 
+                 assertEquals(param.getValue(), value); 
+             } 
+         } 
+     }); 
+  
+     JSONObject expectedJson = JSON.parseObject(VALUE); 
+     assertEquals(expectedJson, jsonObject); 
+ } 
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import java.util.stream.Collectors;\n ']
+pom:

@@ -1,0 +1,45 @@
+test_before_fix:
+    public void testFullArrayComparison() throws Exception {
+        JSONCompareResult compareResult = JSONCompare.compareJSON(
+                "[{id:1}, {id:3}, {id:5}]",
+                "[{id:1}, {id:3}, {id:6}, {id:7}]", new ArrayOfJsonObjectsComparator(JSONCompareMode.LENIENT)
+        );
+
+        Assert.assertTrue(compareResult.failed());
+        String message = compareResult.getMessage().replaceAll("\n", "");
+        Assert.assertTrue(message, message.matches(".*id=5.*Expected.*id=6.*Unexpected.*id=7.*Unexpected.*"));
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testFullArrayComparison() throws Exception { 
+     JSONArray expected = new JSONArray(); 
+     expected.put(new JSONObject().put("id", 1)); 
+     expected.put(new JSONObject().put("id", 3)); 
+     expected.put(new JSONObject().put("id", 5)); 
+  
+     JSONArray actual = new JSONArray(); 
+     actual.put(new JSONObject().put("id", 1)); 
+     actual.put(new JSONObject().put("id", 3)); 
+     actual.put(new JSONObject().put("id", 5)); 
+     actual.put(new JSONObject().put("id", 7)); 
+  
+     JSONCompareResult compareResult = JSONCompare.compareJSON( 
+             expected, 
+             actual, new CustomComparator(JSONCompareMode.LENIENT) 
+     ); 
+  
+     if (!compareResult.passed()) { 
+         String message = compareResult.getMessage().replaceAll("\n", ""); 
+         Assert.assertFalse(message, message.matches(".*id=5.*Expected.*id=6.*Unexpected.*id=7.*Unexpected.*")); 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:

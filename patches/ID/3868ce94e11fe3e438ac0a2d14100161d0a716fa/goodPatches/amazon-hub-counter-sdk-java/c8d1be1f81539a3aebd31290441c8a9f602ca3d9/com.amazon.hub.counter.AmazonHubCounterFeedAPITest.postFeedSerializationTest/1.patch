@@ -1,0 +1,224 @@
+test_before_fix:
+    public void postFeedSerializationTest() throws IOException {
+        // Create an array of Access Points
+        AccessPoint[] accessPoints = new AccessPoint[1];
+
+        // Create Address
+        Address address = Address.builder()
+                .addressFieldOne("1918 8th Ave, Seattle, WA 98101, USA")
+                .city("Seattle")
+                .postalCode("98101")
+                .countryCode("US")
+                .latitude("47.615564")
+                .longitude("-122.335819")
+                .build();
+
+        // Create Capabilities
+        String[] capabilities = {"PICK_UP", "DROP_OFF"};
+
+        // Create an Exceptional Closure
+        ExceptionalClosure[] exceptionalClosures = new ExceptionalClosure[1];
+        exceptionalClosures[0] = ExceptionalClosure.builder()
+                .startDateTime("2038-01-19")
+                .endDateTime("2038-01-20")
+                .build();
+
+        // Create the Communication Details
+        CommunicationDetails communicationDetails = CommunicationDetails.builder()
+                .phoneNumber("00 1 206-922-0880")
+                .emailId("store-id@example.com")
+                .build();
+
+        // Create Standard Hours
+        StandardHours[] standardHours = new StandardHours[6];
+
+        // Monday
+        standardHours[0] = StandardHours.builder()
+                .day("MONDAY")
+                .openingTime("08:30:00")
+                .closingTime("20:00:00")
+                .build();
+        // Tuesday
+        standardHours[1] = StandardHours.builder()
+                .day("TUESDAY")
+                .openingTime("08:30:00")
+                .closingTime("20:00:00")
+                .build();
+        // Wednesday
+        standardHours[2] = StandardHours.builder()
+                .day("WEDNESDAY")
+                .openingTime("08:30:00")
+                .closingTime("20:00:00")
+                .build();
+        // Thursday
+        standardHours[3] = StandardHours.builder()
+                .day("THURSDAY")
+                .openingTime("08:30:00")
+                .closingTime("20:00:00")
+                .build();
+        // Friday
+        standardHours[4] = StandardHours.builder()
+                .day("FRIDAY")
+                .openingTime("08:30:00")
+                .closingTime("20:00:00")
+                .build();
+        // Saturday
+        // Create a MidDay Closure
+        MidDayClosure[] midDayClosures = new MidDayClosure[1];
+        midDayClosures[0] = MidDayClosure.builder()
+                .startTime("12:00:00")
+                .endTime("13:00:00")
+                .build();
+        standardHours[5] = StandardHours.builder()
+                .day("SATURDAY")
+                .openingTime("08:30:00")
+                .closingTime("20:00:00")
+                .midDayClosures(midDayClosures)
+                .build();
+
+        // Create an Access Point
+        accessPoints[0] = AccessPoint.builder()
+                .accessPointId("AMAZON-US-HQ")
+                .accessPointName("Amazon Hub Counter - Amazon US HQ")
+                .isActive(true)
+                .isRestrictedAccess(false)
+                .timeZone("America/Los_Angeles")
+                .address(address)
+                .terminationDate("2199-12-31")
+                .capabilities(capabilities)
+                .standardHoursList(standardHours)
+                .exceptionalClosures(exceptionalClosures)
+                .communicationDetails(communicationDetails)
+                .build();
+
+        AccessPointsFeedRequest accessPointsFeedRequest = AccessPointsFeedRequest.builder()
+                .accessPoints(accessPoints)
+                .build();
+
+        String feedRequestJson = new String(Files.readAllBytes(
+                Paths.get("src/test/resources/__files/feeds/feedRequest.json")
+        ));
+
+        assertEquals(accessPointsFeedRequest.toJson(), feedRequestJson);
+    }
+
+test_after_fix:
+
+code:
+public void postFeedSerializationTest() throws IOException { 
+     // Create an array of Access Points 
+     AccessPoint[] accessPoints = new AccessPoint[1]; 
+  
+     // Create Address 
+     Address address = Address.builder() 
+             .addressFieldOne("1918 8th Ave, Seattle, WA 98101, USA") 
+             .city("Seattle") 
+             .postalCode("98101") 
+             .countryCode("US") 
+             .latitude("47.615564") 
+             .longitude("-122.335819") 
+             .build(); 
+  
+     // Create Capabilities 
+     String[] capabilities = {"PICK_UP", "DROP_OFF"}; 
+  
+     // Create an Exceptional Closure 
+     ExceptionalClosure[] exceptionalClosures = new ExceptionalClosure[1]; 
+     exceptionalClosures[0] = ExceptionalClosure.builder() 
+             .startDateTime("2038-01-19") 
+             .endDateTime("2038-01-20") 
+             .build(); 
+  
+     // Create the Communication Details 
+     CommunicationDetails communicationDetails = CommunicationDetails.builder() 
+             .phoneNumber("00 1 206-922-0880") 
+             .emailId("store-id@example.com") 
+             .build(); 
+  
+     // Create Standard Hours 
+     StandardHours[] standardHours = new StandardHours[6]; 
+  
+     // Monday 
+     standardHours[0] = StandardHours.builder() 
+             .day("MONDAY") 
+             .openingTime("08:30:00") 
+             .closingTime("20:00:00") 
+             .build(); 
+     // Tuesday 
+     standardHours[1] = StandardHours.builder() 
+             .day("TUESDAY") 
+             .openingTime("08:30:00") 
+             .closingTime("20:00:00") 
+             .build(); 
+     // Wednesday 
+     standardHours[2] = StandardHours.builder() 
+             .day("WEDNESDAY") 
+             .openingTime("08:30:00") 
+             .closingTime("20:00:00") 
+             .build(); 
+     // Thursday 
+     standardHours[3] = StandardHours.builder() 
+             .day("THURSDAY") 
+             .openingTime("08:30:00") 
+             .closingTime("20:00:00") 
+             .build(); 
+     // Friday 
+     standardHours[4] = StandardHours.builder() 
+             .day("FRIDAY") 
+             .openingTime("08:30:00") 
+             .closingTime("20:00:00") 
+             .build(); 
+     // Saturday 
+     // Create a MidDay Closure 
+     MidDayClosure[] midDayClosures = new MidDayClosure[1]; 
+     midDayClosures[0] = MidDayClosure.builder() 
+             .startTime("12:00:00") 
+             .endTime("13:00:00") 
+             .build(); 
+     standardHours[5] = StandardHours.builder() 
+             .day("SATURDAY") 
+             .openingTime("08:30:00") 
+             .closingTime("20:00:00") 
+             .midDayClosures(midDayClosures) 
+             .build(); 
+  
+     // Create an Access Point 
+     accessPoints[0] = AccessPoint.builder() 
+             .accessPointId("AMAZON-US-HQ") 
+             .accessPointName("Amazon Hub Counter - Amazon US HQ") 
+             .isActive(true) 
+             .isRestrictedAccess(false) 
+             .timeZone("America/Los_Angeles") 
+             .address(address) 
+             .terminationDate("2199-12-31") 
+             .capabilities(capabilities) 
+             .standardHoursList(standardHours) 
+             .exceptionalClosures(exceptionalClosures) 
+             .communicationDetails(communicationDetails) 
+             .build(); 
+  
+     AccessPointsFeedRequest accessPointsFeedRequest = AccessPointsFeedRequest.builder() 
+             .accessPoints(accessPoints) 
+             .build(); 
+  
+     String feedRequestJson = new String(Files.readAllBytes( 
+             Paths.get("src/test/resources/__files/feeds/feedRequest.json") 
+     )); 
+  
+     ObjectMapper mapper = new ObjectMapper(); 
+     mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true); 
+     ObjectNode expectedJsonNode = mapper.readValue(feedRequestJson, ObjectNode.class); 
+     ObjectNode actualJsonNode = mapper.readValue(accessPointsFeedRequest.toJson(), ObjectNode.class); 
+  
+     assertEquals(expectedJsonNode, actualJsonNode); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import com.fasterxml.jackson.databind.SerializationFeature;\n ', 'import com.fasterxml.jackson.databind.node.ObjectNode;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

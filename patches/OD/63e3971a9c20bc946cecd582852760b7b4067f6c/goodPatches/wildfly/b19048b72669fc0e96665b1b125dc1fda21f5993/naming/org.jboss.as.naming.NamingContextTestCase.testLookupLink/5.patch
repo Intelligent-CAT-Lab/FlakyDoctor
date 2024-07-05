@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'setupObjectFactoryBuilder': 'public static void setupObjectFactoryBuilder() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n    // the rest of the code remains the same\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n    // the rest of the code remains the same\n}\n', 'setup': 'public void setup() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n}\n', 'shutdownServiceContainer': 'public void shutdownServiceContainer() {\n    // the rest of the code remains the same\n}\n', 'testLookupLink': 'public void testLookupLink() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n    // the rest of the code remains the same\n}\n', 'cleanup': 'public void cleanup() throws Exception {\n    // the rest of the code remains the same\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['setupObjectFactoryBuilder', 'testPermissions', 'setup', 'shutdownServiceContainer', 'testLookupLink', 'cleanup']}polluter
+:code:
+{'fields': {}, 'methods': {'setupObjectFactoryBuilder': 'public static void setupObjectFactoryBuilder() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n    // the rest of the code remains the same\n}\n', 'testPermissions': 'public void testPermissions() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n    // the rest of the code remains the same\n}\n', 'setup': 'public void setup() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n}\n', 'shutdownServiceContainer': 'public void shutdownServiceContainer() {\n    // the rest of the code remains the same\n}\n', 'testLookupLink': 'public void testLookupLink() throws Exception {\n    \n\n    WritableNamingStore namingStore = new InMemoryNamingStore();\n    NamingContext namingContext = new NamingContext(namingStore, null);\n    NamingContext.setActiveNamingStore(namingStore);\n    \n\n    // the rest of the code remains the same\n}\n', 'cleanup': 'public void cleanup() throws Exception {\n    // the rest of the code remains the same\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['setupObjectFactoryBuilder', 'testPermissions', 'setup', 'shutdownServiceContainer', 'testLookupLink', 'cleanup']}

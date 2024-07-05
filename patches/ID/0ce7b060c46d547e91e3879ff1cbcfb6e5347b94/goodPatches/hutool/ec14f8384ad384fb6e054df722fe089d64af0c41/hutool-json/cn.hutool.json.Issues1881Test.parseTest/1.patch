@@ -1,0 +1,36 @@
+test_before_fix:
+	public void parseTest(){
+		List<ThingsHolderContactVO> holderContactVOList = new ArrayList<>();
+		holderContactVOList.add(new ThingsHolderContactVO().setId(1L).setName("1"));
+		holderContactVOList.add(new ThingsHolderContactVO().setId(2L).setName("2"));
+
+		Assert.assertEquals("[{\"id\":1,\"name\":\"1\"},{\"id\":2,\"name\":\"2\"}]", JSONUtil.parseArray(holderContactVOList).toString());
+	}
+
+test_after_fix:
+
+code:
+public void parseTest(){ 
+     List<ThingsHolderContactVO> holderContactVOList = new ArrayList<>(); 
+     holderContactVOList.add(new ThingsHolderContactVO().setId(1L).setName("1")); 
+     holderContactVOList.add(new ThingsHolderContactVO().setId(2L).setName("2")); 
+  
+     String expectedJson = "[{\"id\":1,\"name\":\"1\"},{\"id\":2,\"name\":\"2\"}]"; 
+     String actualJson = JSONUtil.parseArray(holderContactVOList).toString(); 
+  
+     JsonParser parser = new JsonParser(); 
+     JsonArray expected = parser.parse(expectedJson).getAsJsonArray(); 
+     JsonArray actual = parser.parse(actualJson).getAsJsonArray(); 
+  
+     Assert.assertEquals(expected, actual); 
+ } 
+ 
+import:
+['import com.google.gson.JsonParser;\n ', 'import com.google.gson.JsonArray;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

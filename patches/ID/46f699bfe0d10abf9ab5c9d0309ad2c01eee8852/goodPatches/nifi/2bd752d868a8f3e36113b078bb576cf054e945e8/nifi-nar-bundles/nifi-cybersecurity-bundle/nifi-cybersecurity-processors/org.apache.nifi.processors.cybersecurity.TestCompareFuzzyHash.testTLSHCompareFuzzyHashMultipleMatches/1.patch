@@ -1,0 +1,73 @@
+test_before_fix:
+    public void testTLSHCompareFuzzyHashMultipleMatches() {
+        double matchingSimilarity = 200;
+        runner.setProperty(CompareFuzzyHash.HASH_ALGORITHM, CompareFuzzyHash.allowableValueTLSH.getValue());
+        runner.setProperty(CompareFuzzyHash.ATTRIBUTE_NAME, "fuzzyhash.value");
+        runner.setProperty(CompareFuzzyHash.HASH_LIST_FILE, "src/test/resources/tlsh.list");
+        runner.setProperty(CompareFuzzyHash.MATCH_THRESHOLD, String.valueOf(matchingSimilarity));
+        runner.setProperty(CompareFuzzyHash.MATCHING_MODE, CompareFuzzyHash.multiMatch.getValue());
+
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("fuzzyhash.value", tlshInput);
+
+        runner.enqueue("bogus".getBytes(), attributes);
+        runner.run();
+
+        runner.assertQueueEmpty();
+        runner.assertAllFlowFilesTransferred(CompareFuzzyHash.REL_FOUND, 1);
+
+        final MockFlowFile outFile = runner.getFlowFilesForRelationship(CompareFuzzyHash.REL_FOUND).get(0);
+
+        outFile.assertAttributeEquals(
+                "fuzzyhash.value.0.match",
+                "nifi-nar-bundles/nifi-lumberjack-bundle/nifi-lumberjack-processors/pom.xml"
+        );
+        double similarity = Double.valueOf(outFile.getAttribute("fuzzyhash.value.0.similarity"));
+        Assert.assertTrue(similarity <= matchingSimilarity);
+
+        outFile.assertAttributeEquals(
+                "fuzzyhash.value.1.match",
+                "nifi-nar-bundles/nifi-beats-bundle/nifi-beats-processors/pom.xml"
+        );
+        similarity = Double.valueOf(outFile.getAttribute("fuzzyhash.value.1.similarity"));
+        Assert.assertTrue(similarity <= matchingSimilarity);
+    }
+
+test_after_fix:
+
+code:
+public void testTLSHCompareFuzzyHashMultipleMatches() { 
+     double matchingSimilarity = 200; 
+     runner.setProperty(CompareFuzzyHash.HASH_ALGORITHM, CompareFuzzyHash.allowableValueTLSH.getValue()); 
+     runner.setProperty(CompareFuzzyHash.ATTRIBUTE_NAME, "fuzzyhash.value"); 
+     runner.setProperty(CompareFuzzyHash.HASH_LIST_FILE, "src/test/resources/tlsh.list"); 
+     runner.setProperty(CompareFuzzyHash.MATCH_THRESHOLD, String.valueOf(matchingSimilarity)); 
+     runner.setProperty(CompareFuzzyHash.MATCHING_MODE, CompareFuzzyHash.multiMatch.getValue()); 
+  
+     Map<String, String> attributes = new LinkedHashMap<>(); 
+     attributes.put("fuzzyhash.value", tlshInput); 
+  
+     runner.enqueue("bogus".getBytes(), attributes); 
+     runner.run(); 
+  
+     runner.assertQueueEmpty(); 
+     runner.assertAllFlowFilesTransferred(CompareFuzzyHash.REL_FOUND, 1); 
+  
+     final MockFlowFile outFile = runner.getFlowFilesForRelationship(CompareFuzzyHash.REL_FOUND).get(0); 
+  
+     String match0 = outFile.getAttribute("fuzzyhash.value.0.match"); 
+     String match1 = outFile.getAttribute("fuzzyhash.value.1.match"); 
+  
+     Assert.assertTrue(match0.equals("nifi-nar-bundles/nifi-lumberjack-bundle/nifi-lumberjack-processors/pom.xml") || match0.equals("nifi-nar-bundles/nifi-beats-bundle/nifi-beats-processors/pom.xml")); 
+     Assert.assertTrue(match1.equals("nifi-nar-bundles/nifi-lumberjack-bundle/nifi-lumberjack-processors/pom.xml") || match1.equals("nifi-nar-bundles/nifi-beats-bundle/nifi-beats-processors/pom.xml")); 
+  
+     double similarity0 = Double.valueOf(outFile.getAttribute("fuzzyhash.value.0.similarity")); 
+     double similarity1 = Double.valueOf(outFile.getAttribute("fuzzyhash.value.1.similarity")); 
+  
+     Assert.assertTrue(similarity0 <= matchingSimilarity); 
+     Assert.assertTrue(similarity1 <= matchingSimilarity); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ']
+pom:

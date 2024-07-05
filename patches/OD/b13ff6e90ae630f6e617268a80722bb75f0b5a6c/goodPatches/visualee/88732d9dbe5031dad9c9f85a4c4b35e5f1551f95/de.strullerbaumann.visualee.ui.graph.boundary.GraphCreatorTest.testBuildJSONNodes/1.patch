@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testIsOkIncludeTrue': 'public void testIsOkIncludeTrue() {\n    SourcecodeFilter filter = new SourcecodeFilter();\n    filter.setFilterToken("EntityManager");\n    filter.setExclude(false);\n    FilterContainer.getInstance().add(filter);\n\n    assertEquals(true, FilterContainer.getInstance().isOk(javaSource));\n\n    \n\n    FilterContainer.getInstance().clear();\n    \n\n}\n', 'testBuildJSONNodes': 'public void testBuildJSONNodes() {\n    JavaSourceContainer.getInstance().clear();\n    int count = 10;\n\n    String namePrefix = "Testclass ";\n    for (int i = 0; i < count; i++) {\n        String name = namePrefix + i;\n        JavaSource javaSource = JavaSourceFactory.getInstance().newJavaSource(name);\n        JavaSourceContainer.getInstance().add(javaSource);\n    }\n\n    JsonArray nodes = GraphCreator.buildJSONNodes(null).build();\n    assertEquals(count, nodes.size());\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testIsOkIncludeTrue', 'testBuildJSONNodes']}polluter
+:code:
+{'fields': {}, 'methods': {'testIsOkIncludeTrue': 'public void testIsOkIncludeTrue() {\n    SourcecodeFilter filter = new SourcecodeFilter();\n    filter.setFilterToken("EntityManager");\n    filter.setExclude(false);\n    FilterContainer.getInstance().add(filter);\n\n    assertEquals(true, FilterContainer.getInstance().isOk(javaSource));\n\n    \n\n    FilterContainer.getInstance().clear();\n    \n\n}\n', 'testBuildJSONNodes': 'public void testBuildJSONNodes() {\n    JavaSourceContainer.getInstance().clear();\n    int count = 10;\n\n    String namePrefix = "Testclass ";\n    for (int i = 0; i < count; i++) {\n        String name = namePrefix + i;\n        JavaSource javaSource = JavaSourceFactory.getInstance().newJavaSource(name);\n        JavaSourceContainer.getInstance().add(javaSource);\n    }\n\n    JsonArray nodes = GraphCreator.buildJSONNodes(null).build();\n    assertEquals(count, nodes.size());\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testIsOkIncludeTrue', 'testBuildJSONNodes']}
