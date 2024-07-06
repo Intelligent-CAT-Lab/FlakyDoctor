@@ -6,7 +6,7 @@ This repo contains the source code and results of FlakyDoctor. FlakyDoctor is a 
 File structures in this repository are as follows, please refer to `README.md` in each directory for more details: 
 - [datasets](datasets/README.md): Datasets of flaky tests in the evaluation.
 - [patches](patches/README.md): Successful patches generated.
-- `results`: Detailed results for successfully fixed flaky tests in the evaluation.
+- [results](results/README.md): Detailed results for successfully fixed flaky tests in the evaluation.
 - `src`: Source code and scripts to run FlakyDoctor.
 
 ## 🌟 Get started to run the tool!
