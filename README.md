@@ -12,8 +12,12 @@ File structures in this repository are as follows, please refer to `README.md` i
 ## 🌟 Reproduce the results
 
 To reproduce the results from scratch, one should run the following commands:
+
 0. Before starting:
-FlakyDoctor works on `Linux`
+FlakyDoctor works on `Linux` with the following requirements:
+- Python 3.10.12
+- Java 8 and Java 11
+- Please also prepare an openai key and local checkpoints of [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B)
 
 1. Set up requirements:
 ```
@@ -21,9 +25,9 @@ git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh
 ```
-2. create an `.env` which includes your local path of model [MagiCoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
+2. create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
 ```
-echo "MagiCoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
+echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
 
 3. Clone and build all Java projects:
@@ -65,7 +69,7 @@ options:
   --projects PROJECTS   A directory path where you save all the Java projects.
   --openai-key OPENAI_KEY
                         Your openai key
-  --model MODEL         LLM model to run, currently we support [GPT-4, MagiCoder].
+  --model MODEL         LLM model to run, currently we support [GPT-4, Magicoder].
   --nondex-times NONDEX_TIMES
                         How many times you want to nondex to rerun.
   --output-dir OUTPUT_DIR
