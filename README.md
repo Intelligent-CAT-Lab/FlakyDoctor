@@ -33,7 +33,7 @@ bash -x src/setup.sh |& tee setup.log
 echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
 
-**3. Run the following commands to fix demo tests with GPT-4:** Please put your openai key into at the placeholder.
+**3. Run the following commands to fix demo tests with GPT-4:** Please put your openai key at the placeholder.
 ```
 # install Java projects
 bash -x src/install.sh datasets/demo_projects.csv projects outputs install_summary.csv 
