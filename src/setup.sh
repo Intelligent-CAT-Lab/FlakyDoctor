@@ -14,12 +14,12 @@ sudo apt-get install python3-pip -y
 pip3 install jsonlines
 pip3 install GitPython
 pip3 install beautifulsoup4==4.12.3
-pip3 install javalang==0.13.0
 pip3 install numpy==1.21.0
 pip3 install openai==0.28.0
 pip3 install torch==2.1.0
 pip3 install transformers==4.31.0
 pip3 install accelerate==0.21.0
+pip3 uninstall javalang
 pip3 install git+https://github.com/jose/javalang.git@start_position_and_end_position
 
 # protobuf is needed to set up for Java projects in the evaluation

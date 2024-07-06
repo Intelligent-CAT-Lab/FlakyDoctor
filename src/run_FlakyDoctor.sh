@@ -11,6 +11,7 @@ TimeStamp=$(echo -n $(date "+%Y-%m-%d %H:%M:%S") | shasum | cut -f 1 -d " ")
 mkdir -p ${output_dir}
 DIR=${output_dir}/ID_Results_${model}_${clone_dir}_${TimeStamp}
 mkdir -p ${DIR}
+echo "Running... Please refer to the results in ${DIR}"
 
 exec 3>&1 4>&2
 trap $(exec 2>&4 1>&3) 0 1 2 3
