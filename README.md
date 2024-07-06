@@ -14,9 +14,12 @@ File structures in this repository are as follows, please refer to `README.md` i
 To reproduce the results from scratch, one should run the following commands:
 
 0. Before starting:  
-FlakyDoctor works on `Linux` with the following requirements:
-- Python 3.10.12
-- Java 8 and Java 11
+- FlakyDoctor works on `Linux` with the following environment:
+```
+Python 3.10.12
+Java 8 and Java 11
+Maven 3.6.3
+```
 - Please also prepare an openai key and local checkpoints of [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B)
 
 1. Set up requirements:
