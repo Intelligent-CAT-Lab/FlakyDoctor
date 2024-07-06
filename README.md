@@ -11,7 +11,7 @@ File structures in this repository are as follows, please refer to `README.md` i
 
 ## 🌟 A quick demo to reproduce sample results
 
-This section provides a quick demo using GPT-4 to reproduce sample results.
+This section provides a quick demo using GPT-4 to reproduce sample results in ~40 minutes.
 
 0. Before starting:  
 - FlakyDoctor works on `Linux` with the following environment:
