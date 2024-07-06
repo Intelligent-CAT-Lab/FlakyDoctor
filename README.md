@@ -20,7 +20,7 @@ Python 3.10.12
 Java 8 and Java 11
 Maven 3.6.3
 ```
-- Current FlakyDoctor supports GPT-4 and Magicoder. Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4 and if you want to run Magicoder, downlaod its [checkpoints]((https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B)) into a local path.
+- Current FlakyDoctor supports GPT-4 and Magicoder. Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4 and if you want to run Magicoder, downlaod its [checkpoints](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) into a local path.
 
 1. Set up requirements:
 ```
