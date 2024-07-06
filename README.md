@@ -9,7 +9,7 @@ File structures in this repository are as follows, please refer to `README.md` i
 - [results](results/README.md): Detailed results for successfully fixed flaky tests in the evaluation.
 - [src](src/README.md): Source code and scripts to run FlakyDoctor.
 
-## 🌟 A demo to reproduce sample results
+## 🌟 A quick demo to reproduce sample results
 
 This section provide a demo to reproduce sample results quickly.
 
