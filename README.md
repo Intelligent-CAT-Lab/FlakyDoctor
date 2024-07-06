@@ -12,6 +12,9 @@ File structures in this repository are as follows, please refer to `README.md` i
 ## 🌟 Reproduce the results
 
 To reproduce the results from scratch, one should run the following commands:
+0. Before starting:
+FlakyDoctor works on `Linux`
+
 1. Set up requirements:
 ```
 git clone https://github.com/dserfe/FlakyDoctor
@@ -26,16 +29,25 @@ echo "MagiCoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 3. Clone and build all Java projects:
 To clone and build the projects, one should run the following commands:
 ```
-bash -x src/install.sh input_csv clone_dir output_dir save_csv
+bash -x src/install.sh [input_csv] [clone_dir] [output_dir] [save_csv]
 ```
-- `input_csv`: Input of ID Java projects you need to set up, each line is in the format of `Project URL, SHA, Module`.
+- `input_csv`: Input of ID Java projects you need to set up, each line is in the format of `Project URL, SHA, Module`. More details in [datasets](datasets/README.md).
 - `clone_dir`: A directory to clone all the java projects.
 - `output_dir`: A directory for outputs and logs when building the projects.
 - `save_csv`: A summary of the build results.
-For example, one can run `bash -x src/install.sh datasets/ID_projects.csv projects outputs summary.csv` to build all Java projects for ID tests (~10 hours).
+
+For example, one can run `bash -x src/install.sh datasets/ID_projects.csv projects outputs summary.csv` to build all Java projects for ID tests (~15 hours).
 
 4. Run FlakyDoctor to fix flaky tests:
-
+To fix flaky tests, one should run the following commands:
+```
+bash -x src/run_FlakyDoctor.sh [clone_dir] [openai_key] [model] [output_dir] [input_csv] [test_type]
+```
+- `clone_dir`: A directory where all the java projects are cloned.
+- `openai_key`: Your openai authentication key.
+- `output_dir`: A directory to save all the results.
+- `input_csv`: A input `.csv` file including all the flaky tests. More details in [datasets](datasets/README.md).
+- `test_type`: The type of flakiness to fix, `ID` or `OD`.
 
 We procide a demo to reproduce the results quickly:
 
