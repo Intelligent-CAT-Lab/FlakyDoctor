@@ -1,9 +1,10 @@
 # FlakyDoctor
 
-This repo contains the source code and results of FlakyDoctor.
+This repo contains the source code and results of FlakyDoctor. FlakyDoctor is a neuro-symbolic approach to fix Implementation-Dependent (ID) and Order-Dependent (OD) tests.
 
 ## 🌟 File structures
-- `datasets`: Datasets for evaluation.
+File structures in this repository are as follows, please refer to `README.md` in each directory for more details: 
+- `datasets`: Datasets of for evaluation.
 - `patches`: Successful patches generated in evaluation.
 - `results`: Detailed results for successfully fixed flaky tests in the evaluation.
 - `src`: Source code and scripts to run FlakyDoctor.
