@@ -55,7 +55,8 @@ def locate_test_file(project_dir, test_class_short_name, module, test_path):
     return potential_file_paths
 
 def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, result_json, save_dir):
-    if model == "MagicCoder":
+    if model == "MagicCoder" or "Magiccoder":
+        model = "MagicCoder"
         print("Loading model...")
         model_load_path = {
             "MagicCoder": os.getenv("MagiCoder_LOAD_PATH"),
