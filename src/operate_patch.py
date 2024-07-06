@@ -16,7 +16,7 @@ from pathlib import Path
 
 def write_patch_stitch(save_dir, project_url, sha, module, test, patch, patch_before_stitching, original_test_method, file_path, round):
     project = project_url.split("/")[-1]
-    patch_dir = os.path.join(save_dir,project,sha,module,test)
+    patch_dir = os.path.join(save_dir, "GoodPatches", project,sha,module,test)
     Path(patch_dir).mkdir(parents=True, exist_ok=True)
     patch_file = os.path.join(patch_dir,str(round) + ".patch")
 
@@ -36,7 +36,7 @@ def write_patch_stitch(save_dir, project_url, sha, module, test, patch, patch_be
 
 def write_patch(save_dir, project_url, sha, module, test, patch, original_test_method, file_path, round):
     project = project_url.split("/")[-1]
-    patch_dir = os.path.join(save_dir,project,sha,module,test)
+    patch_dir = os.path.join(save_dir, "GoodPatches", project,sha,module,test)
     Path(patch_dir).mkdir(parents=True, exist_ok=True)
     patch_file = os.path.join(patch_dir,str(round) + ".patch")
 

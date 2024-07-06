@@ -21,10 +21,6 @@ from parse_nondex import * #parse_compilation_err, parse_err_msg, parse_patch_ma
 os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
 device = "cuda"
 
-model_load_path = {
-    "MagicCoder": os.getenv("MagiCoder_LOAD_PATH"),
-}
-
 result_csv_heads = ["project", "sha", "module", "test_type", "test", 
     "method_name", "status", "PR_link", "notes", "file_path", 
     "patch_file", "test_results", "jdk", "build_results", "Exceptions", 
@@ -61,6 +57,9 @@ def locate_test_file(project_dir, test_class_short_name, module, test_path):
 def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, result_json, save_dir):
     if model == "MagicCoder":
         print("Loading model...")
+        model_load_path = {
+            "MagicCoder": os.getenv("MagiCoder_LOAD_PATH"),
+        }
         loading_model = AutoModelForCausalLM.from_pretrained(model_load_path[model], device_map="auto", cache_dir='./huggingface')
         tokenizer = AutoTokenizer.from_pretrained(model_load_path[model], cache_dir='./huggingface')
     elif model == "GPT-4":
