@@ -12,14 +12,13 @@ mkdir -p ${output_dir}
 DIR=${output_dir}/ID_Results_${model}_${clone_dir}_${TimeStamp}
 mkdir -p ${DIR}
 
-
 exec 3>&1 4>&2
 trap $(exec 2>&4 1>&3) 0 1 2 3
 exec 1>${DIR}/${TimeStamp}.log 2>&1
 
 echo "* "STARTING at $(date) 
 echo "* "REPO VERSION $(git rev-parse HEAD)
-# flakies=( od_brit.csv )
+
 for file in "${flakies[@]}"; do
     SubTimeStamp=$(echo -n $(date "+%Y-%m-%d %H:%M:%S") | shasum | cut -f 1 -d " ")
     result_csv=${DIR}/${model}_results_${SubTimeStamp}.csv
