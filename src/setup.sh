@@ -29,6 +29,6 @@ tar xvf protobuf-2.5.0.tar.gz
 cd protobuf-2.5.0
 ./autogen.sh
 ./configure --prefix=/usr
-make
-make install
+sudo make
+sudo make install
 protoc --version
