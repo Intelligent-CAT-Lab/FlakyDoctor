@@ -36,7 +36,7 @@ echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 3. Run the following commands to fix demo tests with GPT-4:
 ```
 # install Java projects
-bash -x src/install.sh datasets/demo.csv projects outputs install_summary.csv 
+bash -x src/install.sh datasets/demo_projects.csv projects outputs install_summary.csv 
 # fix flay tests 
 bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID 
 ```
