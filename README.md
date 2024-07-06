@@ -13,7 +13,7 @@ File structures in this repository are as follows, please refer to `README.md` i
 
 This section provides a quick demo using GPT-4 to reproduce sample results in ~40 minutes.
 
-0. Before starting:  
+**0. Before starting:**
 - FlakyDoctor works on `Linux` with the following environment:
 ```
 Python 3.10.12
@@ -22,18 +22,18 @@ Maven 3.6.3
 ```
 - The current FlakyDoctor supports GPT-4 and Magicoder. Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) to use GPT-4; if you want to run Magicoder, download its [checkpoints](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) into a local path. We use three NVIDIA GeForce RTX 3090 GPUs in our experiments.
 
-1. Set up requirements:
+**1. Set up requirements:**
 ```
 git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh |& tee setup.log
 ```
-2. Create a `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) (you can skip this step if only running GPT-4):
+**2. Create a `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) (you can skip this step if only running GPT-4):**
 ```
 echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
 
-3. Run the following commands to fix demo tests with GPT-4:
+**3. Run the following commands to fix demo tests with GPT-4:**
 ```
 # install Java projects
 bash -x src/install.sh datasets/demo_projects.csv projects outputs install_summary.csv 
@@ -52,7 +52,7 @@ To check the results of flakiness repair, each round, a directory named as `ID_R
 
 To reproduce the results from scratch, one should run the following commands:
 
-0. Before starting:  
+**0. Before starting:** 
 - FlakyDoctor works on `Linux` with the following environment:
 ```
 Python 3.10.12
@@ -61,18 +61,18 @@ Maven 3.6.3
 ```
 - Please also prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) and local checkpoints of [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B)
 
-1. Set up requirements:
+**1. Set up requirements:**
 ```
 git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh
 ```
-2. Create a `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
+**2. Create a `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):**
 ```
 echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
 
-3. Clone and build all Java projects:
+**3. Clone and build all Java projects:**
 To clone and build the projects, one should run the following commands:
 ```
 bash -x src/install.sh [input_csv] [clone_dir] [output_dir] [save_csv]
@@ -86,7 +86,7 @@ For example, one can run:
 - `bash -x src/install.sh datasets/ID_projects.csv projects outputs ID_summary.csv` to build all Java projects for ID tests (~15 hours)
 - `bash -x src/install.sh datasets/OD_projects.csv projects outputs OD_summary.csv` to build all Java projects for OD tests (~10 hours)
 
-4. Run FlakyDoctor to fix flaky tests:
+**4. Run FlakyDoctor to fix flaky tests:**
 To fix flaky tests, one should run the following commands:
 ```
 bash -x src/run_FlakyDoctor.sh [clone_dir] [openai_key] [model] [output_dir] [input_csv] [test_type]
