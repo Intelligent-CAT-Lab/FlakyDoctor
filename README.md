@@ -20,7 +20,7 @@ Python 3.10.12
 Java 8 and Java 11
 Maven 3.6.3
 ```
-- Please also prepare an openai key and local checkpoints of [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B)
+- Please also prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) and local checkpoints of [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B)
 
 1. Set up requirements:
 ```
