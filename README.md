@@ -2,15 +2,15 @@
 
 This repo contains the source code and results of FlakyDoctor.
 
-## File structures
+## 🌟 File structures
 - `datasets`: Datasets for evaluation.
 - `patches`: Successful patches generated in evaluation.
 - `results`: Detailed results for successfully fixed flaky tests in the evaluation.
 - `src`: Source code and scripts to run FlakyDoctor.
 
-## Get started to run the tool!
+## 🌟 Get started to run the tool!
 
-## Reproduce the results
+## 🌟 Reproduce the results
 To reproduce the results from scratch, one should run the following commands:
 1. Set up environment
 ```
@@ -32,5 +32,5 @@ bash -x src/install.sh datasets/demo.csv projects outputs 1.csv
 ```
 Since one project may include multiple SHAs, 
 
-## Pull requests
+## 🌟 Pull requests
 
