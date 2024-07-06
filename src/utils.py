@@ -140,7 +140,7 @@ def parse_java_func_intervals(content: str) -> Set[Tuple[int, int]]:
                 )
         return func_intervals
     except Exception as e: # javalang.parser.JavaSyntaxError
-        print("exp", e)
+        print("Expceptions", e)
         return func_intervals
 
 def extract_method(test_name,class_content):
