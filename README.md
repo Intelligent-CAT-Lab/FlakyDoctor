@@ -40,8 +40,13 @@ bash -x src/install.sh datasets/demo_projects.csv projects outputs install_summa
 # fix flay tests 
 bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID 
 ```
-To check the outputs of the building project, logs of each round will be saved into a directory named `[unique SHA]` inside `outputs`. You can also check the summary of building results in `install_summary.csv`, including `project,sha,module,build_result,java_version`.
-- To check the results of flakiness repair, each round, a directory named as `ID_Results_GPT-4_projects_[Unique SHA]` will be generated inside `outputs`, you may check instant logs in `ID_Results_GPT-4_projects_[Unique SHA]/[Unique SHA].log`; you can see a summary of all results in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_results_[Unique SHA].csv` or details in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_test_Details_[Unique SHA].json`. If any successful patches are generated, they will be saved in `ID_Results_GPT-4_projects_[Unique SHA]/GoodPatches`. **Please note that the results may vary when running at multiple times due to the non-determinism of LLMs.**
+To check the outputs of the building project, logs of each round will be saved into a directory named `[unique SHA]` inside `outputs`. You can also check the summary of building results in `install_summary.csv`, including `project,sha,module,build_result,java_version`.  
+
+To check the results of flakiness repair, each round, a directory named as `ID_Results_GPT-4_projects_[Unique SHA]` will be generated inside `outputs`:
+- you may check instant logs in `ID_Results_GPT-4_projects_[Unique SHA]/[Unique SHA].log`; 
+- you can see a summary of all results in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_results_[Unique SHA].csv` or more details in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_test_Details_[Unique SHA].json`. 
+- If any successful patches are generated, they will be saved in `ID_Results_GPT-4_projects_[Unique SHA]/GoodPatches`. 
+**Please note that the results may vary when running at multiple times due to the non-determinism of LLMs.**
 
 ## 🌟 Reproduce the results from scratch
 
