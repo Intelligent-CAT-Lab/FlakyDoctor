@@ -4,10 +4,10 @@ This repo contains the source code and results of FlakyDoctor, a neuro-symbolic 
 
 ## 🌟 File structures
 File structures in this repository are as follows, please refer to `README.md` in each directory for more details: 
-- [datasets](datasets/README.md): Datasets of flaky tests in the evaluation.
-- [patches](patches/README.md): Successful patches generated.
-- [results](results/README.md): Detailed results for successfully fixed flaky tests in the evaluation.
-- [src](src/README.md): Source code and scripts to run FlakyDoctor.
+- [datasets](datasets/): Datasets of flaky tests in the evaluation.
+- [patches](patches/): Successful patches generated.
+- [results](results/): Detailed results for successfully fixed flaky tests in the evaluation.
+- [src](src/): Source code and scripts to run FlakyDoctor.
 
 ## 🌟 A quick demo to reproduce sample results
 
