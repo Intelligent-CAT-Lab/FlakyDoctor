@@ -41,7 +41,7 @@ bash -x src/install.sh datasets/demo.csv projects outputs install_summary.csv
 bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID 
 ```
 - To check the outputs of building project, logs of each round will be saved into a directory named as a `[unique SHA]` inside `outputs`, you can also check the summary of building results in `install_summary.csv`, including `project,sha,module,build_result,java_version`.
-- To check the results of flakiness repair, each round a directory named as `ID_Results_GPT-4_projects_[Unique SHA]` will be generated inside `outputs`, 
+- To check the results of flakiness repair, each round a directory named as `ID_Results_GPT-4_projects_[Unique SHA]` will be generated inside `outputs`, you can see a summary of all results in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_results_[Unique SHA].csv` or details in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_test_Details_[Unique SHA].json`, you may also check all logs in `ID_Results_GPT-4_projects_[Unique SHA]/[Unique SHA].log`. If any good patches are generated, they will be saved in `ID_Results_GPT-4_projects_[Unique SHA]/GoodPatches`. Please note that, due to non-determinism of LLMs, the results may vary after running different times.
 
 ## 🌟 Reproduce the results from scratch
 
