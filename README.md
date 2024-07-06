@@ -9,7 +9,37 @@ File structures in this repository are as follows, please refer to `README.md` i
 - [results](results/README.md): Detailed results for successfully fixed flaky tests in the evaluation.
 - [src](src/README.md): Source code and scripts to run FlakyDoctor.
 
-## 🌟 Reproduce the results
+## 🌟 A demo to reproduce sample results
+
+This section provide a demo to reproduce sample results quickly.
+
+0. Before starting:  
+- FlakyDoctor works on `Linux` with the following environment:
+```
+Python 3.10.12
+Java 8 and Java 11
+Maven 3.6.3
+```
+- Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4 and downlaod checkpoints of [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B).
+
+1. Set up requirements:
+```
+git clone https://github.com/dserfe/FlakyDoctor
+cd FlakyDoctor
+bash -x src/setup.sh
+```
+2. Create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
+```
+echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
+```
+
+3. Run the following commands to fix demo tests with GPT-4:
+```
+bash -x src/install.sh datasets/demo.csv projects outputs install_summary.csv
+bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID
+```
+
+## 🌟 Reproduce the results from scratch
 
 To reproduce the results from scratch, one should run the following commands:
 
@@ -28,7 +58,7 @@ git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh
 ```
-2. create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
+2. Create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
 ```
 echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
@@ -43,7 +73,9 @@ bash -x src/install.sh [input_csv] [clone_dir] [output_dir] [save_csv]
 - `output_dir`: A directory for outputs and logs when building the projects.
 - `save_csv`: A summary of the build results.
 
-For example, one can run `bash -x src/install.sh datasets/ID_projects.csv projects outputs summary.csv` to build all Java projects for ID tests (~15 hours).
+For example, one can run:
+- `bash -x src/install.sh datasets/ID_projects.csv projects outputs ID_summary.csv` to build all Java projects for ID tests (~15 hours)
+- `bash -x src/install.sh datasets/OD_projects.csv projects outputs OD_summary.csv` to build all Java projects for OD tests (~10 hours)
 
 4. Run FlakyDoctor to fix flaky tests:
 To fix flaky tests, one should run the following commands:
@@ -56,7 +88,6 @@ bash -x src/run_FlakyDoctor.sh [clone_dir] [openai_key] [model] [output_dir] [in
 - `input_csv`: A input `.csv` file including all the flaky tests. More details in [datasets](datasets/README.md).
 - `test_type`: The type of flakiness to fix, `ID` or `OD`.
 
-We procide a demo to reproduce the results quickly:
 
 ## 🌟 Get started to run the tool!
 The options of `FlakyDoctor`:
