@@ -4,11 +4,12 @@ sudo apt install git-all -y
 
 sudo apt-get update
 sudo add-apt-repository ppa:deadsnakes/ppa -y
-sudo apt-get install -y openjdk-8-jdk
-sudo apt-get install -y openjdk-11-jdk
-sudo apt-get install -y maven
+sudo apt-get install openjdk-8-jdk -y
+sudo apt-get install openjdk-11-jdk -y
+sudo apt-get install maven -y
 sudo apt-get install autoconf -y
 sudo apt-get install libtool -y
+sudo apt-get install python3-pip -y
 
 pip3 install jsonlines
 pip3 install GitPython
@@ -21,8 +22,8 @@ pip3 install accelerate==0.21.0
 pip3 install git+https://github.com/jose/javalang.git@start_position_and_end_position
 
 # protobuf is needed to set up for Java projects in the evaluation
-sudo apt-get install build-essential
-sudo apt install g++
+sudo apt-get install build-essential -y
+sudo apt install g++ -y
 wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
 tar xvf protobuf-2.5.0.tar.gz
 cd protobuf-2.5.0
