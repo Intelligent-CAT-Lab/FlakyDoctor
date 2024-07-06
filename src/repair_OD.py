@@ -15,23 +15,20 @@ from pathlib import Path
 import json
 import signal
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
 device = "cuda"
 
 run_nondex_cmds = "src/cmds/run_nondex.sh"
 run_surefire_cmds = "src/cmds/run_surefire.sh"
 
-java_standard_libs = json.load(open("src/java_standard_libs.json"))
+java_standard_libs = json.load(open("src/utils/java_standard_libs.json"))
 
 def handler(signum, frame):
     raise ValueError("TimesUpError")
 
-
-def collect_tests(pr_csv, clone_dir, test_file_info, model, nondex_times,result_csv,result_json,save_dir):
-    load_path = {
-        "MagicCoder":"/home/ubuntu/.cache/huggingface/hub/models--ise-uiuc--Magicoder-S-DS-6.7B/snapshots/b3ed7cb1578a3643ceaf2ebf996a3d8e85f75d8f/",#"/home/ubuntu/magi",#"/home/shared/huggingface/models--ise-uiuc--Magicoder-S-DS-6.7B/snapshots/cff055b1e110cbe75c0c3759bd436299c6d6bb66/",
-        "StarCoder": "/home/shared/huggingface/models--bigcode--starcoder/snapshots/e117ab3b3d0769fd962bd48b099de711757a3d60/",
-        "CodeLlama": "/home/ubuntu/.cache/huggingface/hub/models--codellama--CodeLlama-13b-hf/snapshots/9d8db7dca513633b20186967a9f0a00f75923dc2",
+def main(pr_csv, clone_dir, test_file_info, model, nondex_times,result_csv,result_json,save_dir):
+    model_load_path = {
+            "MagicCoder": os.getenv("MagiCoder_LOAD_PATH"),
     }
     if model == "MagicCoder":
         print("Loading model...")
@@ -1536,21 +1533,3 @@ def parse_patch_gpt(response, victim_test_method_name, polluter_test_method_name
             if method_name == polluter_test_method_name:
                 patch["polluter_test_code"] = (method_code)
     return patch,ifstitched
-
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    flakies_csv = args[0] # /home/yang/flaky/idAddac.csv
-    clone_dir = args[1]
-    api_key = args[2]
-    result_csv = args[3]
-    result_json = args[4]
-    save_dir = args[5]
-    unfixed_csv = args[6]
-    model = args[7]
-    test_file_info = args[8]
-    nondex_times = args[9]
-
-    openai.api_key = api_key
-    openai.organization = os.getenv("OPENAI_ORGANIZATION")
-    test_info = collect_tests(flakies_csv, clone_dir, test_file_info, model, nondex_times,result_csv,result_json,save_dir)
-    # repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_dir)
