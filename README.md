@@ -1,6 +1,6 @@
 # FlakyDoctor
 
-This repo contains the source code and results of FlakyDoctor. FlakyDoctor is a neuro-symbolic approach to fix Implementation-Dependent (ID) and Order-Dependent (OD) tests.
+This repo contains the source code and results of FlakyDoctor, a neuro-symbolic approach to fixing Implementation-Dependent (ID) and Order-Dependent (OD) tests.
 
 ## 🌟 File structures
 File structures in this repository are as follows, please refer to `README.md` in each directory for more details: 
@@ -11,7 +11,7 @@ File structures in this repository are as follows, please refer to `README.md` i
 
 ## 🌟 A quick demo to reproduce sample results
 
-This section provide a quick demo using GPT-4 to reproduce sample results.
+This section provides a quick demo using GPT-4 to reproduce sample results.
 
 0. Before starting:  
 - FlakyDoctor works on `Linux` with the following environment:
@@ -20,7 +20,7 @@ Python 3.10.12
 Java 8 and Java 11
 Maven 3.6.3
 ```
-- Current FlakyDoctor supports GPT-4 and Magicoder. Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4; if you want to run Magicoder, downlaod its [checkpoints](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) into a local path. We use three NVIDIA GeForce RTX 3090 GPUs in our experiments.
+- The current FlakyDoctor supports GPT-4 and Magicoder. Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) to use GPT-4; if you want to run Magicoder, download its [checkpoints](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) into a local path. We use three NVIDIA GeForce RTX 3090 GPUs in our experiments.
 
 1. Set up requirements:
 ```
@@ -28,7 +28,7 @@ git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh |& tee setup.log
 ```
-2. Create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) (you can skip this step if only running GPT-4):
+2. Create a `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) (you can skip this step if only running GPT-4):
 ```
 echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
@@ -40,8 +40,8 @@ bash -x src/install.sh datasets/demo_projects.csv projects outputs install_summa
 # fix flay tests 
 bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID 
 ```
-- To check the outputs of building project, logs of each round will be saved into a directory named as a `[unique SHA]` inside `outputs`, you can also check the summary of building results in `install_summary.csv`, including `project,sha,module,build_result,java_version`.
-- To check the results of flakiness repair, each round a directory named as `ID_Results_GPT-4_projects_[Unique SHA]` will be generated inside `outputs`, you may check instant logs in `ID_Results_GPT-4_projects_[Unique SHA]/[Unique SHA].log`; you can see a summary of all results in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_results_[Unique SHA].csv` or details in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_test_Details_[Unique SHA].json`. If any good patches are generated, they will be saved in `ID_Results_GPT-4_projects_[Unique SHA]/GoodPatches`. Please note that, due to non-determinism of LLMs, the results may vary after running different times.
+To check the outputs of the building project, logs of each round will be saved into a directory named `[unique SHA]` inside `outputs`. You can also check the summary of building results in `install_summary.csv`, including `project,sha,module,build_result,java_version`.
+- To check the results of flakiness repair, each round, a directory named as `ID_Results_GPT-4_projects_[Unique SHA]` will be generated inside `outputs`, you may check instant logs in `ID_Results_GPT-4_projects_[Unique SHA]/[Unique SHA].log`; you can see a summary of all results in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_results_[Unique SHA].csv` or details in `ID_Results_GPT-4_projects_[Unique SHA]/GPT-4_test_Details_[Unique SHA].json`. If any successful patches are generated, they will be saved in `ID_Results_GPT-4_projects_[Unique SHA]/GoodPatches`. **Please note that the results may vary when running at multiple times due to the non-determinism of LLMs.**
 
 ## 🌟 Reproduce the results from scratch
 
@@ -62,7 +62,7 @@ git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh
 ```
-2. Create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
+2. Create a `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
 ```
 echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
@@ -90,7 +90,7 @@ bash -x src/run_FlakyDoctor.sh [clone_dir] [openai_key] [model] [output_dir] [in
 - `openai_key`: Your openai authentication key.
 - `model`: `GPT-4` or `MagiCoder`
 - `output_dir`: A directory to save all the results.
-- `input_csv`: A input `.csv` file including all the flaky tests. More details in [datasets](datasets/README.md).
+- `input_csv`: An input `.csv` file that includes all the flaky tests. More details in [datasets](datasets/README.md).
 - `test_type`: The type of flakiness to fix, `ID` or `OD`.
 
 ## 🌟 Pull requests
@@ -147,7 +147,7 @@ Tests are fixed by developers in the latest version of the project:
 - com.willwinder.universalgcodesender.GrblControllerTest.rawResponseHandlerWithUnknownErrorShouldWriteGenericMessageToConsole
 - com.graphhopper.isochrone.algorithm.IsochroneTest.testSearch
 
-Tests are actually different types of flakiness after inspected:
+Tests are actually different types of flakiness after inspection:
 - com.baidu.jprotobuf.pbrpc.EchoServiceTest.testDynamiceTalkTimeout
 
 Repository is archived:
