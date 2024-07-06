@@ -10,27 +10,34 @@ File structures in this repository are as follows, please refer to `README.md` i
 - [src](src/README.md): Source code and scripts to run FlakyDoctor.
 
 ## 🌟 Reproduce the results
+
 To reproduce the results from scratch, one should run the following commands:
-1. Set up environment
+1. Set up requirements:
 ```
 git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh
 ```
-create an `.env` with the following content:
+2. create an `.env` which includes your local path of model [MagiCoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
 ```
-MagiCoder_LOAD_PATH=/home/shared/huggingface/models--ise-uiuc--Magicoder-S-DS-6.7B/snapshots/cff055b1e110cbe75c0c3759bd436299c6d6bb66/
-
+echo "MagiCoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
 
-2. Clone and build all the projects
+3. Clone and build all Java projects:
+To clone and build the projects, one should run the following commands:
 ```
-bash -x src/install.sh input_csv clone_dir output_dir save
-
-bash -x src/install.sh datasets/demo.csv projects outputs 1.csv
+bash -x src/install.sh input_csv clone_dir output_dir save_csv
 ```
-Since one project may include multiple SHAs, 
+- `input_csv`: Input of ID Java projects you need to set up, each line is in the format of `Project URL, SHA, Module`.
+- `clone_dir`: A directory to clone all the java projects.
+- `output_dir`: A directory for outputs and logs when building the projects.
+- `save_csv`: A summary of the build results.
+For example, one can run `bash -x src/install.sh datasets/ID_projects.csv projects outputs summary.csv` to build all Java projects for ID tests (~10 hours).
 
+4. Run FlakyDoctor to fix flaky tests:
+
+
+We procide a demo to reproduce the results quickly:
 
 ## 🌟 Get started to run the tool!
 The options of `FlakyDoctor`:
