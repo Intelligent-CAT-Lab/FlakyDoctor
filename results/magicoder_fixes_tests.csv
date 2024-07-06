@@ -1,3 +1,4 @@
+Project URL,SHA,Module,Type,Test,Results,Patch
 https://github.com/Thomas-S-B/visualee,88732d9dbe5031dad9c9f85a4c4b35e5f1551f95,.,,de.strullerbaumann.visualee.filter.entity.SourcecodeFilterTest.testIsOkExcludeFalse,0:F,1:F,2:P,polluter_patch_good_validation
 https://github.com/spring-projects/spring-ws,e8d89c9eb0929dda304174729c9c69fb29f448eb,spring-ws-security,,org.springframework.ws.soap.security.xwss.callback.SpringDigestPasswordValidationCallbackHandlerTest.testAuthenticateUserDigestUserNotFound,0:F,1:F,2:F,3:F,4:F,5:P,polluter_patch_good_validation
 https://github.com/spring-projects/spring-ws,e8d89c9eb0929dda304174729c9c69fb29f448eb,spring-ws-security,,org.springframework.ws.soap.security.xwss.callback.SpringDigestPasswordValidationCallbackHandlerTest.testAuthenticateUserDigestValidInvalid,0:F,1:P,polluter_patch_good_validation
