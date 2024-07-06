@@ -11,7 +11,7 @@ File structures in this repository are as follows, please refer to `README.md` i
 
 ## 🌟 A quick demo to reproduce sample results
 
-This section provide a demo to reproduce sample results quickly.
+This section provide a quick demo using GPT-4 to reproduce sample results.
 
 0. Before starting:  
 - FlakyDoctor works on `Linux` with the following environment:
@@ -20,7 +20,7 @@ Python 3.10.12
 Java 8 and Java 11
 Maven 3.6.3
 ```
-- Current FlakyDoctor supports GPT-4 and Magicoder. Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4 and if you want to run Magicoder, downlaod its [checkpoints](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) into a local path.
+- Current FlakyDoctor supports GPT-4 and Magicoder. Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4; if you want to run Magicoder, downlaod its [checkpoints](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) into a local path. We use three NVIDIA GeForce RTX 3090 GPUs in our experiments.
 
 1. Set up requirements:
 ```
@@ -35,10 +35,13 @@ echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 
 3. Run the following commands to fix demo tests with GPT-4:
 ```
-bash -x src/install.sh datasets/demo.csv projects outputs install_summary.csv # install Java projects
-bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID # fix flay tests 
+# install Java projects
+bash -x src/install.sh datasets/demo.csv projects outputs install_summary.csv 
+# fix flay tests 
+bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID 
 ```
-To check the outputs, 
+- To check the outputs of building project, logs of each round will be saved into a directory named as a `[unique SHA]` inside `outputs`, you can also check the summary of building results in `install_summary.csv`, including `project,sha,module,build_result,java_version`.
+- To check the results of flakiness repair, each round a directory named as `ID_Results_GPT-4_projects_[Unique SHA]` will be generated inside `outputs`, 
 
 ## 🌟 Reproduce the results from scratch
 
