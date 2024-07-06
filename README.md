@@ -20,7 +20,7 @@ Python 3.10.12
 Java 8 and Java 11
 Maven 3.6.3
 ```
-- Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4 and downlaod checkpoints of [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B).
+- Please prepare an [openai key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) in order to use GPT-4 and if you want to run [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B), downlaod its checkpoints into a local path.
 
 1. Set up requirements:
 ```
