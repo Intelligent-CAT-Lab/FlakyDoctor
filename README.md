@@ -7,7 +7,30 @@ File structures in this repository are as follows, please refer to `README.md` i
 - [datasets](datasets/README.md): Datasets of flaky tests in the evaluation.
 - [patches](patches/README.md): Successful patches generated.
 - [results](results/README.md): Detailed results for successfully fixed flaky tests in the evaluation.
-- `src`: Source code and scripts to run FlakyDoctor.
+- [src](src/README.md): Source code and scripts to run FlakyDoctor.
+
+## 🌟 Reproduce the results
+To reproduce the results from scratch, one should run the following commands:
+1. Set up environment
+```
+git clone https://github.com/dserfe/FlakyDoctor
+cd FlakyDoctor
+bash -x src/setup.sh
+```
+create an `.env` with the following content:
+```
+MagiCoder_LOAD_PATH=/home/shared/huggingface/models--ise-uiuc--Magicoder-S-DS-6.7B/snapshots/cff055b1e110cbe75c0c3759bd436299c6d6bb66/
+
+```
+
+2. Clone and build all the projects
+```
+bash -x src/install.sh input_csv clone_dir output_dir save
+
+bash -x src/install.sh datasets/demo.csv projects outputs 1.csv
+```
+Since one project may include multiple SHAs, 
+
 
 ## 🌟 Get started to run the tool!
 The options of `FlakyDoctor`:
@@ -36,29 +59,66 @@ options:
                         A json to save details of results.
 ```
 
-For example,
-
-## 🌟 Reproduce the results
-To reproduce the results from scratch, one should run the following commands:
-1. Set up environment
-```
-git clone https://github.com/dserfe/FlakyDoctor
-cd FlakyDoctor
-bash -x src/setup.sh
-```
-create an `.env` with the following content:
-```
-MagiCoder_LOAD_PATH=/home/shared/huggingface/models--ise-uiuc--Magicoder-S-DS-6.7B/snapshots/cff055b1e110cbe75c0c3759bd436299c6d6bb66/
-
-```
-
-2. Clone and build all the projects
-```
-bash -x src/install.sh input_csv clone_dir output_dir save
-
-bash -x src/install.sh datasets/demo.csv projects outputs 1.csv
-```
-Since one project may include multiple SHAs, 
-
 ## 🌟 Pull requests
+19 Tests have been accepted (one PR may include fixes for multiple tests):
+
+**Accepted PRs:**
+- https://github.com/funkygao/cp-ddd-framework/pull/65
+- https://github.com/apache/pinot/pull/11771
+- https://github.com/dropwizard/dropwizard/pull/7629
+- https://github.com/opengoofy/hippo4j/pull/1495
+- https://github.com/moquette-io/moquette/pull/781
+- https://github.com/jnr/jnr-posix/pull/185
+- https://github.com/FasterXML/jackson-jakarta-rs-providers/pull/22
+- https://github.com/yangfuhai/jboot/pull/117
+
+**Opened PRs:**
+- https://github.com/perwendel/spark/pull/1285
+- https://github.com/dyc87112/SpringBoot-Learning/pull/98
+- https://github.com/graphhopper/graphhopper/pull/2899
+- https://github.com/BroadleafCommerce/BroadleafCommerce/pull/2901
+- https://github.com/dianping/cat/pull/2320
+- https://github.com/hellokaton/30-seconds-of-java8/pull/8
+- https://github.com/AmadeusITGroup/workflow-cps-global-lib-http-plugin/pull/68
+- https://github.com/wro4j/wro4j/pull/1167
+- https://github.com/kevinsawicki/http-request/pull/177
+- https://github.com/apache/flink/pull/23648
+
+
+*We are waiting for developers to approve our requests to create an issue for the following PRs:*
+- https://github.com/dserfe/flink/pull/2
+- https://github.com/dserfe/nifi/pull/1
+- https://github.com/dserfe/jenkins/pull/1
+
+**Why other tests can not be opened PRs:**
+```
+Tests are deleted in the latest version of the project:
+- org.apache.dubbo.registry.client.metadata.ServiceInstanceMetadataUtilsTest.testMetadataServiceURLParameters
+- org.apache.cayenne.CayenneContextClientChannelEventsIT.testSyncToOneRelationship
+- org.apache.shardingsphere.elasticjob.cloud.scheduler.env.BootstrapEnvironmentTest.assertWithoutEventTraceRdbConfiguration
+- org.apache.shardingsphere.elasticjob.cloud.scheduler.mesos.AppConstraintEvaluatorTest.assertExistExecutorOnS0
+- net.sf.marineapi.ais.event.AbstractAISMessageListenerTest.testParametrizedConstructor
+- net.sf.marineapi.ais.event.AbstractAISMessageListenerTest.testSequenceListener
+- com.willwinder.universalgcodesender.GrblControllerTest.testGetGrblVersion
+- com.willwinder.universalgcodesender.GrblControllerTest.testIsReadyToStreamFile
+
+Tests are fixed by developers in the latest version of the project:
+- io.elasticjob.lite.lifecycle.internal.settings.JobSettingsAPIImplTest.assertUpdateJobSettings
+- net.sf.marineapi.ais.event.AbstractAISMessageListenerTest.testBasicListenerWithUnexpectedMessage
+- net.sf.marineapi.ais.event.AbstractAISMessageListenerTest.testConstructor
+- net.sf.marineapi.ais.event.AbstractAISMessageListenerTest.testGenericsListener
+- net.sf.marineapi.ais.event.AbstractAISMessageListenerTest.testOnMessageWithExpectedMessage
+- com.willwinder.universalgcodesender.GrblControllerTest.rawResponseHandlerOnErrorWithNoSentCommandsShouldSendMessageToConsole
+- com.willwinder.universalgcodesender.GrblControllerTest.rawResponseHandlerWithKnownErrorShouldWriteMessageToConsole
+- com.willwinder.universalgcodesender.GrblControllerTest.rawResponseHandlerWithUnknownErrorShouldWriteGenericMessageToConsole
+- com.graphhopper.isochrone.algorithm.IsochroneTest.testSearch
+
+Tests are actually different types of flakiness after inspected:
+- com.baidu.jprotobuf.pbrpc.EchoServiceTest.testDynamiceTalkTimeout
+
+Repository is archived:
+- io.searchbox.indices.RolloverTest.testBasicUriGeneration
+- com.netflix.exhibitor.core.config.zookeeper.TestZookeeperConfigProvider.testConcurrentModification
+- org.springframework.security.oauth2.provider.client.JdbcClientDetailsServiceTests.testUpdateClientRedirectURI
+``` 
 
