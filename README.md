@@ -26,7 +26,7 @@ Maven 3.6.3
 ```
 git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
-bash -x src/setup.sh
+bash -x src/setup.sh |& tee setup.log#
 ```
 2. Create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) (you can skip this step if only running GPT-4):
 ```
