@@ -28,16 +28,17 @@ git clone https://github.com/dserfe/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh
 ```
-2. Create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B):
+2. Create an `.env` which includes your local path of model [Magicoder](https://huggingface.co/ise-uiuc/Magicoder-S-DS-6.7B) (you can skip this step if only running GPT-4):
 ```
 echo "Magicoder_LOAD_PATH=[Your local path of Magicoder checkpoints]" > .env
 ```
 
 3. Run the following commands to fix demo tests with GPT-4:
 ```
-bash -x src/install.sh datasets/demo.csv projects outputs install_summary.csv
-bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID
+bash -x src/install.sh datasets/demo.csv projects outputs install_summary.csv # install Java projects
+bash -x src/run_FlakyDoctor.sh projects [openai_key] GPT-4 outputs datasets/demo.csv ID # fix flay tests 
 ```
+To check the outputs, 
 
 ## 🌟 Reproduce the results from scratch
 
@@ -84,37 +85,10 @@ bash -x src/run_FlakyDoctor.sh [clone_dir] [openai_key] [model] [output_dir] [in
 ```
 - `clone_dir`: A directory where all the java projects are cloned.
 - `openai_key`: Your openai authentication key.
+- `model`: `GPT-4` or `MagiCoder`
 - `output_dir`: A directory to save all the results.
 - `input_csv`: A input `.csv` file including all the flaky tests. More details in [datasets](datasets/README.md).
 - `test_type`: The type of flakiness to fix, `ID` or `OD`.
-
-
-## 🌟 Get started to run the tool!
-The options of `FlakyDoctor`:
-```
-usage: flakydoctor.py [-h] --input-tests-csv INPUT_TESTS_CSV --flakiness-type FLAKINESS_TYPE --projects PROJECTS --openai-key OPENAI_KEY --model MODEL [--nondex-times NONDEX_TIMES] --output-dir OUTPUT_DIR --output-result-csv OUTPUT_RESULT_CSV --output-result-json OUTPUT_RESULT_JSON --output-details-json OUTPUT_DETAILS_JSON
-
-options:
-  -h, --help            show this help message and exit
-  --input-tests-csv INPUT_TESTS_CSV
-                        A csv file include flaky tests with consistent format as in IDoFT `pr-data.csv`.
-  --flakiness-type FLAKINESS_TYPE
-                        Flakiness type to fix, select one from [ID, OD].
-  --projects PROJECTS   A directory path where you save all the Java projects.
-  --openai-key OPENAI_KEY
-                        Your openai key
-  --model MODEL         LLM model to run, currently we support [GPT-4, Magicoder].
-  --nondex-times NONDEX_TIMES
-                        How many times you want to nondex to rerun.
-  --output-dir OUTPUT_DIR
-                        A directory to save all the outputs.
-  --output-result-csv OUTPUT_RESULT_CSV
-                        A csv to save summary of results.
-  --output-result-json OUTPUT_RESULT_JSON
-                        A json to save summary of results.
-  --output-details-json OUTPUT_DETAILS_JSON
-                        A json to save details of results.
-```
 
 ## 🌟 Pull requests
 19 Tests have been accepted (one PR may include fixes for multiple tests):
