@@ -13,7 +13,7 @@ File structures in this repository are as follows, please refer to `README.md` i
 
 To reproduce the results from scratch, one should run the following commands:
 
-0. Before starting:
+0. Before starting:  
 FlakyDoctor works on `Linux` with the following requirements:
 - Python 3.10.12
 - Java 8 and Java 11
