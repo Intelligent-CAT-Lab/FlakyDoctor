@@ -13,6 +13,7 @@ sudo apt-get install python3-pip -y
 
 pip3 install jsonlines
 pip3 install GitPython
+pip3 install lxml
 pip3 install beautifulsoup4==4.12.3
 pip3 install numpy==1.21.0
 pip3 install openai==0.28.0
