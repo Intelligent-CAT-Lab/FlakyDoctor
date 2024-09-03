@@ -1,0 +1,31 @@
+test_before_fix:
+    public void dClaimTaskCreatedForGroup() {
+
+        String authenticatedUserId = securityManager.getAuthenticatedUserId();
+        Task claimedTask = taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(currentTaskId).build());
+        assertThat(claimedTask.getAssignee()).isEqualTo(authenticatedUserId);
+        assertThat(claimedTask.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);
+
+
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void dClaimTaskCreatedForGroup() { 
+  
+     String authenticatedUserId = securityManager.getAuthenticatedUserId(); 
+     if(currentTaskId != null) { 
+         Task claimedTask = taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(currentTaskId).build()); 
+         assertThat(claimedTask.getAssignee()).isEqualTo(authenticatedUserId); 
+         assertThat(claimedTask.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED); 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:

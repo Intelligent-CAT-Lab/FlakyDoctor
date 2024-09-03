@@ -1,0 +1,32 @@
+test_before_fix:
+    public void testSingleQuote() {
+        YNestedA a = Marshallable.fromString("!YNestedA {\n" +
+                "  b: !YNestedB,\n" +
+                "  value: 12345\n" +
+                "}");
+        assertNotNull(a);
+    }
+
+test_after_fix:
+
+code:
+public void testSingleQuote() { 
+     ClassAliasPool.CLASS_ALIASES.addAlias(YNestedA.class); 
+     ClassAliasPool.CLASS_ALIASES.addAlias(YNestedB.class); 
+  
+     YNestedA a = Marshallable.fromString("!YNestedA {\n" + 
+             "  b: !YNestedB,\n" + 
+             "  value: 12345\n" + 
+             "}"); 
+     assertNotNull(a); 
+ } 
+ 
+import:
+['import net.openhft.chronicle.wire.Marshallable;\n ']
+pom:
+
+<dependency>
+    <groupId>net.openhft</groupId>
+    <artifactId>chronicle-wire</artifactId>
+    <version>2.20.0</version>
+</dependency>

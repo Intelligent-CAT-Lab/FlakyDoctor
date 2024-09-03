@@ -1,0 +1,44 @@
+test_before_fix:
+    public void bClaimAndRelease() {
+
+        String authenticatedUserId = securityManager.getAuthenticatedUserId();
+        Task claimedTask = taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(currentTaskId).build());
+        assertThat(claimedTask.getAssignee()).isEqualTo(authenticatedUserId);
+        assertThat(claimedTask.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);
+
+        Task releasedTask = taskRuntime.release(TaskPayloadBuilder.release().withTaskId(claimedTask.getId()).build());
+        assertThat(releasedTask.getAssignee()).isNull();
+        assertThat(releasedTask.getStatus()).isEqualTo(Task.TaskStatus.CREATED);
+
+
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void bClaimAndRelease() { 
+  
+     String authenticatedUserId = securityManager.getAuthenticatedUserId(); 
+     currentTaskId = taskRuntime.create(TaskPayloadBuilder.create().withName("testTask").build()).getId(); 
+     if(currentTaskId == null || currentTaskId.isEmpty()) { 
+         Assert.fail("currentTaskId is null or empty"); 
+     } 
+     Task claimedTask = taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(currentTaskId).build()); 
+     Assert.assertEquals(authenticatedUserId, claimedTask.getAssignee()); 
+     Assert.assertEquals(Task.TaskStatus.ASSIGNED, claimedTask.getStatus()); 
+  
+     Task releasedTask = taskRuntime.release(TaskPayloadBuilder.release().withTaskId(claimedTask.getId()).build()); 
+     Assert.assertNull(releasedTask.getAssignee()); 
+     Assert.assertEquals(Task.TaskStatus.CREATED, releasedTask.getStatus()); 
+  
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+
+<!-- No changes needed -->

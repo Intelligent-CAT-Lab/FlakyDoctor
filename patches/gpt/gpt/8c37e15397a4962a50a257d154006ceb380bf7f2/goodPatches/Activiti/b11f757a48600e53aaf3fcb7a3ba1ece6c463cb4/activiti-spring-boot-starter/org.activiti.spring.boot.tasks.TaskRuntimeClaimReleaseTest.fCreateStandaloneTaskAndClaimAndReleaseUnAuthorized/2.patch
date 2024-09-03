@@ -1,0 +1,20 @@
+test_before_fix:
+    public void fCreateStandaloneTaskAndClaimAndReleaseUnAuthorized() {
+        // UnAuthorized release, task is assigned not to you and hence not visible anymore
+        taskRuntime.release(TaskPayloadBuilder.release().withTaskId(currentTaskId).build());
+
+    }
+
+test_after_fix:
+
+code:
+public void fCreateStandaloneTaskAndClaimAndReleaseUnAuthorized() { 
+         String currentTaskId = "someTaskId"; // replace with actual task id 
+         taskRuntime.release(TaskPayloadBuilder.release().withTaskId(currentTaskId).build()); 
+     } 
+ 
+import:
+[]
+pom:
+
+<!-- No changes needed -->

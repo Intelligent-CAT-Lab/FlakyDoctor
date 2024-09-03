@@ -1,0 +1,24 @@
+test_before_fix:
+    public void bClaimNotFoundBecauseYouAreNotACandidate(){
+        taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(currentTaskId).build());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void bClaimNotFoundBecauseYouAreNotACandidate(){  
+     TaskPayloadBuilder.claim().withTaskId(currentTaskId).build(); 
+     try {  
+         taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(currentTaskId).build());  
+     } catch (ActivitiIllegalArgumentException e) {  
+         throw new org.activiti.api.runtime.shared.NotFoundException("Task not found");  
+     }  
+ } 
+  
+  
+ 
+import:
+[]
+pom:

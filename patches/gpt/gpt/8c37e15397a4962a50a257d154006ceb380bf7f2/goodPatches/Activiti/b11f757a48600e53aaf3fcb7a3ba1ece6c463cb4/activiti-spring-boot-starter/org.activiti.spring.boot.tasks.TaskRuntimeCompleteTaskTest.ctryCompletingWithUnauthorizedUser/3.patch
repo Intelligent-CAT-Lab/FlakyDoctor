@@ -1,0 +1,22 @@
+test_before_fix:
+    public void ctryCompletingWithUnauthorizedUser() {
+        taskRuntime.complete(TaskPayloadBuilder.complete().withTaskId(currentTaskId).build());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void ctryCompletingWithUnauthorizedUser() { 
+     String currentTaskId = "someTaskId"; // replace "someTaskId" with the actual task id 
+     if (currentTaskId != null && !currentTaskId.isEmpty()) { 
+         taskRuntime.complete(TaskPayloadBuilder.complete().withTaskId(currentTaskId).build()); 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:
