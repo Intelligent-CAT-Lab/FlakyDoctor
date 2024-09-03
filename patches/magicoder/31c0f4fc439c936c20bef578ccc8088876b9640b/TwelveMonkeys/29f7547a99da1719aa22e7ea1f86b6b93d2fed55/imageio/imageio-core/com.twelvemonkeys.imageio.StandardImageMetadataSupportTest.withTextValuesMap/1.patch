@@ -1,0 +1,93 @@
+Test File Path: projects/29f7547a99da1719aa22e7ea1f86b6b93d2fed55/TwelveMonkeys/imageio/imageio-core/src/test/java/com/twelvemonkeys/imageio/StandardImageMetadataSupportTest.java
+
+    Original Test Method:
+     public void withTextValuesMap() {
+        Map<String, String> entries = new HashMap<>();
+        entries.put("foo", "bar");
+        entries.put("bar", "xyzzy");
+
+        StandardImageMetadataSupport metadata = (StandardImageMetadataSupport) builder(ImageTypeSpecifiers.createFromBufferedImageType(BufferedImage.TYPE_BYTE_GRAY))
+                .withTextEntries(entries)
+                .build();
+
+        IIOMetadataNode textNode = metadata.getStandardTextNode();
+        assertNotNull(textNode);
+
+        NodeList textEntries = textNode.getElementsByTagName("TextEntry");
+        assertEquals(entries.size(), textEntries.getLength());
+
+        int i = 0;
+        for (Entry<String, String> entry : entries.entrySet()) {
+            IIOMetadataNode textEntry = (IIOMetadataNode) textEntries.item(i);
+            assertEquals(entry.getKey(), textEntry.getAttribute("keyword"));
+            assertEquals(entry.getValue(), textEntry.getAttribute("value"));
+
+            i++;
+        }
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+        public void withTextValuesMap() {
+            Map<String, String> entries = new LinkedHashMap<>();
+            entries.put("foo", "bar");
+            entries.put("bar", "xyzzy");
+
+            StandardImageMetadataSupport metadata = (StandardImageMetadataSupport) builder(ImageTypeSpecifiers.createFromBufferedImageType(BufferedImage.TYPE_BYTE_GRAY))
+                    .withTextEntries(entries)
+                    .build();
+
+            IIOMetadataNode textNode = metadata.getStandardTextNode();
+            assertNotNull(textNode);
+
+            NodeList textEntries = textNode.getElementsByTagName("TextEntry");
+            assertEquals(entries.size(), textEntries.getLength());
+
+            int i = 0;
+            for (Entry<String, String> entry : entries.entrySet()) {
+                IIOMetadataNode textEntry = (IIOMetadataNode) textEntries.item(i);
+                assertEquals(entry.getKey(), textEntry.getAttribute("keyword"));
+                assertEquals(entry.getValue(), textEntry.getAttribute("value"));
+
+                i++;
+            }
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None
+Patch before Stitching:
+
+test_code:
+        public void withTextValuesMap() {
+            Map<String, String> entries = new LinkedHashMap<>();
+            entries.put("foo", "bar");
+            entries.put("bar", "xyzzy");
+
+            StandardImageMetadataSupport metadata = (StandardImageMetadataSupport) builder(ImageTypeSpecifiers.createFromBufferedImageType(BufferedImage.TYPE_BYTE_GRAY))
+                    .withTextEntries(entries)
+                    .build();
+
+            IIOMetadataNode textNode = metadata.getStandardTextNode();
+            assertNotNull(textNode);
+
+            NodeList textEntries = textNode.getElementsByTagName("TextEntry");
+            assertEquals(entries.size(), textEntries.getLength());
+
+            int i = 0;
+            for (Entry<String, String> entry : entries.entrySet()) {
+                IIOMetadataNode textEntry = (IIOMetadataNode) textEntries.item(i);
+                assertEquals(entry.getKey(), textEntry.getAttribute("keyword"));
+                assertEquals(entry.getValue(), textEntry.getAttribute("value"));
+
+                i++;
+            }
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None

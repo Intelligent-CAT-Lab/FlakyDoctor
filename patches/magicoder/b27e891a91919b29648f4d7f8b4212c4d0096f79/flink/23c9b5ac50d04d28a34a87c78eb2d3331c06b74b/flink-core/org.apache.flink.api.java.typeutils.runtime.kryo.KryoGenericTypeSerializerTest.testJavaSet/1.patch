@@ -1,0 +1,33 @@
+Test File Path: projects/23c9b5ac50d04d28a34a87c78eb2d3331c06b74b/flink/flink-core/src/test/java/org/apache/flink/api/java/typeutils/runtime/kryo/KryoGenericTypeSerializerTest.java
+
+    Original Test Method:
+ 	public void testJavaSet(){
+		Collection<Integer> b = new HashSet<>();
+
+		fillCollection(b);
+
+		runTests(b);
+	}
+
+    
+test_code:
+        public void testJavaSet(){
+            Collection<Integer> b = new LinkedHashSet<>();
+
+            fillCollection(b);
+
+            runTests(b);
+        }
+
+import:
+['import java.util.LinkedHashSet;']
+pom:
+        
+        
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.18.1</version>
+            </dependency>
+        
+        

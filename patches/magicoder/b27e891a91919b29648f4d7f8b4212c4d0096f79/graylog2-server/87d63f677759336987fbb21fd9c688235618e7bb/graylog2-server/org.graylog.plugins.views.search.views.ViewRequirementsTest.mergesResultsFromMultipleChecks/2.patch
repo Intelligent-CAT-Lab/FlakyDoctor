@@ -1,0 +1,41 @@
+Test File Path: projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog/plugins/views/search/views/ViewRequirementsTest.java
+
+    Original Test Method:
+     public void mergesResultsFromMultipleChecks() {
+        final Map<String, PluginMetadataSummary> result = new ViewRequirements(
+                ImmutableSet.of(
+                        view -> Collections.singletonMap("aioverlord", plugin),
+                        view -> Collections.emptyMap(),
+                        view -> Collections.singletonMap("parameters", new EnterpriseMetadataSummary())
+                ),
+                view
+        );
+
+        assertThat(result).containsExactly(
+                Maps.immutableEntry("aioverlord", plugin),
+                Maps.immutableEntry("parameters", new EnterpriseMetadataSummary())
+        );
+    }
+
+    
+test_code:
+        public void mergesResultsFromMultipleChecks() {
+            final Map<String, PluginMetadataSummary> result = new ViewRequirements(
+                    ImmutableSet.of(
+                            view -> Collections.singletonMap("aioverlord", plugin),
+                            view -> Collections.emptyMap(),
+                            view -> Collections.singletonMap("parameters", new EnterpriseMetadataSummary())
+                    ),
+                    view
+            );
+
+            assertThat(result.entrySet()).containsExactlyInAnyOrder(
+                    Maps.immutableEntry("aioverlord", plugin),
+                    Maps.immutableEntry("parameters", new EnterpriseMetadataSummary())
+            );
+        }
+
+import:
+[]
+pom:
+None

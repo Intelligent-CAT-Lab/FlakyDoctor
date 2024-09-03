@@ -1,0 +1,57 @@
+Test File Path: projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog/plugins/views/search/views/ViewRequirementsTest.java
+
+    Original Test Method:
+     public void mergesMultipleResultsFromMultipleChecksWithConflictingKeys() {
+        final Map<String, PluginMetadataSummary> result = new ViewRequirements(
+                ImmutableSet.of(
+                        view -> ImmutableMap.of(
+                                "parameters", plugin,
+                                "aioverlord", plugin
+                        ),
+                        view -> Collections.emptyMap(),
+                        view -> ImmutableMap.of(
+                                "parameters", new EnterpriseMetadataSummary(),
+                                "aioverlord", new EnterpriseMetadataSummary()
+                        )
+                ),
+                view
+        );
+
+        assertThat(result).containsExactly(
+                Maps.immutableEntry("aioverlord", plugin),
+                Maps.immutableEntry("parameters", plugin)
+        );
+    }
+
+    
+test_code:
+            public void mergesMultipleResultsFromMultipleChecksWithConflictingKeys() {
+                final Map<String, PluginMetadataSummary> result = new ViewRequirements(
+                        ImmutableSet.of(
+                                view -> ImmutableMap.of(
+                                        "parameters", plugin,
+                                        "aioverlord", plugin
+                                ),
+                                view -> Collections.emptyMap(),
+                                view -> ImmutableMap.of(
+                                        "parameters", new EnterpriseMetadataSummary(),
+                                        "aioverlord", new EnterpriseMetadataSummary()
+                                )
+                        ),
+                        view
+                );
+
+                // Convert the map to a list and sort it
+                List<Map.Entry<String, PluginMetadataSummary>> sortedResult = new ArrayList<>(result.entrySet());
+                sortedResult.sort(Map.Entry.comparingByKey());
+
+                assertThat(sortedResult).containsExactly(
+                        Maps.immutableEntry("aioverlord", plugin),
+                        Maps.immutableEntry("parameters", plugin)
+                );
+            }
+
+import:
+['import java.util.*;']
+pom:
+None

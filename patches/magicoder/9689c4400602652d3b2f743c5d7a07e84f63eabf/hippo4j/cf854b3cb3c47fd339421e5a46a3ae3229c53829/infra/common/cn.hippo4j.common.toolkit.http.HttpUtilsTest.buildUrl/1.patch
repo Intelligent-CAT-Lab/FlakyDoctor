@@ -1,0 +1,27 @@
+Test File Path: projects/cf854b3cb3c47fd339421e5a46a3ae3229c53829/hippo4j/infra/common/src/test/java/cn/hippo4j/common/toolkit/http/HttpUtilsTest.java
+
+    Original Test Method:
+     public void buildUrl() {
+        Map<String, String> map = new HashMap<>();
+        map.put(password, passwordValue);
+        map.put(username, usernameValue);
+        String s = HttpUtil.buildUrl(url + PORT, map);
+        Assert.assertEquals(url + PORT + suffix, s);
+    }
+
+    
+test_code:
+        public void buildUrl() {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put(password, passwordValue);
+            map.put(username, usernameValue);
+            String s = HttpUtil.buildUrl(url + PORT, map);
+            Assert.assertEquals(url + PORT + suffix, s);
+        }
+
+import:
+['import java.util.LinkedHashMap;']
+pom:
+        
+        <!-- no dependencies needed -->
+        

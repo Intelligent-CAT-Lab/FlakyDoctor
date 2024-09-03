@@ -1,0 +1,35 @@
+Test File Path: projects/d7873514c1705575c642ed99d2fa501f9b319790/common-kafka/common-kafka/src/test/java/com/cerner/common/kafka/consumer/ProcessingKafkaConsumerTest.java
+
+    Original Test Method:
+     public void rebalanceListener_onPartitionsAssigned() {
+        long rebalanceCount = ProcessingKafkaConsumer.REBALANCE_COUNTER.count();
+        TopicPartition newPartition = new TopicPartition("new-topic", 0);
+        when(consumer.committed(newPartition)).thenReturn(new OffsetAndMetadata(0L));
+        processingConsumer.rebalanceListener.onPartitionsAssigned(Arrays.asList(topicPartition, newPartition));
+        assertThat(processingConsumer.partitions.keySet(), contains(newPartition, topicPartition));
+        assertThat(ProcessingKafkaConsumer.REBALANCE_COUNTER.count(), is(rebalanceCount + 1));
+    }
+
+    
+test_code:
+            public void rebalanceListener_onPartitionsAssigned() {
+                long rebalanceCount = ProcessingKafkaConsumer.REBALANCE_COUNTER.count();
+                TopicPartition newPartition = new TopicPartition("new-topic", 0);
+                when(consumer.committed(newPartition)).thenReturn(new OffsetAndMetadata(0L));
+                processingConsumer.rebalanceListener.onPartitionsAssigned(Arrays.asList(topicPartition, newPartition));
+                assertThat(processingConsumer.partitions.keySet(), containsInAnyOrder(newPartition, topicPartition));
+                assertThat(ProcessingKafkaConsumer.REBALANCE_COUNTER.count(), is(rebalanceCount + 1));
+            }
+
+import:
+['import org.mockito.Mockito;', 'import static org.hamcrest.Matchers.containsInAnyOrder;']
+pom:
+        
+        
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>3.11.2</version>
+            </dependency>
+        
+        

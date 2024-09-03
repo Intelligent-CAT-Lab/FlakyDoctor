@@ -1,0 +1,26 @@
+Test File Path: projects/87a88b3e9fcd67f22577a5b549e25f8224b4a0c8/captivate-prime-aem-components/core/src/test/java/com/adobe/prime/core/sightly/models/EmbeddableWidgetModelTest.java
+
+    Original Test Method:
+   void testWidgetConfigs()
+  {
+    String expectedConfigs =
+        "{\"widgetRefSelected\":\"com.adobe.captivateprime.lostrip.trending\",\"auth\":{\"accessToken\":\"123456\"},\"type\":\"acapConfig\",\"widgetConfig\":{\"widgetRef\":\"com.adobe.captivateprime.lostrip.trending\"}}";
+    String configs = widgetModel.getWidgetConfigs();
+    assertTrue(expectedConfigs.equals(configs));
+  }
+
+    
+test_code:
+            public void testWidgetConfigs() throws Exception {
+                String expectedConfigs =
+                    "{\"widgetRefSelected\":\"com.adobe.captivateprime.lostrip.trending\",\"auth\":{\"accessToken\":\"123456\"},\"type\":\"acapConfig\",\"widgetConfig\":{\"widgetRef\":\"com.adobe.captivateprime.lostrip.trending\"}}";
+                String configs = widgetModel.getWidgetConfigs();
+                
+                ObjectMapper mapper = new ObjectMapper();
+                assertThat(mapper.readTree(configs)).isEqualTo(mapper.readTree(expectedConfigs));
+            }
+
+import:
+[]
+pom:
+None

@@ -1,0 +1,37 @@
+Test File Path: projects/76813bc18a2513d6797794721d0bcf72dcc4ab22/servicecomb-java-chassis/foundations/foundation-vertx/src/test/java/org/apache/servicecomb/foundation/vertx/http/TestAbstractHttpServletRequest.java
+
+    Original Test Method:
+   public void testAttribute() {
+    String key = "a1";
+    String value = "abc";
+    request.setAttribute(key, value);
+    Assertions.assertSame(value, request.getAttribute(key));
+    MatcherAssert.assertThat(Collections.list(request.getAttributeNames()), Matchers.contains(key));
+
+    request.setAttribute("a2", "v");
+    MatcherAssert.assertThat(Collections.list(request.getAttributeNames()), Matchers.contains(key, "a2"));
+
+    request.removeAttribute(key);
+    Assertions.assertNull(request.getAttribute(key));
+  }
+
+    
+test_code:
+        public void testAttribute() {
+            String key = "a1";
+            String value = "abc";
+            request.setAttribute(key, value);
+            Assertions.assertSame(value, request.getAttribute(key));
+            MatcherAssert.assertThat(new LinkedHashSet<>(Collections.list(request.getAttributeNames())), Matchers.contains(key));
+
+            request.setAttribute("a2", "v");
+            MatcherAssert.assertThat(new LinkedHashSet<>(Collections.list(request.getAttributeNames())), Matchers.containsInAnyOrder("a1", "a2"));
+
+            request.removeAttribute(key);
+            Assertions.assertNull(request.getAttribute(key));
+        }
+
+import:
+[]
+pom:
+None

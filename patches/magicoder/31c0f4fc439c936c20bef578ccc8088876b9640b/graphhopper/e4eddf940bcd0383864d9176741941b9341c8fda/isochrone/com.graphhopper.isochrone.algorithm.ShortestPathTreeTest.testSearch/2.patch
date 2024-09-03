@@ -1,0 +1,53 @@
+Test File Path: projects/e4eddf940bcd0383864d9176741941b9341c8fda/graphhopper/isochrone/src/test/java/com/graphhopper/isochrone/algorithm/ShortestPathTreeTest.java
+
+    Original Test Method:
+     public void testSearch() {
+        initDirectedAndDiffSpeed(graph);
+        PMap pMap = new PMap();
+        ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+        // limit to certain seconds
+        instance.setTimeLimit(60);
+        List<Set<Integer>> res = searchFromNode0Into5Buckets(instance);
+        assertEquals("[[0, 4], [6], [1, 7], [5], [2, 3]]", res.toString());
+
+        instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+        instance.setTimeLimit(30);
+        res = searchFromNode0Into5Buckets(instance);
+        assertEquals("[[0], [4], [], [6], [1, 7]]", res.toString());
+    }
+
+    
+test_code:
+            public void testSearch() {
+                initDirectedAndDiffSpeed(graph);
+                PMap pMap = new PMap();
+                ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+                // limit to certain seconds
+                instance.setTimeLimit(60);
+                List<Set<Integer>> res = searchFromNode0Into5Buckets(instance);
+                // Fix the flakiness
+                List<Set<Integer>> expected = new ArrayList<>();
+                expected.add(new LinkedHashSet<>(Arrays.asList(0, 4)));
+                expected.add(new LinkedHashSet<>(Arrays.asList(6)));
+                expected.add(new LinkedHashSet<>(Arrays.asList(1, 7)));
+                expected.add(new LinkedHashSet<>(Arrays.asList(5)));
+                expected.add(new LinkedHashSet<>(Arrays.asList(2, 3)));
+                assertEquals(expected, res);
+
+                instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+                instance.setTimeLimit(30);
+                res = searchFromNode0Into5Buckets(instance);
+                // Fix the flakiness
+                expected = new ArrayList<>();
+                expected.add(new LinkedHashSet<>(Arrays.asList(0)));
+                expected.add(new LinkedHashSet<>(Arrays.asList(4)));
+                expected.add(new LinkedHashSet<>(Arrays.asList()));
+                expected.add(new LinkedHashSet<>(Arrays.asList(6)));
+                expected.add(new LinkedHashSet<>(Arrays.asList(1, 7)));
+                assertEquals(expected, res);
+            }
+
+import:
+['import java.util.*;']
+pom:
+None

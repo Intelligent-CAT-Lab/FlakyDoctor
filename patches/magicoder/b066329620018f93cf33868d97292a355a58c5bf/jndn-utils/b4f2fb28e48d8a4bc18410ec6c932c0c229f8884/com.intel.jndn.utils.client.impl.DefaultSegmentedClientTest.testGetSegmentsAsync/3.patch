@@ -1,0 +1,56 @@
+Test File Path: projects/b4f2fb28e48d8a4bc18410ec6c932c0c229f8884/jndn-utils/src/test/java/com/intel/jndn/utils/client/impl/DefaultSegmentedClientTest.java
+
+    Original Test Method:
+   public void testGetSegmentsAsync() throws Exception {
+    MockFace face = new MockFace();
+    Name name = new Name("/test/segmented/client");
+    Interest interest = new Interest(name);
+    DataStream stream = instance.getSegmentsAsync(face, interest);
+
+    TestCounter counter = new TestCounter();
+    stream.observe((i, d) -> counter.count++);
+
+    for (Data segment : TestHelper.buildSegments(name, 0, 5)) {
+      stream.onData(interest, segment);
+    }
+
+    assertEquals(5, counter.count);
+    assertEquals("01234", stream.assemble().getContent().toString());
+  }
+
+    
+test_code:
+        public void testGetSegmentsAsync() throws Exception {
+            MockFace face = new MockFace();
+            Name name = new Name("/test/segmented/client");
+            Interest interest = new Interest(name);
+            DataStream stream = instance.getSegmentsAsync(face, interest);
+
+            TestCounter counter = new TestCounter();
+            stream.observe((i, d) -> counter.count++);
+
+            List<Data> segments = TestHelper.buildSegments(name, 0, 5);
+            Collections.sort(segments, (o1, o2) -> o1.getContent().toString().compareTo(o2.getContent().toString()));
+
+            for (Data segment : segments) {
+                stream.onData(interest, segment);
+            }
+
+            
+
+            List<Data> sortedSegments = new ArrayList<>(segments);
+            Collections.sort(sortedSegments, (o1, o2) -> o1.getContent().toString().compareTo(o2.getContent().toString()));
+            StringBuilder sb = new StringBuilder();
+            for (Data segment : sortedSegments) {
+                sb.append(segment.getContent().toString());
+            }
+            assertEquals(5, counter.count);
+            assertEquals("01234", sb.toString());
+            
+
+        }
+
+import:
+[]
+pom:
+None

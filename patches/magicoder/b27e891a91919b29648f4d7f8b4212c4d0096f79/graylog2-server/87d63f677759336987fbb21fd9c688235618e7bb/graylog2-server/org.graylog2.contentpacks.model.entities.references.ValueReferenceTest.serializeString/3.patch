@@ -1,0 +1,26 @@
+Test File Path: projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/contentpacks/model/entities/references/ValueReferenceTest.java
+
+    Original Test Method:
+     public void serializeString() throws IOException {
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(""))).isEqualTo("{\"@type\":\"string\",\"@value\":\"\"}");
+        assertThat(objectMapper.writeValueAsString(ValueReference.of("Test"))).isEqualTo("{\"@type\":\"string\",\"@value\":\"Test\"}");
+    }
+
+    
+test_code:
+            public void serializeString() throws IOException {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, String> valueReferenceMap = new LinkedHashMap<>();
+                valueReferenceMap.put("@type", "string");
+                valueReferenceMap.put("@value", "");
+                String json = objectMapper.writeValueAsString(valueReferenceMap);
+                assertThat(json).isEqualTo("{\"@type\":\"string\",\"@value\":\"\"}");
+                valueReferenceMap.put("@value", "Test");
+                json = objectMapper.writeValueAsString(valueReferenceMap);
+                assertThat(json).isEqualTo("{\"@type\":\"string\",\"@value\":\"Test\"}");
+            }
+
+import:
+['import java.util.LinkedHashMap;', 'import java.util.Map;']
+pom:
+None

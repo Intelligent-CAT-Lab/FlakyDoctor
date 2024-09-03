@@ -1,0 +1,67 @@
+Test File Path: projects/e4b02936cc7d4ff2714e7231db0c4373ba5d48a2/admiral/common/src/test/java/com/vmware/admiral/common/util/JsonMapperTest.java
+
+    Original Test Method:
+     public void testRoundtrip() throws IOException {
+
+        Map<String, String> source = new HashMap<>();
+        source.put(k1, v1);
+        source.put(k2, v2);
+
+        String json = JsonMapper.toJSON(source);
+
+        Assert.assertNotNull(json);
+        Assert.assertEquals(JSON_SOURCE, json);
+
+        Map cloned = JsonMapper.fromJSON(json, Map.class);
+        Assert.assertNotNull(cloned);
+
+        Assert.assertEquals(source, cloned);
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+        public void testRoundtrip() throws IOException {
+            Map<String, String> source = new LinkedHashMap<>();
+            source.put(k1, v1);
+            source.put(k2, v2);
+
+            String json = JsonMapper.toJSON(source);
+
+            Assert.assertNotNull(json);
+            Assert.assertEquals(JSON_SOURCE, json);
+
+            Map cloned = JsonMapper.fromJSON(json, Map.class);
+            Assert.assertNotNull(cloned);
+
+            Assert.assertEquals(source, cloned);
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None
+Patch before Stitching:
+
+test_code:
+        public void testRoundtrip() throws IOException {
+            Map<String, String> source = new LinkedHashMap<>();
+            source.put(k1, v1);
+            source.put(k2, v2);
+
+            String json = JsonMapper.toJSON(source);
+
+            Assert.assertNotNull(json);
+            Assert.assertEquals(JSON_SOURCE, json);
+
+            Map cloned = JsonMapper.fromJSON(json, Map.class);
+            Assert.assertNotNull(cloned);
+
+            Assert.assertEquals(source, cloned);
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None

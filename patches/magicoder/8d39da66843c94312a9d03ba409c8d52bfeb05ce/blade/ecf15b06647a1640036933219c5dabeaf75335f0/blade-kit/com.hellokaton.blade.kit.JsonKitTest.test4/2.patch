@@ -1,0 +1,42 @@
+Test File Path: projects/ecf15b06647a1640036933219c5dabeaf75335f0/blade/blade-kit/src/test/java/com/hellokaton/blade/kit/JsonKitTest.java
+
+    Original Test Method:
+     public void test4() {
+        ChildBean childBean = new ChildBean();
+        childBean.setSuperField("super");
+        childBean.setChildField("child");
+        childBean.setRepeatField("sss");
+        String json = JsonKit.toString(childBean);
+
+        Assert.assertEquals("{\"repeatField\":\"sss\",\"childField\":\"child\",\"superField\":\"super\"}", json);
+
+        ChildBean formJson = JsonKit.fromJson(json, ChildBean.class);
+
+        Assert.assertEquals(formJson, childBean);
+    }
+
+    
+test_code:
+            public void test4() {
+                ChildBean childBean = new ChildBean();
+                childBean.setSuperField("super");
+                childBean.setChildField("child");
+                childBean.setRepeatField("sss");
+                String json = JsonKit.toString(childBean);
+
+                // Use JsonParser to parse the JSON string and compare the elements
+                JsonParser parser = new JsonParser();
+                JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+                Assert.assertEquals("sss", jsonObject.get("repeatField").getAsString());
+                Assert.assertEquals("child", jsonObject.get("childField").getAsString());
+                Assert.assertEquals("super", jsonObject.get("superField").getAsString());
+
+                ChildBean formJson = JsonKit.fromJson(json, ChildBean.class);
+
+                Assert.assertEquals(formJson, childBean);
+            }
+
+import:
+['import com.google.gson.JsonObject;', 'import com.google.gson.JsonParser;']
+pom:
+None

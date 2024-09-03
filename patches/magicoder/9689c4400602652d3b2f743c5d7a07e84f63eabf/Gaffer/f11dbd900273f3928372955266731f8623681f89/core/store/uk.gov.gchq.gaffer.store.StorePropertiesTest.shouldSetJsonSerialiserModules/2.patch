@@ -1,0 +1,49 @@
+Test File Path: projects/f11dbd900273f3928372955266731f8623681f89/Gaffer/core/store/src/test/java/uk/gov/gchq/gaffer/store/StorePropertiesTest.java
+
+    Original Test Method:
+     public void shouldSetJsonSerialiserModules() {
+        // Given
+        final StoreProperties props = createStoreProperties();
+        final Set<Class<? extends JSONSerialiserModules>> modules = Sets.newHashSet(
+                TestCustomJsonModules1.class,
+                TestCustomJsonModules2.class
+        );
+
+        // When
+        props.setJsonSerialiserModules(modules);
+
+        // Then
+        final String expected = TestCustomJsonModules1.class.getName() + "," + TestCustomJsonModules2.class.getName();
+        assertEquals(expected, props.getJsonSerialiserModules());
+    }
+
+    
+test_code:
+        public void shouldSetJsonSerialiserModules() {
+            // Given
+            final StoreProperties props = createStoreProperties();
+            final Set<Class<? extends JSONSerialiserModules>> modules = Sets.newHashSet(
+                    TestCustomJsonModules1.class,
+                    TestCustomJsonModules2.class
+            );
+
+            // When
+            props.setJsonSerialiserModules(modules);
+
+            // Then
+            final String expected = modules.stream()
+                    .map(Class::getName)
+                    .sorted()
+                    .collect(Collectors.joining(","));
+            final String actual = props.getJsonSerialiserModules();
+            final String[] expectedArray = expected.split(",");
+            final String[] actualArray = actual.split(",");
+            Arrays.sort(expectedArray);
+            Arrays.sort(actualArray);
+            Assertions.assertThat(expectedArray).isEqualTo(actualArray);
+        }
+
+import:
+['import java.util.*;', 'import java.util.stream.Collectors;', 'import org.assertj.core.api.Assertions;']
+pom:
+None

@@ -1,0 +1,48 @@
+Test File Path: projects/07dfaed697427e208d65049f80a5d1949833b7cd/dropwizard/dropwizard-e2e/src/test/java/com/example/app1/App1Test.java
+
+    Original Test Method:
+     public void customJsonProvider() {
+        final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+        final String response = client.target(url)
+            .request()
+            .post(Entity.json("/** A Dropwizard specialty */\n{\"check\": \"mate\"}"), String.class);
+        assertThat(response).isEqualTo("/** A Dropwizard specialty */\n" +
+            "{\"check\":\"mate\",\"hello\":\"world\"}");
+    }
+
+    
+test_code:
+        public void customJsonProvider() {
+            final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+            final String response = client.target(url)
+                .request()
+                .post(Entity.json("/** A Dropwizard specialty */\n{\"check\": \"mate\"}"), String.class);
+            
+
+            // Convert the response to a JSON object
+            JsonParser parser = new JsonParser();
+            JsonObject jsonObject = parser.parse(response).getAsJsonObject();
+            
+            // Create a new JSON object with the expected values in the same order
+            JsonObject expectedJsonObject = new JsonObject();
+            expectedJsonObject.addProperty("check", "mate");
+            expectedJsonObject.addProperty("hello", "world");
+            
+            // Compare the two JSON objects
+            assertThat(jsonObject).isEqualTo(expectedJsonObject);
+            
+
+        }
+
+import:
+['import com.google.gson.JsonObject;', 'import com.google.gson.JsonParser;']
+pom:
+        
+        
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.8.6</version>
+            </dependency>
+        
+        

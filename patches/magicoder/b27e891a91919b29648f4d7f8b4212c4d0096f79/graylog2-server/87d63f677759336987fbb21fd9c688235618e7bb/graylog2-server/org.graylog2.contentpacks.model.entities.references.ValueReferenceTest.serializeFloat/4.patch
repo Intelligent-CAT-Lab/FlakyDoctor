@@ -1,0 +1,25 @@
+Test File Path: projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/contentpacks/model/entities/references/ValueReferenceTest.java
+
+    Original Test Method:
+     public void serializeFloat() throws IOException {
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(1.0f))).isEqualTo("{\"@type\":\"float\",\"@value\":1.0}");
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(42.4f))).isEqualTo("{\"@type\":\"float\",\"@value\":42.4}");
+    }
+
+    
+test_code:
+            public void serializeFloat() throws IOException {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, Object> valueReference = new LinkedHashMap<>();
+                valueReference.put("@type", "float");
+                valueReference.put("@value", 1.0f);
+                assertThat(objectMapper.writeValueAsString(valueReference)).isEqualTo("{\"@type\":\"float\",\"@value\":1.0}");
+
+                valueReference.put("@value", 42.4f);
+                assertThat(objectMapper.writeValueAsString(valueReference)).isEqualTo("{\"@type\":\"float\",\"@value\":42.4}");
+            }
+
+import:
+['import java.util.LinkedHashMap;', 'import java.util.Map;']
+pom:
+None

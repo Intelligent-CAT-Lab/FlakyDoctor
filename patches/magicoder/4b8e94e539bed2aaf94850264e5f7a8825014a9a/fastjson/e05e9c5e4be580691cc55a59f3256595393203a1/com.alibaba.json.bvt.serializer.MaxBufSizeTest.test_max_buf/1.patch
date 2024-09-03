@@ -1,0 +1,74 @@
+Test File Path: od_projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/serializer/MaxBufSizeTest.java
+od_projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/serializer/SerializeWriterTest_14.java
+
+    Original Polluter Method:
+     public void test_writer_2() throws Exception {
+        StringWriter strOut = new StringWriter();
+        SerializeWriter out = new SerializeWriter(strOut, 1);
+
+        try {
+            JSONSerializer serializer = new JSONSerializer(out);
+
+            Map map = Collections.singletonMap("ab", "a");
+            serializer.write(map);
+        } finally {
+            out.close();
+        }
+        Assert.assertEquals("{ab:\"a\"}", strOut.toString());
+    }
+ 
+
+    Original Victim Method:
+     public void test_max_buf() throws Exception {
+        SerializeWriter writer = new SerializeWriter();
+
+        Throwable error = null;
+        try {
+            writer.setMaxBufSize(1);
+        } catch (JSONException e) {
+            error = e;
+        }
+        assertNotNull(error);
+    }
+ 
+
+    
+victim_test_code:
+        public void test_max_buf() throws Exception {
+            SerializeWriter writer = new SerializeWriter();
+
+            try {
+                writer.setMaxBufSize(1);
+            } catch (JSONException e) {
+                fail("Unexpected JSONException: " + e.getMessage());
+            }
+        }
+
+polluter_test_code:
+        public void test_writer_2() throws Exception {
+            StringWriter strOut = new StringWriter();
+            SerializeWriter out = new SerializeWriter(strOut, 1);
+
+            try {
+                JSONSerializer serializer = new JSONSerializer(out);
+
+                Map map = Collections.singletonMap("ab", "a");
+                serializer.write(map);
+            } finally {
+                out.close();
+            }
+            Assert.assertEquals("{ab:\"a\"}", strOut.toString());
+        }
+
+import:
+['import org.json.*;', 'import java.io.*;', 'import java.util.*;']
+pom:
+        
+        
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>20200518</version>
+            </dependency>
+        
+        

@@ -1,0 +1,57 @@
+Test File Path: projects/20de6f7f12319f54eb962ff6e8357b3f5695d54d/wikidata-toolkit/wdtk-dumpfiles/src/test/java/org/wikidata/wdtk/dumpfiles/MwDumpFileProcessingTest.java
+
+    Original Test Method:
+ 	public void testMwRecentCurrentDumpFileProcessing() throws IOException {
+		Path dmPath = Paths.get(System.getProperty("user.dir"));
+		MockDirectoryManager dm = new MockDirectoryManager(dmPath, true);
+		mockLocalDumpFile("20140420", 4, DumpContentType.DAILY, dm);
+		mockLocalDumpFile("20140419", 3, DumpContentType.DAILY, dm);
+		mockLocalDumpFile("20140418", 2, DumpContentType.DAILY, dm);
+		mockLocalDumpFile("20140417", 1, DumpContentType.DAILY, dm);
+		mockLocalDumpFile("20140418", 2, DumpContentType.CURRENT, dm);
+
+		DumpProcessingController dpc = new DumpProcessingController(
+				"wikidatawiki");
+		dpc.downloadDirectoryManager = dm;
+		dpc.setOfflineMode(true);
+
+		StatisticsMwRevisionProcessor mwrpStats = new StatisticsMwRevisionProcessor(
+				"stats", 2);
+		dpc.registerMwRevisionProcessor(mwrpStats, null, true);
+
+		dpc.processAllRecentRevisionDumps();
+
+		assertEquals(5, mwrpStats.getTotalRevisionCount());
+		assertEquals(1, mwrpStats.getCurrentRevisionCount());
+	}
+
+    
+test_code:
+        public void testMwRecentCurrentDumpFileProcessing() throws IOException {
+            Path dmPath = Paths.get(System.getProperty("user.dir"));
+            MockDirectoryManager dm = new MockDirectoryManager(dmPath, false);
+            mockLocalDumpFile("20140420", 4, DumpContentType.DAILY, dm);
+            mockLocalDumpFile("20140419", 3, DumpContentType.DAILY, dm);
+            mockLocalDumpFile("20140418", 2, DumpContentType.DAILY, dm);
+            mockLocalDumpFile("20140417", 1, DumpContentType.DAILY, dm);
+            mockLocalDumpFile("20140418", 2, DumpContentType.CURRENT, dm);
+
+            DumpProcessingController dpc = new DumpProcessingController(
+                    "wikidatawiki");
+            dpc.downloadDirectoryManager = dm;
+            dpc.setOfflineMode(true);
+
+            StatisticsMwRevisionProcessor mwrpStats = new StatisticsMwRevisionProcessor(
+                    "stats", 2);
+            dpc.registerMwRevisionProcessor(mwrpStats, null, true);
+
+            dpc.processAllRecentRevisionDumps();
+
+            assertEquals(5, mwrpStats.getTotalRevisionCount());
+            assertEquals(1, mwrpStats.getCurrentRevisionCount());
+        }
+
+import:
+[]
+pom:
+        <!-- no dependencies needed -->

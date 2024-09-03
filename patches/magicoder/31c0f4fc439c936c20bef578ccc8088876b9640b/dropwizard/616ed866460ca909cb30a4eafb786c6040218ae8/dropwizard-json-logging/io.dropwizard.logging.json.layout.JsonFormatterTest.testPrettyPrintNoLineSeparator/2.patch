@@ -1,0 +1,28 @@
+Test File Path: projects/616ed866460ca909cb30a4eafb786c6040218ae8/dropwizard/dropwizard-json-logging/src/test/java/io/dropwizard/logging/json/layout/JsonFormatterTest.java
+
+    Original Test Method:
+     public void testPrettyPrintNoLineSeparator() {
+        JsonFormatter formatter = new JsonFormatter(objectMapper, true, false);
+        assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
+                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
+                "  \"name\" : \"Jim\"%n" +
+                "}"));
+    }
+
+    
+test_code:
+        public void testPrettyPrintNoLineSeparator() {
+            JsonFormatter formatter = new JsonFormatter(objectMapper, true, false);
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("name", "Jim");
+            map.put("hobbies", Arrays.asList("Reading", "Biking", "Snorkeling"));
+            Assertions.assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
+                    "  \"name\" : \"Jim\",%n" +
+                    "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ]%n" +
+                    "}"));
+        }
+
+import:
+[]
+pom:
+        <!-- No dependencies needed for this test -->

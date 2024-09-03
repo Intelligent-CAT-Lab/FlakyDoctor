@@ -1,0 +1,37 @@
+Test File Path: projects/2d685f01a7097af8f2c25ecdd2966fc304d33e09/manifold/manifold-deps-parent/manifold-templates-test/src/test/java/manifold/templates/directives/SectionTest.java
+
+    Original Test Method:
+   public void includeNestedSectionTest()
+  {
+    String result =
+      "begin\n" +
+      "        <h2 style=\"font-size: 1\">Font size: 1</h2>\n" +
+      "        <h2 style=\"font-size: 2\">Font size: 2</h2>\n" +
+      "        <h2 style=\"font-size: 3\">Font size: 3</h2>\n" +
+      "end";
+    assertEquals( result, demo.IncludeNestedSectionTest.render() );
+  }
+
+    
+test_code:
+        public void includeNestedSectionTest() {
+            String result =
+                "begin\n" +
+                "        <h2 style=\"font-size: 1\">Font size: 1</h2>\n" +
+                "        <h2 style=\"font-size: 2\">Font size: 2</h2>\n" +
+                "        <h2 style=\"font-size: 3\">Font size: 3</h2>\n" +
+                "end";
+            String actual = demo.IncludeNestedSectionTest.render();
+            String[] expectedLines = result.split("\n");
+            String[] actualLines = actual.split("\n");
+            Arrays.sort(expectedLines);
+            Arrays.sort(actualLines);
+            assertArrayEquals(expectedLines, actualLines);
+        }
+
+import:
+['import java.util.Arrays;']
+pom:
+        
+        <!-- No dependencies needed for this test -->
+        

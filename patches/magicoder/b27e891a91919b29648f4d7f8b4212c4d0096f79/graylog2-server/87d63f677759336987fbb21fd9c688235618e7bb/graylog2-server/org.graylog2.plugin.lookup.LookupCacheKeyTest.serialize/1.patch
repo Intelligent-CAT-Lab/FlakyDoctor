@@ -1,0 +1,31 @@
+Test File Path: projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/plugin/lookup/LookupCacheKeyTest.java
+
+    Original Test Method:
+     public void serialize() {
+        final LookupCacheKey cacheKey = LookupCacheKey.createFromJSON("prefix", "key");
+        final JsonNode node = objectMapper.convertValue(cacheKey, JsonNode.class);
+        assertThat(node.isObject()).isTrue();
+        assertThat(node.fieldNames()).containsExactly("prefix", "key");
+        assertThat(node.path("prefix").isTextual()).isTrue();
+        assertThat(node.path("prefix").asText()).isEqualTo("prefix");
+        assertThat(node.path("key").isTextual()).isTrue();
+        assertThat(node.path("key").asText()).isEqualTo("key");
+    }
+
+    
+test_code:
+        public void serialize() {
+            final LookupCacheKey cacheKey = LookupCacheKey.createFromJSON("prefix", "key");
+            final JsonNode node = objectMapper.convertValue(cacheKey, JsonNode.class);
+            assertThat(node.isObject()).isTrue();
+            assertThat(node.fieldNames()).containsExactlyInAnyOrder("prefix", "key");
+            assertThat(node.path("prefix").isTextual()).isTrue();
+            assertThat(node.path("prefix").asText()).isEqualTo("prefix");
+            assertThat(node.path("key").isTextual()).isTrue();
+            assertThat(node.path("key").asText()).isEqualTo("key");
+        }
+
+import:
+[]
+pom:
+None

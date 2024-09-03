@@ -1,0 +1,136 @@
+Test File Path: projects/78d1d23c015eaf74fda45eff2b816400e41bd651/jackson-datatypes-collections/eclipse-collections/src/test/java/com/fasterxml/jackson/datatype/eclipsecollections/DeserializerTest.java
+
+    Original Test Method:
+     public void primitivePairs() throws Exception {
+        List<Class<?>> types = Arrays.asList(
+                Object.class,
+                boolean.class,
+                byte.class,
+                short.class,
+                char.class,
+                int.class,
+                float.class,
+                long.class,
+                double.class);
+
+        for (Class<?> oneType : types) {
+            for (Class<?> twoType : types) {
+                Class<?> pairClass;
+                Method factory;
+                if (oneType == Object.class && twoType == Object.class) {
+                    pairClass = Pair.class;
+                    factory = Tuples.class.getMethod("pair", Object.class, Object.class);
+                } else {
+                    pairClass = Class.forName("org.eclipse.collections.api.tuple.primitive." +
+                                              capitalize(oneType.getSimpleName()) +
+                                              capitalize(twoType.getSimpleName()) +
+                                              "Pair");
+                    factory = PrimitiveTuples.class.getMethod("pair", oneType, twoType);
+                }
+
+                Object sampleOne = randomSample(oneType);
+                Object sampleTwo = randomSample(twoType);
+
+                JavaType pairType;
+                // possibly generify with the sample type
+                if (oneType == Object.class) {
+                    if (twoType == Object.class) {
+                        pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                pairClass, sampleOne.getClass(), sampleTwo.getClass());
+                    } else {
+                        pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                pairClass, sampleOne.getClass());
+                    }
+                } else {
+                    if (twoType == Object.class) {
+                        pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                pairClass, sampleTwo.getClass());
+                    } else {
+                        pairType = mapperWithModule().constructType(pairClass);
+                    }
+                }
+
+                String expectedJson = "{\"one\":" + mapperWithModule().writeValueAsString(sampleOne)
+                                      + ",\"two\":" + mapperWithModule().writeValueAsString(sampleTwo) + "}";
+                Object samplePair = factory.invoke(null, sampleOne, sampleTwo);
+
+                Assert.assertEquals(expectedJson, mapperWithModule().writeValueAsString(samplePair));
+                Assert.assertEquals(samplePair, mapperWithModule().readValue(expectedJson, pairType));
+            }
+        }
+    }
+
+    
+test_code:
+        public void primitivePairs() throws Exception {
+            List<Class<?>> types = Arrays.asList(
+                    Object.class,
+                    boolean.class,
+                    byte.class,
+                    short.class,
+                    char.class,
+                    int.class,
+                    float.class,
+                    long.class,
+                    double.class);
+
+            for (Class<?> oneType : types) {
+                for (Class<?> twoType : types) {
+                    Class<?> pairClass;
+                    Method factory;
+                    if (oneType == Object.class && twoType == Object.class) {
+                        pairClass = Pair.class;
+                        factory = Tuples.class.getMethod("pair", Object.class, Object.class);
+                    } else {
+                        pairClass = Class.forName("org.eclipse.collections.api.tuple.primitive." +
+                                                  capitalize(oneType.getSimpleName()) +
+                                                  capitalize(twoType.getSimpleName()) +
+                                                  "Pair");
+                        factory = PrimitiveTuples.class.getMethod("pair", oneType, twoType);
+                    }
+
+                    Object sampleOne = randomSample(oneType);
+                    Object sampleTwo = randomSample(twoType);
+
+                    JavaType pairType;
+                    // possibly generify with the sample type
+                    if (oneType == Object.class) {
+                        if (twoType == Object.class) {
+                            pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                    pairClass, sampleOne.getClass(), sampleTwo.getClass());
+                        } else {
+                            pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                    pairClass, sampleOne.getClass());
+                        }
+                    } else {
+                        if (twoType == Object.class) {
+                            pairType = mapperWithModule().getTypeFactory().constructParametricType(
+                                    pairClass, sampleTwo.getClass());
+                        } else {
+                            pairType = mapperWithModule().constructType(pairClass);
+                        }
+                    }
+
+                    String expectedJson = "{\"one\":" + mapperWithModule().writeValueAsString(sampleOne)
+                                          + ",\"two\":" + mapperWithModule().writeValueAsString(sampleTwo) + "}";
+                    Object samplePair = factory.invoke(null, sampleOne, sampleTwo);
+
+                    // Use the same order for expected and actual JSON to avoid flakiness
+                    String actualJson = mapperWithModule().writeValueAsString(samplePair);
+                    String[] expectedParts = expectedJson.substring(1, expectedJson.length() - 1).split(",");
+                    String[] actualParts = actualJson.substring(1, actualJson.length() - 1).split(",");
+                    Arrays.sort(expectedParts);
+                    Arrays.sort(actualParts);
+                    expectedJson = "{" + String.join(",", expectedParts) + "}";
+                    actualJson = "{" + String.join(",", actualParts) + "}";
+
+                    Assert.assertEquals(expectedJson, actualJson);
+                    Assert.assertEquals(samplePair, mapperWithModule().readValue(expectedJson, pairType));
+                }
+            }
+        }
+
+import:
+[]
+pom:
+None

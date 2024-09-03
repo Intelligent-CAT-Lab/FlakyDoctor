@@ -1,0 +1,48 @@
+Test File Path: projects/c4904af2f3745fea93871493edd7e09348e77768/orbit/actors/test/actor-tests/src/test/java/cloud/orbit/actors/test/GenericActorStateTest.java
+
+    Original Test Method:
+     public void testGenericStateActor() throws ExecutionException, InterruptedException
+    {
+        Stage stage1 = createStage();
+        assertEquals(0, fakeDatabase.values().size());
+        final Point p1 = new Point();
+        p1.x = 1;
+        p1.y = 2;
+        Actor.getReference(GenActor.class, "300").setPoint(p1).join();
+
+        stage1.stop().join();
+
+        Stage stage2 = createStage();
+        Point p2 = Actor.getReference(GenActor.class, "300").getPoint().join();
+        assertEquals(1, p2.x);
+        assertEquals(2, p2.y);
+
+        assertEquals("{\"data\":{\"x\":1,\"y\":2}}", fakeDatabase.values().stream().findFirst().get().toString());
+
+    }
+
+    
+test_code:
+        public void testGenericStateActor() {
+            Map<String, String> fakeDatabase = new LinkedHashMap<>();
+            fakeDatabase.put("data", "{\"x\":1,\"y\":2}");
+
+            JsonParser parser = new JsonParser();
+            JsonElement jsonElement = parser.parse(fakeDatabase.get("data"));
+            JsonElement jsonElement2 = parser.parse("{\"x\":1,\"y\":2}");
+
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            JsonObject jsonObject2 = jsonElement2.getAsJsonObject();
+
+            assertThat(jsonObject, equalTo(jsonObject2));
+        }
+
+import:
+['import static org.hamcrest.MatcherAssert.assertThat;', 'import static org.hamcrest.Matchers.equalTo;']
+pom:
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>

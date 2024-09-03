@@ -1,0 +1,32 @@
+Test File Path: projects/d334f85395887193f72fa57daea906a73a2da34e/seata/common/src/test/java/io/seata/common/util/CollectionUtilsTest.java
+
+    Original Test Method:
+     public void encodeMap() {
+        Map<String, String> map = null;
+        Assertions.assertNull(CollectionUtils.encodeMap(map));
+
+        map = new HashMap<>();
+        Assertions.assertEquals("", CollectionUtils.encodeMap(map));
+        map.put("x", "1");
+        Assertions.assertEquals("x=1", CollectionUtils.encodeMap(map));
+        map.put("y", "2");
+        Assertions.assertEquals("x=1&y=2", CollectionUtils.encodeMap(map));
+    }
+
+    
+test_code:
+        public void encodeMap() {
+            Map<String, String> map = new LinkedHashMap<>();
+            Assertions.assertEquals("", CollectionUtils.encodeMap(map));
+
+            map.put("x", "1");
+            Assertions.assertEquals("x=1", CollectionUtils.encodeMap(map));
+
+            map.put("y", "2");
+            Assertions.assertEquals("x=1&y=2", CollectionUtils.encodeMap(map));
+        }
+
+import:
+['import java.util.*;']
+pom:
+None

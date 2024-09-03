@@ -1,0 +1,25 @@
+Test File Path: projects/689f5a36713a1e09edeeb8ecd7a822dbc097d7cd/modelmapper/core/src/test/java/org/modelmapper/internal/converter/ArrayConverterTest.java
+
+    Original Test Method:
+   public void shouldConvertFromSet() {
+    Set<Integer> source = new HashSet<Integer>(Arrays.asList(3, 4, 5));
+    String[] dest = (String[]) convert(source, String[].class);
+    assertEquals(Arrays.asList(dest), Arrays.asList("3", "4", "5"));
+  }
+
+    
+test_code:
+            public void shouldConvertFromSet() {
+                Set<Integer> source = new LinkedHashSet<>(Arrays.asList(3, 4, 5));
+                String[] dest = (String[]) convert(source, String[].class);
+                List<String> destList = Arrays.asList(dest);
+                List<String> expectedList = Arrays.asList("3", "4", "5");
+                Collections.sort(destList);
+                Collections.sort(expectedList);
+                assertEquals(destList, expectedList);
+            }
+
+import:
+['import java.util.*;']
+pom:
+None

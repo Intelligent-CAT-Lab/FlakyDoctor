@@ -1,0 +1,75 @@
+Test File Path: projects/07dfaed697427e208d65049f80a5d1949833b7cd/dropwizard/dropwizard-e2e/src/test/java/com/example/app1/App1Test.java
+
+    Original Test Method:
+     public void customJsonProviderRoundtrip() {
+        final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+        final GenericType<Map<String, String>> typ = new GenericType<Map<String, String>>() {
+        };
+
+        final Map<String, String> response = client.target(url)
+            .request()
+            .post(Entity.json(Collections.singletonMap("check", "mate")), typ);
+        assertThat(response).containsExactly(entry("check", "mate"), entry("hello", "world"));
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+        public void customJsonProviderRoundtrip() {
+            final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+            final GenericType<Map<String, String>> typ = new GenericType<Map<String, String>>() {
+            };
+
+            final Map<String, String> response = client.target(url)
+                .request()
+                .post(Entity.json(Collections.singletonMap("check", "mate")), typ);
+
+            // Sort the response map before comparing
+            Map<String, String> sortedResponse = new LinkedHashMap<>();
+            response.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(x -> sortedResponse.put(x.getKey(), x.getValue()));
+
+            // Sort the expected map before comparing
+            Map<String, String> sortedExpected = new LinkedHashMap<>();
+            sortedExpected.put("check", "mate");
+            sortedExpected.put("hello", "world");
+
+            assertThat(sortedResponse).isEqualTo(sortedExpected);
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None
+Patch before Stitching:
+
+test_code:
+        public void customJsonProviderRoundtrip() {
+            final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+            final GenericType<Map<String, String>> typ = new GenericType<Map<String, String>>() {
+            };
+
+            final Map<String, String> response = client.target(url)
+                .request()
+                .post(Entity.json(Collections.singletonMap("check", "mate")), typ);
+
+            // Sort the response map before comparing
+            Map<String, String> sortedResponse = new LinkedHashMap<>();
+            response.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(x -> sortedResponse.put(x.getKey(), x.getValue()));
+
+            // Sort the expected map before comparing
+            Map<String, String> sortedExpected = new LinkedHashMap<>();
+            sortedExpected.put("check", "mate");
+            sortedExpected.put("hello", "world");
+
+            assertThat(sortedResponse).isEqualTo(sortedExpected);
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None

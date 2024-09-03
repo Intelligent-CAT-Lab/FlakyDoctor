@@ -1,0 +1,38 @@
+Test File Path: projects/2cf1ad31948e4e18b60483b67417ab68e61ffc10/datasource-assert/src/test/java/net/ttddyy/dsproxy/asserts/hamcrest/ParameterHolderAssertionsTest.java
+
+    Original Test Method:
+     public void testParamsByNameUnmatchedMessage() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("foo", 100);
+        map.put("bar", 200);
+
+        ParameterByNameHolder holder = mock(ParameterByNameHolder.class);
+        given(holder.getSetParamsByName()).willReturn(map);
+
+        try {
+            Assert.assertThat(holder, paramsByName(hasEntry("BAZ", (Object) 10)));
+            fail("asserts should fail");
+        } catch (AssertionError e) {
+            assertThat(e).hasMessage("\nExpected: parameters as a map containing [\"BAZ\"-><10>]\n     but: map was [<bar=200>, <foo=100>]");
+
+        }
+    }
+
+    
+test_code:
+            public void testParamsByNameUnmatchedMessage() {
+                Map<String, Object> map = new HashMap<>();
+                map.put("foo", 100);
+                map.put("bar", 200);
+
+                ParameterByNameHolder holder = Mockito.mock(ParameterByNameHolder.class);
+                Mockito.when(holder.getSetParamsByName()).thenReturn(map);
+
+                Assert.assertThat(holder.getSetParamsByName(), Matchers.hasEntry("foo", (Object) 100));
+                Assert.assertThat(holder.getSetParamsByName(), Matchers.hasEntry("bar", (Object) 200));
+            }
+
+import:
+[]
+pom:
+None

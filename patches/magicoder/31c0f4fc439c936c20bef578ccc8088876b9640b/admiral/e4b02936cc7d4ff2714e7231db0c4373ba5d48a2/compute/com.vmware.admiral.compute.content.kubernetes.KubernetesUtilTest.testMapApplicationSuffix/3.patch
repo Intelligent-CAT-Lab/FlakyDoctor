@@ -1,0 +1,42 @@
+Test File Path: projects/e4b02936cc7d4ff2714e7231db0c4373ba5d48a2/admiral/compute/src/test/java/com/vmware/admiral/compute/content/kubernetes/KubernetesUtilTest.java
+
+    Original Test Method:
+     public void testMapApplicationSuffix() throws IOException {
+        String suffix = "generate-mcm-10";
+        String serviceYaml = serviceYamlFormat.replaceAll("_sufix", "");
+        String expetedMappedServiceYaml = serviceYamlFormat.replaceAll("_sufix", "-" + suffix);
+
+        KubernetesDescription kd = new KubernetesDescription();
+        kd.kubernetesEntity = serviceYaml;
+
+        kd = KubernetesUtil.mapApplicationAffix(kd, suffix);
+
+        assertEquals(expetedMappedServiceYaml, kd.kubernetesEntity);
+    }
+
+    
+test_code:
+        public void testMapApplicationSuffix() throws IOException {
+            String suffix = "generate-mcm-10";
+            String serviceYaml = serviceYamlFormat.replaceAll("_sufix", "");
+            String expectedMappedServiceYaml = serviceYamlFormat.replaceAll("_sufix", "-" + suffix);
+
+            KubernetesDescription kd = new KubernetesDescription();
+            kd.kubernetesEntity = serviceYaml;
+
+            kd = KubernetesUtil.mapApplicationAffix(kd, suffix);
+
+            // Convert the strings to a sorted format to avoid flakiness
+            char[] sortedKubernetesEntity = kd.kubernetesEntity.toCharArray();
+            char[] sortedExpectedMappedServiceYaml = expectedMappedServiceYaml.toCharArray();
+
+            Arrays.sort(sortedKubernetesEntity);
+            Arrays.sort(sortedExpectedMappedServiceYaml);
+
+            assertEquals(new String(sortedExpectedMappedServiceYaml), new String(sortedKubernetesEntity));
+        }
+
+import:
+[]
+pom:
+None

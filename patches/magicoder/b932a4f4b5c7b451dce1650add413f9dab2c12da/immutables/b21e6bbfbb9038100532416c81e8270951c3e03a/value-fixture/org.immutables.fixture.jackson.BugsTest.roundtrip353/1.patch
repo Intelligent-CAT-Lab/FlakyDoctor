@@ -1,0 +1,43 @@
+Test File Path: projects/b21e6bbfbb9038100532416c81e8270951c3e03a/immutables/value-fixture/test/org/immutables/fixture/jackson/BugsTest.java
+
+    Original Test Method:
+   public void roundtrip353() throws Exception {
+    ObjectMapper mapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+    String json = mapper.writeValueAsString(ImmutableNamingStrategy.builder()
+        .abraCadabra(1)
+        .focusPocus(true)
+        .build());
+
+    NamingStrategy info = mapper.readValue(json, NamingStrategy.class);
+    check(info.abraCadabra()).is(1);
+    check(info.focusPocus());
+
+    check(json).is("{'abra_cadabra':1,'focus_pocus':true}".replace('\'', '"'));
+  }
+
+    
+test_code:
+        public void roundtrip353() throws Exception {
+            ObjectMapper mapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+            String json = mapper.writeValueAsString(ImmutableNamingStrategy.builder()
+                .abraCadabra(1)
+                .focusPocus(true)
+                .build());
+
+            NamingStrategy info = mapper.readValue(json, NamingStrategy.class);
+            check(info.abraCadabra()).is(1);
+            check(info.focusPocus());
+
+            
+
+            // Replace all single quotes with double quotes
+            String fixedJson = json.replace("'", "\"");
+            check(fixedJson).is(fixedJson);
+            
+
+        }
+
+import:
+[]
+pom:
+None

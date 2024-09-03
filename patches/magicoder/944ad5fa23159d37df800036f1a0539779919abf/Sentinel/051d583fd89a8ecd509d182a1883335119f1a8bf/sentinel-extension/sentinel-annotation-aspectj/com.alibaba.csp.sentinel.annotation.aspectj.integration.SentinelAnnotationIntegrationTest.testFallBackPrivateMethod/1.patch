@@ -1,0 +1,53 @@
+Test File Path: projects/051d583fd89a8ecd509d182a1883335119f1a8bf/Sentinel/sentinel-extension/sentinel-annotation-aspectj/src/test/java/com/alibaba/csp/sentinel/annotation/aspectj/integration/SentinelAnnotationIntegrationTest.java
+
+    Original Test Method:
+     public void testFallBackPrivateMethod() throws Exception {
+        String resourceName = "apiFooWithFallback";
+        ClusterNode cn = ClusterBuilderSlot.getClusterNode(resourceName);
+
+        try {
+            fooService.fooWithPrivateFallback(5758);
+            fail("should not reach here");
+        } catch (Exception ex) {
+            // Should not be traced.
+            assertThat(cn.exceptionQps()).isZero();
+        }
+
+        assertThat(fooService.fooWithPrivateFallback(5763)).isEqualTo("EEE...");
+
+        // Test for blockHandler
+        FlowRuleManager.loadRules(Collections.singletonList(
+                new FlowRule(resourceName).setCount(0)
+        ));
+        assertThat(fooService.fooWithPrivateFallback(2221)).isEqualTo("Oops, 2221");
+    }
+
+    
+test_code:
+        public void testFallBackPrivateMethod() throws Exception {
+            String resourceName = "apiFooWithFallback";
+            ClusterNode cn = ClusterBuilderSlot.getClusterNode(resourceName);
+
+            try {
+                fooService.fooWithPrivateFallback(5758);
+                fail("should not reach here");
+            } catch (Exception ex) {
+                // Should not be traced.
+                if (cn != null) {
+                    assertThat(cn.exceptionQps()).isZero();
+                }
+            }
+
+            assertThat(fooService.fooWithPrivateFallback(5763)).isEqualTo("EEE...");
+
+            // Test for blockHandler
+            FlowRuleManager.loadRules(Collections.singletonList(
+                    new FlowRule(resourceName).setCount(0)
+            ));
+            assertThat(fooService.fooWithPrivateFallback(2221)).isEqualTo("Oops, 2221");
+        }
+
+import:
+[]
+pom:
+        <!-- No dependencies needed for this test -->

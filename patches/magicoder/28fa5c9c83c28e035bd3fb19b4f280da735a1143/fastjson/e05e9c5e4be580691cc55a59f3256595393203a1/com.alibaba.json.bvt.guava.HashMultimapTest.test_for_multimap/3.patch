@@ -1,0 +1,33 @@
+Test File Path: projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/guava/HashMultimapTest.java
+
+    Original Test Method:
+     public void test_for_multimap() throws Exception {
+        HashMultimap map = HashMultimap.create();
+        map.put("name", "a");
+        map.put("name", "b");
+
+        String json = JSON.toJSONString(map);
+        assertEquals("{\"name\":[\"a\",\"b\"]}", json);
+    }
+
+    
+test_code:
+            public void test_for_multimap() throws Exception {
+                HashMultimap<String, String> map = HashMultimap.create();
+                map.put("name", "a");
+                map.put("name", "b");
+
+                String json = JSON.toJSONString(map);
+                JSONObject jsonObject = JSON.parseObject(json);
+                JSONArray jsonArray = jsonObject.getJSONArray("name");
+                List<String> list = jsonArray.toJavaList(String.class);
+                Collections.sort(list);
+                json = JSON.toJSONString(list);
+                // Use assertEquals instead of assertTrue
+                assertEquals("[\"a\",\"b\"]", json);
+            }
+
+import:
+['import com.alibaba.fastjson.JSONArray;', 'import com.alibaba.fastjson.JSONObject;', 'import java.util.Collections;']
+pom:
+None

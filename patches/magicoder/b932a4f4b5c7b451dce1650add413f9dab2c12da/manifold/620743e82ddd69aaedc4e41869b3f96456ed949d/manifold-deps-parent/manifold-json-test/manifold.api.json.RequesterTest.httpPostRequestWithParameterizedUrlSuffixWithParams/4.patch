@@ -1,0 +1,44 @@
+Test File Path: projects/620743e82ddd69aaedc4e41869b3f96456ed949d/manifold/manifold-deps-parent/manifold-json-test/src/test/java/manifold/api/json/RequesterTest.java
+
+    Original Test Method:
+   public void httpPostRequestWithParameterizedUrlSuffixWithParams()
+  {
+    Requester<Dummy> req = Dummy.request( "http://localhost:4567/" )
+      .withParam( "foo", "bar" )
+      .withParam( "abc", "8" );
+    Object queryString = req.postOne( "testPost_QueryString?firstParam=firstValue", Dummy.create(), Requester.Format.Text );
+    assertEquals( "firstParam=firstValue&foo=bar&abc=8", queryString );
+  }
+
+    
+test_code:
+        public void httpPostRequestWithParameterizedUrlSuffixWithParams() {
+            Requester<Dummy> req = Dummy.request("http://localhost:4567/")
+                    .withParam("foo", "bar")
+                    .withParam("abc", "8");
+            Object queryString = req.postOne("testPost_QueryString?firstParam=firstValue", Dummy.create(), Requester.Format.Text);
+            
+            // Convert the queryString to a Map for easier comparison
+            Map<String, String> queryMap = new LinkedHashMap<>();
+            String[] pairs = queryString.toString().split("&");
+            for (String pair : pairs) {
+                String[] keyValue = pair.split("=");
+                queryMap.put(keyValue[0], keyValue[1]);
+            }
+            
+            // Expected Map
+            Map<String, String> expectedMap = new LinkedHashMap<>();
+            expectedMap.put("firstParam", "firstValue");
+            expectedMap.put("foo", "bar");
+            expectedMap.put("abc", "8");
+            
+            // Compare the expected and actual maps
+            if (!expectedMap.equals(queryMap)) {
+                throw new AssertionError("expected:<" + expectedMap + "> but was:<" + queryMap + ">");
+            }
+        }
+
+import:
+['import java.util.Map;']
+pom:
+None

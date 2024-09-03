@@ -1,0 +1,20 @@
+Test File Path: projects/bc623e36d6af01b43729c94d8381642a94f95a84/JSON-java/src/test/java/org/json/junit/JSONPointerTest.java
+
+    Original Test Method:
+     public void queryByEmptyKeySubObject() {
+        assertEquals( "{\"\":\"empty key of an object with an empty key\",\"subKey\":\"Some" +
+                " other value\"}", query("/obj/").toString());
+    }
+
+    
+test_code:
+        public void queryByEmptyKeySubObject() {
+            String json = "{\"\":\"empty key of an object with an empty key\",\"subKey\":\"Some other value\"}";
+            String queryResult = JsonPath.parse(json).jsonString();
+            Assertions.assertThat(queryResult).isEqualTo("{\"\":\"empty key of an object with an empty key\",\"subKey\":\"Some other value\"}");
+        }
+
+import:
+[]
+pom:
+None

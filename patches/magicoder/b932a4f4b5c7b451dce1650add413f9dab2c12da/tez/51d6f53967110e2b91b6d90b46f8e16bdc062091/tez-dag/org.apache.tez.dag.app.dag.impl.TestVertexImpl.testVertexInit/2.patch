@@ -1,0 +1,89 @@
+Test File Path: projects/51d6f53967110e2b91b6d90b46f8e16bdc062091/tez/tez-dag/src/test/java/org/apache/tez/dag/app/dag/impl/TestVertexImpl.java
+
+    Original Test Method:
+   public void testVertexInit() throws AMUserCodeException {
+    initAllVertices(VertexState.INITED);
+
+    VertexImpl v3 = vertices.get("vertex3");
+
+    Assert.assertEquals("x3.y3", v3.getProcessorName());
+    Assert.assertTrue(v3.getJavaOpts().contains("foo"));
+
+    Assert.assertEquals(2, v3.getInputSpecList(0).size());
+    Assert.assertEquals(2, v3.getInputVerticesCount());
+    Assert.assertEquals(2, v3.getOutputVerticesCount());
+    Assert.assertEquals(2, v3.getOutputVerticesCount());
+
+    assertTrue("vertex1".equals(v3.getInputSpecList(0).get(0)
+        .getSourceVertexName())
+        || "vertex2".equals(v3.getInputSpecList(0).get(0)
+        .getSourceVertexName()));
+    assertTrue("vertex1".equals(v3.getInputSpecList(0).get(1)
+        .getSourceVertexName())
+        || "vertex2".equals(v3.getInputSpecList(0).get(1)
+        .getSourceVertexName()));
+    assertTrue("i3_v1".equals(v3.getInputSpecList(0).get(0)
+        .getInputDescriptor().getClassName())
+        || "i3_v2".equals(v3.getInputSpecList(0).get(0)
+        .getInputDescriptor().getClassName()));
+    assertTrue("i3_v1".equals(v3.getInputSpecList(0).get(1)
+        .getInputDescriptor().getClassName())
+        || "i3_v2".equals(v3.getInputSpecList(0).get(1)
+        .getInputDescriptor().getClassName()));
+
+    assertTrue("vertex4".equals(v3.getOutputSpecList(0).get(0)
+        .getDestinationVertexName())
+        || "vertex5".equals(v3.getOutputSpecList(0).get(0)
+        .getDestinationVertexName()));
+    assertTrue("vertex4".equals(v3.getOutputSpecList(0).get(1)
+        .getDestinationVertexName())
+        || "vertex5".equals(v3.getOutputSpecList(0).get(1)
+        .getDestinationVertexName()));
+    assertTrue("o3_v4".equals(v3.getOutputSpecList(0).get(0)
+        .getOutputDescriptor().getClassName())
+        || "o3_v5".equals(v3.getOutputSpecList(0).get(0)
+        .getOutputDescriptor().getClassName()));
+    assertTrue("o3_v4".equals(v3.getOutputSpecList(0).get(1)
+        .getOutputDescriptor().getClassName())
+        || "o3_v5".equals(v3.getOutputSpecList(0).get(1)
+        .getOutputDescriptor().getClassName()));
+  }
+
+    
+test_code:
+        public void testVertexInit() throws AMUserCodeException {
+            initAllVertices(VertexState.INITED);
+
+            VertexImpl v3 = vertices.get("vertex3");
+
+            Assert.assertEquals("x3.y3", v3.getProcessorName());
+            Assert.assertTrue(v3.getJavaOpts().contains("foo"));
+
+            Assert.assertEquals(2, v3.getInputSpecList(0).size());
+            Assert.assertEquals(2, v3.getInputVerticesCount());
+            Assert.assertEquals(2, v3.getOutputVerticesCount());
+            Assert.assertEquals(2, v3.getOutputVerticesCount());
+
+            List<String> inputVertices = new ArrayList<>(Arrays.asList("vertex1", "vertex2"));
+            List<String> inputClasses = new ArrayList<>(Arrays.asList("i3_v1", "i3_v2"));
+            for (int i = 0; i < v3.getInputSpecList(0).size(); i++) {
+                Assert.assertTrue(inputVertices.contains(v3.getInputSpecList(0).get(i)
+                    .getSourceVertexName()));
+                Assert.assertTrue(inputClasses.contains(v3.getInputSpecList(0).get(i)
+                    .getInputDescriptor().getClassName()));
+            }
+
+            List<String> outputVertices = new ArrayList<>(Arrays.asList("vertex4", "vertex5"));
+            List<String> outputClasses = new ArrayList<>(Arrays.asList("o3_v4", "o3_v5"));
+            for (int i = 0; i < v3.getOutputSpecList(0).size(); i++) {
+                Assert.assertTrue(outputVertices.contains(v3.getOutputSpecList(0).get(i)
+                    .getDestinationVertexName()));
+                Assert.assertTrue(outputClasses.contains(v3.getOutputSpecList(0).get(i)
+                    .getOutputDescriptor().getClassName()));
+            }
+        }
+
+import:
+[]
+pom:
+None

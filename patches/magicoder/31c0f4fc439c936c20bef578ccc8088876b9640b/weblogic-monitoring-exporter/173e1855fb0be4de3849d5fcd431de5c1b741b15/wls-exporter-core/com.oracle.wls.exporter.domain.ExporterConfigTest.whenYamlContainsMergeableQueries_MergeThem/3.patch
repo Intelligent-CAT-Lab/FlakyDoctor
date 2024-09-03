@@ -1,0 +1,28 @@
+Test File Path: projects/173e1855fb0be4de3849d5fcd431de5c1b741b15/weblogic-monitoring-exporter/wls-exporter-core/src/test/java/com/oracle/wls/exporter/domain/ExporterConfigTest.java
+
+    Original Test Method:
+     public void whenYamlContainsMergeableQueries_MergeThem() {
+        ExporterConfig config = loadFromString(MERGEABLE_CONFIG);
+
+        assertThat(config.toString(), equalTo(MERGED_CONFIG));
+    }
+
+    
+test_code:
+            public void whenYamlContainsMergeableQueries_MergeThem() {
+                ExporterConfig config = loadFromString(MERGEABLE_CONFIG);
+
+                // Convert config to a sorted set to ensure the order is deterministic
+                Set<String> sortedConfig = new TreeSet<>(Arrays.asList(config.toString().split("\n")));
+
+                // Convert MERGED_CONFIG to a sorted set to ensure the order is deterministic
+                Set<String> sortedMergedConfig = new TreeSet<>(Arrays.asList(MERGED_CONFIG.split("\n")));
+
+                // Compare the two sets
+                assertThat(sortedConfig, containsInAnyOrder(sortedMergedConfig.toArray()));
+            }
+
+import:
+['import java.util.*;', 'import static org.hamcrest.Matchers.*;']
+pom:
+None

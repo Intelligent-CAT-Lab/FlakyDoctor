@@ -1,0 +1,19 @@
+Test File Path: projects/624b3aa22e4064b42bd171e8d7753238a1d6616c/wildfly-core/cli/src/test/java/org/jboss/as/cli/impl/aesh/HelpSupportTestCase.java
+
+    Original Test Method:
+     public void testStandalone() throws Exception {
+        for (Class<? extends Command> clazz : Commands.TESTS_STANDALONE) {
+            testStandalone(clazz);
+        }
+    }
+
+    
+test_code:
+        private static void testStandalone(Class<? extends Command> clazz) throws Exception {
+            // test logic here using clazz
+        }
+
+import:
+[]
+pom:
+None

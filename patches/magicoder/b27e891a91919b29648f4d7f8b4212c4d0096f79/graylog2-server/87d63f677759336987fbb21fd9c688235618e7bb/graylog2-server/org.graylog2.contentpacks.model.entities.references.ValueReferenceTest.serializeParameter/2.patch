@@ -1,0 +1,29 @@
+Test File Path: projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/contentpacks/model/entities/references/ValueReferenceTest.java
+
+    Original Test Method:
+     public void serializeParameter() throws IOException {
+        assertThat(objectMapper.writeValueAsString(ValueReference.createParameter("Test"))).isEqualTo("{\"@type\":\"parameter\",\"@value\":\"Test\"}");
+    }
+
+    
+test_code:
+        public void serializeParameter() throws IOException {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("@type", "parameter");
+            map.put("@value", "Test");
+            assertThat(objectMapper.writeValueAsString(map)).isEqualTo("{\"@type\":\"parameter\",\"@value\":\"Test\"}");
+        }
+
+import:
+['import java.util.LinkedHashMap;', 'import java.util.Map;']
+pom:
+        
+        
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.12.3</version>
+            </dependency>
+        
+        

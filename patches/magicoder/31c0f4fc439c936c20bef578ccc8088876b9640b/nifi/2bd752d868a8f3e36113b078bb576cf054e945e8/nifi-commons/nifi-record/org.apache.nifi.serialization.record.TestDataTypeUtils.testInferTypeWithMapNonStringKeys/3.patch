@@ -1,0 +1,37 @@
+Test File Path: projects/2bd752d868a8f3e36113b078bb576cf054e945e8/nifi/nifi-commons/nifi-record/src/test/java/org/apache/nifi/serialization/record/TestDataTypeUtils.java
+
+    Original Test Method:
+     public void testInferTypeWithMapNonStringKeys() {
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "Hello");
+        map.put(2, "World");
+
+        RecordDataType expected = (RecordDataType)RecordFieldType.RECORD.getRecordDataType(new SimpleRecordSchema(Arrays.asList(
+                new RecordField("1", RecordFieldType.STRING.getDataType()),
+                new RecordField("2", RecordFieldType.STRING.getDataType())
+        )));
+
+        DataType actual = DataTypeUtils.inferDataType(map, null);
+        assertEquals(expected, actual);
+    }
+
+    
+test_code:
+        public void testInferTypeWithMapNonStringKeys() {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("1", "Hello");
+            map.put("2", "World");
+
+            RecordDataType expected = (RecordDataType)RecordFieldType.RECORD.getRecordDataType(new SimpleRecordSchema(Arrays.asList(
+                    new RecordField("1", RecordFieldType.STRING.getDataType()),
+                    new RecordField("2", RecordFieldType.STRING.getDataType())
+            )));
+
+            DataType actual = DataTypeUtils.inferDataType(map, null);
+            assertEquals(expected, actual);
+        }
+
+import:
+[]
+pom:
+None

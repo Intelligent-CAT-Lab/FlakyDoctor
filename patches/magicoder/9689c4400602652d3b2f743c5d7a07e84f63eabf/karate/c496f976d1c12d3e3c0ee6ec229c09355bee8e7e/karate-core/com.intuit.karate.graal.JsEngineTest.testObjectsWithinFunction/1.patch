@@ -1,0 +1,48 @@
+Test File Path: projects/c496f976d1c12d3e3c0ee6ec229c09355bee8e7e/karate/karate-core/src/test/java/com/intuit/karate/graal/JsEngineTest.java
+
+    Original Test Method:
+     void testObjectsWithinFunction() {
+        Map<String, Object> map = new HashMap();
+        map.put("a", 1);
+        map.put("b", 2);
+        je.put("o", map);
+        JsValue jv = je.eval("(function(){ return Object.entries(o) })()");
+        List result = jv.getAsList();
+        Match.that(result).isEqualTo("[[a, 1],[b, 2]]");
+    }     
+
+    
+Patch after Stitching:
+
+test_code:
+        void testObjectsWithinFunction() {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("a", 1);
+            map.put("b", 2);
+            je.put("o", map);
+            JsValue jv = je.eval("(function(){ return Object.entries(o) })()");
+            List result = jv.getAsList();
+            Match.that(result).isEqualTo("[[a, 1],[b, 2]]");
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None
+Patch before Stitching:
+
+test_code:
+        void testObjectsWithinFunction() {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("a", 1);
+            map.put("b", 2);
+            je.put("o", map);
+            JsValue jv = je.eval("(function(){ return Object.entries(o) })()");
+            List result = jv.getAsList();
+            Match.that(result).isEqualTo("[[a, 1],[b, 2]]");
+        }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+None

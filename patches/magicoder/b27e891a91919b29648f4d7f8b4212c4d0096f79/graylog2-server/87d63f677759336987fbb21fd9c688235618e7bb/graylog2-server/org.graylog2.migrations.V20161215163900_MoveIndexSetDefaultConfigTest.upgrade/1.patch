@@ -1,0 +1,57 @@
+Test File Path: projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/migrations/V20161215163900_MoveIndexSetDefaultConfigTest.java
+
+    Original Test Method:
+     public void upgrade() throws Exception {
+        final long count = collection.count();
+
+        migration.upgrade();
+
+        final MigrationCompleted migrationCompleted = clusterConfigService.get(MigrationCompleted.class);
+
+        assertThat(collection.count())
+                .withFailMessage("No document should be deleted by the migration!")
+                .isEqualTo(count);
+        assertThat(collection.count(Filters.exists("default")))
+                .withFailMessage("The migration should have deleted the \"default\" field from the documents!")
+                .isEqualTo(0L);
+
+        assertThat(clusterConfigService.get(DefaultIndexSetConfig.class))
+                .withFailMessage("The DefaultIndexSetConfig should have been written to cluster config!")
+                .isNotNull();
+        assertThat(clusterConfigService.get(DefaultIndexSetConfig.class).defaultIndexSetId()).isEqualTo("57f3d721a43c2d59cb750001");
+
+        assertThat(migrationCompleted).isNotNull();
+        assertThat(migrationCompleted.indexSetIds()).containsExactly("57f3d721a43c2d59cb750001", "57f3d721a43c2d59cb750003");
+    }
+
+    
+test_code:
+        public void upgrade() throws Exception {
+            final long count = collection.count();
+
+            migration.upgrade();
+
+            final MigrationCompleted migrationCompleted = clusterConfigService.get(MigrationCompleted.class);
+
+            assertThat(collection.count())
+                    .withFailMessage("No document should be deleted by the migration!")
+                    .isEqualTo(count);
+            assertThat(collection.count(Filters.exists("default")))
+                    .withFailMessage("The migration should have deleted the \"default\" field from the documents!")
+                    .isEqualTo(0L);
+
+            assertThat(clusterConfigService.get(DefaultIndexSetConfig.class))
+                    .withFailMessage("The DefaultIndexSetConfig should have been written to cluster config!")
+                    .isNotNull();
+            assertThat(clusterConfigService.get(DefaultIndexSetConfig.class).defaultIndexSetId())
+                    .isEqualTo("57f3d721a43c2d59cb750001");
+
+            assertThat(migrationCompleted).isNotNull();
+            assertThat(migrationCompleted.indexSetIds())
+                    .containsExactlyInAnyOrder("57f3d721a43c2d59cb750001", "57f3d721a43c2d59cb750003");
+        }
+
+import:
+[]
+pom:
+None

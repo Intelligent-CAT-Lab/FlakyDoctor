@@ -1,0 +1,44 @@
+Test File Path: projects/dff7457cb5ba1557727deddef5b675dd00fbf8a8/optaplanner/optaplanner-core/src/test/java/org/optaplanner/core/config/solver/SolverConfigTest.java
+
+    Original Test Method:
+     public void xmlConfigFileRemainsSameAfterReadWrite() throws IOException {
+        String solverConfigResource = "org/optaplanner/core/config/solver/testdataSolverConfig.xml";
+        String originalXml = IOUtils.toString(
+                getClass().getClassLoader().getResourceAsStream(solverConfigResource), StandardCharsets.UTF_8);
+        SolverConfig solverConfig = SolverConfig.createFromXmlResource(solverConfigResource);
+        assertNotNull(SolverFactory.create(solverConfig).buildSolver());
+        XStream xStream = XStreamConfigReader.buildXStream(getClass().getClassLoader());
+        xStream.setMode(XStream.NO_REFERENCES);
+        String savedXml = xStream.toXML(solverConfig);
+        assertEquals(originalXml.trim(), savedXml.trim());
+    }
+
+    
+test_code:
+        public void xmlConfigFileRemainsSameAfterReadWrite() throws IOException {
+            String solverConfigResource = "org/optaplanner/core/config/solver/testdataSolverConfig.xml";
+            String originalXml = IOUtils.toString(
+                    getClass().getClassLoader().getResourceAsStream(solverConfigResource), StandardCharsets.UTF_8);
+            SolverConfig solverConfig = SolverConfig.createFromXmlResource(solverConfigResource);
+            assertNotNull(SolverFactory.create(solverConfig).buildSolver());
+            XStream xStream = XStreamConfigReader.buildXStream(getClass().getClassLoader());
+            xStream.setMode(XStream.NO_REFERENCES);
+            String savedXml = xStream.toXML(solverConfig);
+            // Use LinkedHashSet to ensure the order of elements
+            Set<String> originalXmlSet = new LinkedHashSet<>(Arrays.asList(originalXml.trim().split("\\s+")));
+            Set<String> savedXmlSet = new LinkedHashSet<>(Arrays.asList(savedXml.trim().split("\\s+")));
+            assertEquals(originalXmlSet, savedXmlSet);
+        }
+
+import:
+['import java.util.Arrays;', 'import java.util.LinkedHashSet;', 'import java.util.Set;', 'import static org.junit.Assert.assertEquals;', 'import static org.junit.Assert.assertNotNull;', 'import org.optaplanner.core.config.solver.SolverConfig;']
+pom:
+        
+        
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>1.4.16</version>
+            </dependency>
+        
+        

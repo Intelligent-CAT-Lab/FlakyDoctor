@@ -1,0 +1,55 @@
+Test File Path: projects/0be329d2897f6d5fbb634e46e0ef3d283282dc93/pair-distribution-app/src/test/java/pair/distribution/app/helpers/DayPairsHelperTest.java
+
+    Original Test Method:
+ 	public void testGenerateNewDayPairs() {
+		PairCombinations pairs = getPairsList();
+		List<Developer> devs = getStandardDevs();
+		List<String> tracks = Arrays.asList("track1", "track2", "track3");
+		Map<Pair, Integer> pairsWeight = subject.buildPairsWeightFromPastPairing(pairs, devs);
+		subject.buildDevelopersPairingDays(pairs, devs);
+		
+		DayPairs dayPairs = subject.generateNewDayPairs(tracks, devs, pairs, pairsWeight, getStandardCompanies());
+
+		assertThat(dayPairs.getTracks().size(), is(2));
+		assertThat(dayPairs.getTracks(), contains("track1", "track2"));
+		assertThat(dayPairs.getPairByTrack("track1"),
+				is(not(new Pair(Arrays.asList(new Developer("dev1"), new Developer("dev2"))))));
+		assertThat(dayPairs.getPairByTrack("track2"),
+				is(not(new Pair(Arrays.asList(new Developer("dev3"), new Developer("dev4"))))));
+		
+		boolean trackOneHasContext = dayPairs.getPairByTrack("track1").getFirstDev().hasContext() || dayPairs.getPairByTrack("track1").getSecondDev().hasContext();
+		boolean trackTwoHasContext = dayPairs.getPairByTrack("track2").getFirstDev().hasContext() || dayPairs.getPairByTrack("track2").getSecondDev().hasContext();
+		assertThat(trackOneHasContext, is(true));
+		assertThat(trackTwoHasContext, is(true));
+	}
+
+    
+test_code:
+            public void testGenerateNewDayPairs() {
+                PairCombinations pairs = getPairsList();
+                List<Developer> devs = getStandardDevs();
+                List<String> tracks = Arrays.asList("track1", "track2", "track3");
+                Map<Pair, Integer> pairsWeight = subject.buildPairsWeightFromPastPairing(pairs, devs);
+                subject.buildDevelopersPairingDays(pairs, devs);
+
+                DayPairs dayPairs = subject.generateNewDayPairs(tracks, devs, pairs, pairsWeight, getStandardCompanies());
+
+                List<String> tracksList = new ArrayList<>(dayPairs.getTracks());
+                Collections.sort(tracksList);
+                assertThat(tracksList.size(), is(2));
+                assertThat(tracksList, contains("track1", "track2"));
+                assertThat(dayPairs.getPairByTrack("track1"),
+                        is(not(new Pair(Arrays.asList(new Developer("dev1"), new Developer("dev2"))))));
+                assertThat(dayPairs.getPairByTrack("track2"),
+                        is(not(new Pair(Arrays.asList(new Developer("dev3"), new Developer("dev4"))))));
+
+                boolean trackOneHasContext = dayPairs.getPairByTrack("track1").getFirstDev().hasContext() || dayPairs.getPairByTrack("track1").getSecondDev().hasContext();
+                boolean trackTwoHasContext = dayPairs.getPairByTrack("track2").getFirstDev().hasContext() || dayPairs.getPairByTrack("track2").getSecondDev().hasContext();
+                assertThat(trackOneHasContext, is(true));
+                assertThat(trackTwoHasContext, is(true));
+            }
+
+import:
+['import java.util.*;', 'import static org.hamcrest.CoreMatchers.*;', 'import static org.hamcrest.MatcherAssert.*;']
+pom:
+None

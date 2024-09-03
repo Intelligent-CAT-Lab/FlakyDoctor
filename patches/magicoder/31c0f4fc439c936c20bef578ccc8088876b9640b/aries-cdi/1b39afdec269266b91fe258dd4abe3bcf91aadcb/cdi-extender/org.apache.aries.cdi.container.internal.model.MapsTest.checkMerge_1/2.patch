@@ -1,0 +1,40 @@
+Test File Path: projects/1b39afdec269266b91fe258dd4abe3bcf91aadcb/aries-cdi/cdi-extender/src/test/java/org/apache/aries/cdi/container/internal/model/MapsTest.java
+
+    Original Test Method:
+ 	public void checkMerge_1() throws Exception {
+		Map<String, ?> merged = Maps.merge(
+			Stream.of(getClass().getField("one").getAnnotations()).collect(Collectors.toList()));
+
+		Assert.assertEquals(
+			Maps.of(
+				"a", Arrays.asList("foo", "bar", "baz"),
+				"cpt3", true,
+				"b", Arrays.asList(1,1,1,2,2),
+				"c", true),
+			merged);
+	}
+
+    
+test_code:
+        public void checkMerge_1() throws Exception {
+            Field field = getClass().getField("one");
+            Annotation[] annotations = field.getAnnotations();
+
+            Map<String, ?> merged = Maps.merge(
+                Stream.of(annotations)
+                    .sorted(Comparator.comparing(Annotation::toString))
+                    .collect(Collectors.toList()));
+
+            Assert.assertEquals(
+                Maps.of(
+                    "a", Arrays.asList("foo", "bar", "baz"),
+                    "cpt3", true,
+                    "b", Arrays.asList(1,1,1,2,2),
+                    "c", true),
+                merged);
+        }
+
+import:
+['import java.lang.reflect.Field;', 'import java.lang.annotation.Annotation;', 'import java.util.Comparator;']
+pom:
+None
