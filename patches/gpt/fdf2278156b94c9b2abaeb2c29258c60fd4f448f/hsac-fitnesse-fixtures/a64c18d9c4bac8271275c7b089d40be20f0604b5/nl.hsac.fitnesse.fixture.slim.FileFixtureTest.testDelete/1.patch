@@ -1,0 +1,31 @@
+Test File Path: od_projects/a64c18d9c4bac8271275c7b089d40be20f0604b5/hsac-fitnesse-fixtures/src/test/java/nl/hsac/fitnesse/fixture/slim/FileFixtureTest.java
+
+    Original Test Method:
+     public void testDelete() {
+        try {
+            fixture.setDirectory(testResourcesDir);
+            fixture.delete(copyFilename);
+        } catch (SlimFixtureException sfe) {
+            fail("Should not happen: " + sfe.getMessage());
+        }
+    }
+
+    
+test_code:
+public void testDelete() {
+    File file = new File(testResourcesDir, copyFilename);
+    if (!file.exists()) {
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            fail("Unable to create file: " + e.getMessage());
+        }
+    }
+    fixture.setDirectory(testResourcesDir);
+    fixture.delete(copyFilename);
+}
+
+import:
+[]
+pom:
+

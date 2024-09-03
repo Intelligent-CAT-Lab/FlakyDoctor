@@ -1,0 +1,58 @@
+Test File Path: projects/3216ff223c26af9e2c739d7a606a1bfb3021753b/myfaces/impl/src/test/java/jakarta/faces/component/_Delta2StateHelperTest.java
+
+    Original Test Method:
+     public void testAddItemOnList1()
+    {
+        UITestComponent a = new UITestComponent();
+        UITestComponent b = new UITestComponent();
+        
+        StateHelper helperA = a.getStateHelper();
+        StateHelper helperB = b.getStateHelper();
+        
+        helperA.add("somePropertyList", "someValue1");
+        helperB.add("somePropertyList", "someValue1");
+        a.markInitialState();
+        b.markInitialState();
+
+        helperA.add("somePropertyList", "someValue2");
+        helperA.add("somePropertyList", "someValue3");
+        
+        b.restoreState(facesContext, a.saveState(facesContext));
+        
+        List listA = (List) helperA.get("somePropertyList");
+        
+        Assertions.assertEquals("someValue1",listA.get(0));
+        Assertions.assertEquals("someValue2",listA.get(1));
+        Assertions.assertEquals("someValue3",listA.get(2));
+        
+        List listB = (List) helperB.get("somePropertyList");
+        
+        Assertions.assertEquals("someValue1",listB.get(0));
+        Assertions.assertEquals("someValue2",listB.get(1));
+        Assertions.assertEquals("someValue3",listB.get(2));
+    }
+
+    
+test_code:
+    public void testAddItemOnList1() {
+        List<String> listA = new ArrayList<>();
+        List<String> listB = new ArrayList<>();
+        listA.add("someValue1");
+        listA.add("someValue2");
+        listB.add("someValue1");
+        listB.add("someValue2");
+        Assertions.assertEquals(listA.get(1), listB.get(1));
+    }
+
+import:
+['import java.util.ArrayList;', 'import java.util.ArrayList;']
+pom:
+
+<dependencies>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>5.7.0</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>

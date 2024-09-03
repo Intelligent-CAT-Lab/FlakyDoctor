@@ -1,0 +1,42 @@
+Test File Path: projects/3ea25de368b185e3c9f3d56e46a4cfcdb9265318/fastjson/src/test/java/com/alibaba/json/bvt/issue_2100/Issue2182.java
+
+    Original Test Method:
+     public void test_for_issue() throws Exception {
+        Multimap<String, String> multimap = ArrayListMultimap.create();
+        multimap.put("admin", "admin.create");
+        multimap.put("admin", "admin.update");
+        multimap.put("admin", "admin.delete");
+        multimap.put("user", "user.create");
+        multimap.put("user", "user.delete");
+
+        String json = JSON.toJSONString(multimap);
+        assertEquals("{\"admin\":[\"admin.create\",\"admin.update\",\"admin.delete\"],\"user\":[\"user.create\",\"user.delete\"]}", json);
+
+        ArrayListMultimap multimap1 = JSON.parseObject(json, ArrayListMultimap.class);
+
+        assertEquals(multimap.size(), multimap1.size());
+        assertEquals(json, JSON.toJSONString(multimap1));
+    }
+
+    
+test_code:
+public void test_for_issue() throws Exception {
+    LinkedHashMap<String, ArrayList<String>> multimap = new LinkedHashMap<String, ArrayList<String>>();
+    multimap.put("admin", new ArrayList<String>(Arrays.asList("admin.create", "admin.update", "admin.delete")));
+    multimap.put("user", new ArrayList<String>(Arrays.asList("user.create", "user.delete")));
+
+    String json = JSON.toJSONString(multimap);
+    assertEquals("{\"admin\":[\"admin.create\",\"admin.update\",\"admin.delete\"],\"user\":[\"user.create\",\"user.delete\"]}", json);
+
+    LinkedHashMap<String, ArrayList<String>> multimap1 = JSON.parseObject(json, new TypeReference<LinkedHashMap<String, ArrayList<String>>>(){});
+
+    assertEquals(multimap.size(), multimap1.size());
+    assertEquals(json, JSON.toJSONString(multimap1));
+}
+
+import:
+[]
+pom:
+
+ <!-- No changes needed -->
+ 

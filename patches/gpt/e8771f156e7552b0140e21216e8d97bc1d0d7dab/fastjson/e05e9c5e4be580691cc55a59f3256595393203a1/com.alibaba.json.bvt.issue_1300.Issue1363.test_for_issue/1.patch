@@ -1,0 +1,44 @@
+Test File Path: dexfix_projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/issue_1300/Issue1363.java
+
+    Original Test Method:
+     public void test_for_issue() throws Exception {
+        DataSimpleVO a = new DataSimpleVO("a", 1);
+        DataSimpleVO b = new DataSimpleVO("b", 2);
+        b.value = a;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put(a.name, a);
+        b.value1 = map;
+
+        String jsonStr = JSON.toJSONString(b);
+        System.out.println(jsonStr);
+        DataSimpleVO obj = JSON.parseObject(jsonStr, DataSimpleVO.class);
+        assertEquals(jsonStr, JSON.toJSONString(obj));
+
+    }
+
+    
+test_code:
+public void test_for_issue() throws Exception {
+    DataSimpleVO a = new DataSimpleVO("a", 1);
+    DataSimpleVO b = new DataSimpleVO("b", 2);
+    b.value = a;
+    Map<String, Object> map = new LinkedHashMap<String, Object>();
+    map.put(a.name, a);
+    b.value1 = map;
+
+    String jsonStr = JSON.toJSONString(b, SerializerFeature.MapSortField);
+    System.out.println(jsonStr);
+    DataSimpleVO obj = JSON.parseObject(jsonStr, DataSimpleVO.class);
+    assertEquals(jsonStr, JSON.toJSONString(obj, SerializerFeature.MapSortField));
+}
+
+import:
+['import com.alibaba.fastjson.serializer.SerializerFeature;', 'import java.util.LinkedHashMap;']
+pom:
+
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.75</version>
+</dependency>
+ 

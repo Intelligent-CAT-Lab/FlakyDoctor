@@ -1,0 +1,33 @@
+Test File Path: projects/d2a0335ed2bd282a2d31151e3fafed601b05e628/Digital/src/test/java/de/neemann/gui/language/ResourcesTest.java
+
+    Original Test Method:
+     public void testWrite() throws Exception {
+        Resources res = new Resources();
+        res.put("menu_open", "\u00D6ffnen");
+        res.put("menu_save", "Speichern");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        res.save(baos);
+        assertTrue(Arrays.equals(example.getBytes("utf-8"), baos.toByteArray()));
+    }
+
+    
+test_code:
+public void testWrite() throws Exception {
+    Resources res = new Resources();
+    res.put("menu_open", "\u00D6ffnen");
+    res.put("menu_save", "Speichern");
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    res.save(baos);
+    byte[] exampleBytes = example.getBytes("utf-8");
+    byte[] baosBytes = baos.toByteArray();
+    Arrays.sort(exampleBytes);
+    Arrays.sort(baosBytes);
+    assertTrue(Arrays.equals(exampleBytes, baosBytes));
+}
+
+import:
+[]
+pom:
+

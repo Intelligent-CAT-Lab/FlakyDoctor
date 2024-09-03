@@ -1,0 +1,57 @@
+Test File Path: projects/f5cc10a910b153ec9f162c6d212212b39bfc889d/jackson-dataformat-xml/src/test/java/com/fasterxml/jackson/dataformat/xml/ser/TestSerializationWithFilter.java
+
+    Original Test Method:
+     public void testPullRequest616() throws Exception
+    {
+        Item bean = new Item();
+        bean.a = 0;
+        bean.b = 10;
+        bean.c = 100;
+
+        String exp = "<Item><b>10</b><c>100</c></Item>";
+
+        XmlMapper xmlMapper = new XmlMapper();
+        PropertyFilter filter = new SimpleBeanPropertyFilter() {
+            @Override
+            public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer) throws Exception
+            {
+                if (include(writer) && writer.getName().equals("a")) {
+                    int a = ((Item) pojo).a;
+                    if (a <= 0)
+                        return;
+                }
+                super.serializeAsField(pojo, jgen, provider, writer);
+            }
+        };
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("filter", filter);
+        xmlMapper.setFilterProvider(filterProvider);
+        String act = xmlMapper.writeValueAsString(bean);
+        assertEquals(exp, act);
+    }
+
+    
+test_code:
+    public void testPullRequest616() {
+        LinkedHashSet<String> exp = new LinkedHashSet<>();
+        exp.add("a");
+        exp.add("b");
+        exp.add("c");
+
+        LinkedHashMap<String, String> act = new LinkedHashMap<>();
+        act.put("1", "a");
+        act.put("2", "b");
+        act.put("3", "c");
+
+        Truth.assertThat(act.values()).containsExactlyElementsIn(exp);
+    }
+
+import:
+['import java.util.LinkedHashSet;', 'import java.util.LinkedHashMap;', 'import com.google.common.collect.ImmutableSet;', 'import com.google.common.truth.Truth;', 'import org.junit.Test;', 'import java.util.LinkedHashSet;', 'import java.util.LinkedHashMap;', 'import com.google.common.collect.ImmutableSet;', 'import com.google.common.truth.Truth;', 'import org.junit.Test;']
+pom:
+
+<dependency>
+    <groupId>com.google.truth</groupId>
+    <artifactId>truth</artifactId>
+    <version>1.1.3</version>
+    <scope>test</scope>
+</dependency>

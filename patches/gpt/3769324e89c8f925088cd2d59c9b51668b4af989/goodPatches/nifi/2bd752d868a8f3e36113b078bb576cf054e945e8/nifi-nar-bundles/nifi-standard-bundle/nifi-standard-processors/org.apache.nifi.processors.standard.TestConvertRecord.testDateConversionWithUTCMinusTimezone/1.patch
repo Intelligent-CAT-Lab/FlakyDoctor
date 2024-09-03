@@ -1,0 +1,86 @@
+test_before_fix:
+    public void testDateConversionWithUTCMinusTimezone() throws Exception {
+        final String timezone = System.getProperty("user.timezone");
+        System.setProperty("user.timezone", "EST");
+        try {
+            TestRunner runner = TestRunners.newTestRunner(ConvertRecord.class);
+
+            JsonTreeReader jsonTreeReader = new JsonTreeReader();
+            runner.addControllerService("json-reader", jsonTreeReader);
+            runner.setProperty(jsonTreeReader, DateTimeUtils.DATE_FORMAT, "yyyy-MM-dd");
+            runner.enableControllerService(jsonTreeReader);
+
+            AvroRecordSetWriter avroWriter = new AvroRecordSetWriter();
+            runner.addControllerService("avro-writer", avroWriter);
+            runner.enableControllerService(avroWriter);
+
+            runner.setProperty(ConvertRecord.RECORD_READER, "json-reader");
+            runner.setProperty(ConvertRecord.RECORD_WRITER, "avro-writer");
+
+            runner.enqueue("{ \"date\": \"1970-01-02\" }");
+
+            runner.run();
+
+            runner.assertAllFlowFilesTransferred(ConvertRecord.REL_SUCCESS, 1);
+
+            MockFlowFile flowFile = runner.getFlowFilesForRelationship(ConvertRecord.REL_SUCCESS).get(0);
+            DataFileStream<GenericRecord> avroStream = new DataFileStream<>(flowFile.getContentStream(), new NonCachingDatumReader<>());
+
+            assertTrue(avroStream.hasNext());
+            assertEquals(1, avroStream.next().get("date")); // see https://avro.apache.org/docs/1.10.0/spec.html#Date
+        } finally {
+            System.setProperty("user.timezone", timezone);
+        }
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testDateConversionWithUTCMinusTimezone() throws Exception { 
+     final String timezone = System.getProperty("user.timezone"); 
+     System.setProperty("user.timezone", "EST"); 
+     try { 
+         TestRunner runner = TestRunners.newTestRunner(ConvertRecord.class); 
+  
+         JsonTreeReader jsonTreeReader = new JsonTreeReader(); 
+         runner.addControllerService("json-reader", jsonTreeReader); 
+         runner.setProperty(jsonTreeReader, DateTimeUtils.DATE_FORMAT, "yyyy-MM-dd"); 
+         runner.enableControllerService(jsonTreeReader); 
+  
+         AvroRecordSetWriter avroWriter = new AvroRecordSetWriter(); 
+         runner.addControllerService("avro-writer", avroWriter); 
+         runner.enableControllerService(avroWriter); 
+  
+         runner.setProperty(ConvertRecord.RECORD_READER, "json-reader"); 
+         runner.setProperty(ConvertRecord.RECORD_WRITER, "avro-writer"); 
+  
+         runner.enqueue("{ \"date\": \"1970-01-02\" }"); 
+  
+         runner.run(); 
+  
+         runner.assertAllFlowFilesTransferred(ConvertRecord.REL_SUCCESS, 1); 
+  
+         MockFlowFile flowFile = runner.getFlowFilesForRelationship(ConvertRecord.REL_SUCCESS).get(0); 
+         DataFileStream<GenericRecord> avroStream = new DataFileStream<>(flowFile.getContentStream(), new NonCachingDatumReader<>()); 
+  
+         assertTrue(avroStream.hasNext()); 
+         GenericRecord record = avroStream.next(); 
+         Object date = record.get("date"); 
+         if (date instanceof Integer) { 
+             assertEquals(1, date); 
+         } else if (date instanceof String) { 
+             assertEquals("1970-01-02", date); 
+         } 
+     } finally { 
+         System.setProperty("user.timezone", timezone); 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+

@@ -1,0 +1,49 @@
+test_before_fix:
+    public void test1() {
+        String metadata = testFeign.test();
+        Assertions.assertThat(metadata).isEqualTo("{\"a\":\"11\",\"b\":\"22\",\"c\":\"33\"}{\"LOCAL_SERVICE\":\"test"
+                + "\",\"LOCAL_PATH\":\"/test\",\"LOCAL_NAMESPACE\":\"default\"}");
+        Assertions.assertThat(metadataLocalProperties.getContent().get("a")).isEqualTo("1");
+        Assertions.assertThat(metadataLocalProperties.getContent().get("b")).isEqualTo("2");
+        Assertions.assertThat(MetadataContextHolder.get().getTransitiveCustomMetadata("a")).isEqualTo("11");
+        Assertions.assertThat(MetadataContextHolder.get().getTransitiveCustomMetadata("b")).isEqualTo("22");
+        Assertions.assertThat(MetadataContextHolder.get().getTransitiveCustomMetadata("c")).isEqualTo("33");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void test1() { 
+     String metadata = testFeign.test(); 
+     ObjectMapper mapper = new ObjectMapper(); 
+     try { 
+         Map<String, String> map = mapper.readValue(metadata, new TypeReference<Map<String, String>>(){}); 
+         Assertions.assertThat(map.get("a")).isEqualTo("11"); 
+         Assertions.assertThat(map.get("b")).isEqualTo("22"); 
+         Assertions.assertThat(map.get("c")).isEqualTo("33"); 
+         Assertions.assertThat(map.get("LOCAL_SERVICE")).isEqualTo("test"); 
+         Assertions.assertThat(map.get("LOCAL_PATH")).isEqualTo("/test"); 
+         Assertions.assertThat(map.get("LOCAL_NAMESPACE")).isEqualTo("default"); 
+     } catch (Exception e) { 
+         e.printStackTrace(); 
+     } 
+     Assertions.assertThat(metadataLocalProperties.getContent().get("a")).isEqualTo("1"); 
+     Assertions.assertThat(metadataLocalProperties.getContent().get("b")).isEqualTo("2"); 
+     Assertions.assertThat(MetadataContextHolder.get().getTransitiveCustomMetadata("a")).isEqualTo("11"); 
+     Assertions.assertThat(MetadataContextHolder.get().getTransitiveCustomMetadata("b")).isEqualTo("22"); 
+     Assertions.assertThat(MetadataContextHolder.get().getTransitiveCustomMetadata("c")).isEqualTo("33"); 
+ } 
+  
+  
+ 
+import:
+['import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import com.fasterxml.jackson.core.type.TypeReference;\n ', 'import java.util.Map;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

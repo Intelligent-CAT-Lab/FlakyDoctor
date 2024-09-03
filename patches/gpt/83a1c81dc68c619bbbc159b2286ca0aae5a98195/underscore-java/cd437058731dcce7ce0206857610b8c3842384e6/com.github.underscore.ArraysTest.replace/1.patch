@@ -1,0 +1,85 @@
+Test File Path: projects/cd437058731dcce7ce0206857610b8c3842384e6/underscore-java/src/test/java/com/github/underscore/ArraysTest.java
+
+    Original Test Method:
+     public void replace() {
+        assertEquals("[100, 1, 100, 3, 100, 5]", U.replace(U.range(6),
+                arg -> arg % 2 == 0, 100).toString());
+        assertEquals("[0, 1, 2, 3, 4]", U.replace(U.range(5), null, 100).toString());
+        assertEquals("[a, aa, b, b]", new U<>(asList("a", "aa", "aaa", "aaaa")).replace(
+                arg -> arg.length() > 2, "b").toString());
+        assertEquals("[a, aa, cc, ccc]", new U<>(asList("a", "aa", "cc", "ccc")).replace(
+               null, "b").toString());
+        Set<Integer> set = new HashSet<>();
+        set.addAll(U.range(7));
+        assertEquals("[0, 1, 2, 100, 100, 100, 100]", U.chain(set).replace(
+                arg -> arg > 2, 100).toString());
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+public void replace() {
+    List<Integer> list = new ArrayList<>();
+    list.addAll(U.range(6));
+    assertEquals("[100, 1, 100, 3, 100, 5]", U.replace(list,
+            arg -> arg % 2 == 0, 100).toString());
+
+    list.clear();
+    list.addAll(U.range(5));
+    assertEquals("[0, 1, 2, 3, 4]", U.replace(list, null, 100).toString());
+
+    List<String> stringList = new ArrayList<>(asList("a", "aa", "aaa", "aaaa"));
+    assertEquals("[a, aa, b, b]", new U<>(stringList).replace(
+            arg -> arg.length() > 2, "b").toString());
+
+    stringList.clear();
+    stringList.addAll(asList("a", "aa", "cc", "ccc"));
+    assertEquals("[a, aa, cc, ccc]", new U<>(stringList).replace(
+           null, "b").toString());
+
+    Set<Integer> set = new LinkedHashSet<>();
+    set.addAll(U.range(7));
+    List<Integer> listFromSet = new ArrayList<>(set);
+    assertEquals("[0, 1, 2, 100, 100, 100, 100]", U.chain(listFromSet).replace(
+            arg -> arg > 2, 100).toString());
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+
+
+Patch before Stitching:
+
+test_code:
+public void replace() {
+    List<Integer> list = new ArrayList<>();
+    list.addAll(U.range(6));
+    assertEquals("[100, 1, 100, 3, 100, 5]", U.replace(list,
+            arg -> arg % 2 == 0, 100).toString());
+
+    list.clear();
+    list.addAll(U.range(5));
+    assertEquals("[0, 1, 2, 3, 4]", U.replace(list, null, 100).toString());
+
+    List<String> stringList = new ArrayList<>(asList("a", "aa", "aaa", "aaaa"));
+    assertEquals("[a, aa, b, b]", new U<>(stringList).replace(
+            arg -> arg.length() > 2, "b").toString());
+
+    stringList.clear();
+    stringList.addAll(asList("a", "aa", "cc", "ccc"));
+    assertEquals("[a, aa, cc, ccc]", new U<>(stringList).replace(
+           null, "b").toString());
+
+    Set<Integer> set = new LinkedHashSet<>();
+    set.addAll(U.range(7));
+    List<Integer> listFromSet = new ArrayList<>(set);
+    assertEquals("[0, 1, 2, 100, 100, 100, 100]", U.chain(listFromSet).replace(
+            arg -> arg > 2, 100).toString());
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+

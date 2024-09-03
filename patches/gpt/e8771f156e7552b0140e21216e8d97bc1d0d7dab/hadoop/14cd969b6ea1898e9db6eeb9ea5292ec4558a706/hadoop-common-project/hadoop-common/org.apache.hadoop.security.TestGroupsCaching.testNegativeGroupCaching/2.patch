@@ -1,0 +1,152 @@
+Test File Path: dexfix_projects/14cd969b6ea1898e9db6eeb9ea5292ec4558a706/hadoop/hadoop-common-project/hadoop-common/src/test/java/org/apache/hadoop/security/TestGroupsCaching.java
+
+    Original Test Method:
+   public void testNegativeGroupCaching() throws Exception {
+    final String user = "negcache";
+    final String failMessage = "Did not throw IOException: ";
+    conf.setLong(
+        CommonConfigurationKeys.HADOOP_SECURITY_GROUPS_NEGATIVE_CACHE_SECS, 2);
+    FakeTimer timer = new FakeTimer();
+    Groups groups = new Groups(conf, timer);
+    groups.cacheGroupsAdd(Arrays.asList(myGroups));
+    groups.refresh();
+    FakeGroupMapping.addToBlackList(user);
+
+    // In the first attempt, the user will be put in the negative cache.
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "Failed to obtain groups from FakeGroupMapping.");
+    } catch (IOException e) {
+      // Expects to raise exception for the first time. But the user will be
+      // put into the negative cache
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    // The second time, the user is in the negative cache.
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "The user is in the negative cache.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    // Brings back the backend user-group mapping service.
+    FakeGroupMapping.clearBlackList();
+
+    // It should still get groups from the negative cache.
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "The user is still in the negative cache, even " +
+          "FakeGroupMapping has resumed.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    // Let the elements in the negative cache expire.
+    timer.advance(4 * 1000);
+
+    // The groups for the user is expired in the negative cache, a new copy of
+    // groups for the user is fetched.
+    assertEquals(Arrays.asList(myGroups), groups.getGroups(user));
+  }
+
+    
+Patch after Stitching:
+
+test_code:
+public void testNegativeGroupCaching() throws Exception {
+    final String user = "negcache";
+    final String failMessage = "Did not throw IOException: ";
+    conf.setLong(
+        CommonConfigurationKeys.HADOOP_SECURITY_GROUPS_NEGATIVE_CACHE_SECS, 2);
+    FakeTimer timer = new FakeTimer();
+    Groups groups = new Groups(conf, timer);
+    groups.cacheGroupsAdd(new ArrayList<>(Arrays.asList(myGroups)));
+    groups.refresh();
+    FakeGroupMapping.addToBlackList(user);
+
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "Failed to obtain groups from FakeGroupMapping.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "The user is in the negative cache.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    FakeGroupMapping.clearBlackList();
+
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "The user is still in the negative cache, even " +
+          "FakeGroupMapping has resumed.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    timer.advance(4 * 1000);
+
+    Set<String> expectedGroups = new LinkedHashSet<>(Arrays.asList(myGroups));
+    Set<String> actualGroups = new LinkedHashSet<>(groups.getGroups(user));
+    assertEquals(expectedGroups, actualGroups);
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+
+
+Patch before Stitching:
+
+test_code:
+public void testNegativeGroupCaching() throws Exception {
+    final String user = "negcache";
+    final String failMessage = "Did not throw IOException: ";
+    conf.setLong(
+        CommonConfigurationKeys.HADOOP_SECURITY_GROUPS_NEGATIVE_CACHE_SECS, 2);
+    FakeTimer timer = new FakeTimer();
+    Groups groups = new Groups(conf, timer);
+    groups.cacheGroupsAdd(new ArrayList<>(Arrays.asList(myGroups)));
+    groups.refresh();
+    FakeGroupMapping.addToBlackList(user);
+
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "Failed to obtain groups from FakeGroupMapping.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "The user is in the negative cache.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    FakeGroupMapping.clearBlackList();
+
+    try {
+      groups.getGroups(user);
+      fail(failMessage + "The user is still in the negative cache, even " +
+          "FakeGroupMapping has resumed.");
+    } catch (IOException e) {
+      GenericTestUtils.assertExceptionContains("No groups found for user", e);
+    }
+
+    timer.advance(4 * 1000);
+
+    Set<String> expectedGroups = new LinkedHashSet<>(Arrays.asList(myGroups));
+    Set<String> actualGroups = new LinkedHashSet<>(groups.getGroups(user));
+    assertEquals(expectedGroups, actualGroups);
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+

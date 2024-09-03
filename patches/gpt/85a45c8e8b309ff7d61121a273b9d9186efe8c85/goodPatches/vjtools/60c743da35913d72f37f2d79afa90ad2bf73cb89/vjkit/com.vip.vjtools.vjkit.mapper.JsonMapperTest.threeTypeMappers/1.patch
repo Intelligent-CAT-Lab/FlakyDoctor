@@ -1,0 +1,54 @@
+test_before_fix:
+	public void threeTypeMappers() {
+		// 打印全部属性
+		JsonMapper normalBinder = JsonMapper.defaultMapper();
+		TestBean bean = new TestBean("A");
+		assertThat(normalBinder.toJson(bean))
+				.isEqualTo("{\"name\":\"A\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]}");
+
+		// 不打印nullValue属性
+		JsonMapper nonNullMapper = JsonMapper.nonNullMapper();
+		assertThat(nonNullMapper.toJson(bean))
+				.isEqualTo("{\"name\":\"A\",\"defaultValue\":\"hello\",\"emptyValue\":[]}");
+
+		// 不打印nullValue与empty的属性
+		JsonMapper nonEmptyMapper = JsonMapper.nonEmptyMapper();
+		assertThat(nonEmptyMapper.toJson(bean)).isEqualTo("{\"name\":\"A\",\"defaultValue\":\"hello\"}");
+
+		TestBean nonEmptyBean = nonEmptyMapper.fromJson("{\"name\":\"A\",\"defaultValue\":\"hello\"}", TestBean.class);
+		assertThat(nonEmptyBean.getEmptyValue()).isEmpty();
+	}
+
+test_after_fix:
+
+code:
+public void threeTypeMappers() { 
+     // 打印全部属性 
+     JsonMapper normalBinder = JsonMapper.defaultMapper(); 
+     TestBean bean = new TestBean("A"); 
+     String json = normalBinder.toJson(bean); 
+     assertThat(json.contains("\"name\":\"A\"")).isTrue(); 
+     assertThat(json.contains("\"defaultValue\":\"hello\"")).isTrue(); 
+     assertThat(json.contains("\"nullValue\":null")).isTrue(); 
+     assertThat(json.contains("\"emptyValue\":[]")).isTrue(); 
+  
+     // 不打印nullValue属性 
+     JsonMapper nonNullMapper = JsonMapper.nonNullMapper(); 
+     json = nonNullMapper.toJson(bean); 
+     assertThat(json.contains("\"name\":\"A\"")).isTrue(); 
+     assertThat(json.contains("\"defaultValue\":\"hello\"")).isTrue(); 
+     assertThat(json.contains("\"emptyValue\":[]")).isTrue(); 
+  
+     // 不打印nullValue与empty的属性 
+     JsonMapper nonEmptyMapper = JsonMapper.nonEmptyMapper(); 
+     json = nonEmptyMapper.toJson(bean); 
+     assertThat(json.contains("\"name\":\"A\"")).isTrue(); 
+     assertThat(json.contains("\"defaultValue\":\"hello\"")).isTrue(); 
+  
+     TestBean nonEmptyBean = nonEmptyMapper.fromJson("{\"name\":\"A\",\"defaultValue\":\"hello\"}", TestBean.class); 
+     assertThat(nonEmptyBean.getEmptyValue()).isEmpty(); 
+ } 
+ 
+import:
+[]
+pom:

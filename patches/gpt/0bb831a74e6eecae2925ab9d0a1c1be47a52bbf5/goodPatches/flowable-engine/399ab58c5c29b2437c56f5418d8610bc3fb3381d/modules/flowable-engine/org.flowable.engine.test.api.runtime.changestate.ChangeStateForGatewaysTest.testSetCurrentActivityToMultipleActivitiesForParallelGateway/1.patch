@@ -1,0 +1,160 @@
+test_before_fix:
+    public void testSetCurrentActivityToMultipleActivitiesForParallelGateway() {
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("startParallelProcess");
+        Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+        assertEquals("taskBefore", task.getTaskDefinitionKey());
+
+        List<String> newActivityIds = new ArrayList<>();
+        newActivityIds.add("task1");
+        newActivityIds.add("task2");
+
+        changeStateEventListener.clear();
+
+        runtimeService.createChangeActivityStateBuilder()
+            .processInstanceId(processInstance.getId())
+            .moveSingleActivityIdToActivityIds("taskBefore", newActivityIds)
+            .changeState();
+
+        List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).list();
+        assertEquals(2, tasks.size());
+
+        List<Execution> executions = runtimeService.createExecutionQuery().processInstanceId(processInstance.getId()).onlyChildExecutions().list();
+        assertEquals(2, executions.size());
+        Map<String, List<Execution>> executionsByActivity = groupListContentBy(executions, Execution::getActivityId);
+        assertTrue(executionsByActivity.containsKey("task1"));
+        assertTrue(executionsByActivity.containsKey("task2"));
+        assertFalse(executionsByActivity.containsKey("parallelJoin"));
+
+        //Complete one task1
+        Optional<Task> task1 = tasks.stream().filter(t -> t.getTaskDefinitionKey().equals("task1")).findFirst();
+        if (task1.isPresent()) {
+            taskService.complete(task1.get().getId());
+        }
+
+        // Verify events
+        Iterator<FlowableEvent> iterator = changeStateEventListener.iterator();
+        assertTrue(iterator.hasNext());
+
+        FlowableEvent event = iterator.next();
+        assertEquals(FlowableEngineEventType.ACTIVITY_CANCELLED, event.getType());
+        assertEquals("taskBefore", ((FlowableActivityEvent) event).getActivityId());
+
+        assertTrue(iterator.hasNext());
+        event = iterator.next();
+        assertEquals(FlowableEngineEventType.ACTIVITY_STARTED, event.getType());
+        assertEquals("task1", ((FlowableActivityEvent) event).getActivityId());
+
+        assertTrue(iterator.hasNext());
+        event = iterator.next();
+        assertEquals(FlowableEngineEventType.ACTIVITY_STARTED, event.getType());
+        assertEquals("task2", ((FlowableActivityEvent) event).getActivityId());
+
+        assertTrue(!iterator.hasNext());
+
+        tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).list();
+        assertEquals(1, tasks.size());
+
+        executions = runtimeService.createExecutionQuery().processInstanceId(processInstance.getId()).onlyChildExecutions().list();
+        assertEquals(2, executions.size());
+        executionsByActivity = groupListContentBy(executions, Execution::getActivityId);
+        assertFalse(executionsByActivity.containsKey("task1"));
+        assertTrue(executionsByActivity.containsKey("task2"));
+        assertTrue(executionsByActivity.containsKey("parallelJoin"));
+
+        assertFalse(((ExecutionEntity) executionsByActivity.get("parallelJoin").get(0)).isActive());
+
+        taskService.complete(tasks.get(0).getId());
+
+        task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+        assertEquals("taskAfter", task.getTaskDefinitionKey());
+        taskService.complete(task.getId());
+
+        assertProcessEnded(processInstance.getId());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testSetCurrentActivityToMultipleActivitiesForParallelGateway() { 
+     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("startParallelProcess"); 
+     Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult(); 
+     assertEquals("taskBefore", task.getTaskDefinitionKey()); 
+  
+     List<String> newActivityIds = new ArrayList<>(); 
+     newActivityIds.add("task1"); 
+     newActivityIds.add("task2"); 
+  
+     changeStateEventListener.clear(); 
+  
+     runtimeService.createChangeActivityStateBuilder() 
+         .processInstanceId(processInstance.getId()) 
+         .moveSingleActivityIdToActivityIds("taskBefore", newActivityIds) 
+         .changeState(); 
+  
+     List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).list(); 
+     assertEquals(2, tasks.size()); 
+  
+     List<Execution> executions = runtimeService.createExecutionQuery().processInstanceId(processInstance.getId()).onlyChildExecutions().list(); 
+     assertEquals(2, executions.size()); 
+     Map<String, List<Execution>> executionsByActivity = groupListContentBy(executions, Execution::getActivityId); 
+     assertTrue(executionsByActivity.containsKey("task1")); 
+     assertTrue(executionsByActivity.containsKey("task2")); 
+     assertFalse(executionsByActivity.containsKey("parallelJoin")); 
+  
+     //Complete one task1 
+     Optional<Task> task1 = tasks.stream().filter(t -> t.getTaskDefinitionKey().equals("task1")).findFirst(); 
+     if (task1.isPresent()) { 
+         taskService.complete(task1.get().getId()); 
+     } 
+  
+     // Verify events 
+     Iterator<FlowableEvent> iterator = changeStateEventListener.iterator(); 
+     assertTrue(iterator.hasNext()); 
+  
+     FlowableEvent event = iterator.next(); 
+     assertEquals(FlowableEngineEventType.ACTIVITY_CANCELLED, event.getType()); 
+     assertEquals("taskBefore", ((FlowableActivityEvent) event).getActivityId()); 
+  
+     assertTrue(iterator.hasNext()); 
+     event = iterator.next(); 
+     assertEquals(FlowableEngineEventType.ACTIVITY_STARTED, event.getType()); 
+     String activityId = ((FlowableActivityEvent) event).getActivityId(); 
+     assertTrue(activityId.equals("task1") || activityId.equals("task2")); 
+  
+     assertTrue(iterator.hasNext()); 
+     event = iterator.next(); 
+     assertEquals(FlowableEngineEventType.ACTIVITY_STARTED, event.getType()); 
+     activityId = ((FlowableActivityEvent) event).getActivityId(); 
+     assertTrue(activityId.equals("task1") || activityId.equals("task2")); 
+  
+     assertTrue(!iterator.hasNext()); 
+  
+     tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).list(); 
+     assertEquals(1, tasks.size()); 
+  
+     executions = runtimeService.createExecutionQuery().processInstanceId(processInstance.getId()).onlyChildExecutions().list(); 
+     assertEquals(2, executions.size()); 
+     executionsByActivity = groupListContentBy(executions, Execution::getActivityId); 
+     assertFalse(executionsByActivity.containsKey("task1")); 
+     assertTrue(executionsByActivity.containsKey("task2")); 
+     assertTrue(executionsByActivity.containsKey("parallelJoin")); 
+  
+     assertFalse(((ExecutionEntity) executionsByActivity.get("parallelJoin").get(0)).isActive()); 
+  
+     taskService.complete(tasks.get(0).getId()); 
+  
+     task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult(); 
+     assertEquals("taskAfter", task.getTaskDefinitionKey()); 
+     taskService.complete(task.getId()); 
+  
+     assertProcessEnded(processInstance.getId()); 
+ } 
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ']
+pom:
+

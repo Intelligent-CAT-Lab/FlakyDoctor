@@ -1,0 +1,79 @@
+Test File Path: projects/7f0b301addd9ec6237c2c947cdb629b12831fd43/utils/utils-serialize/src/test/java/test/utils/serialize/JSONSerializeUtilsTest.java
+
+    Original Test Method:
+ 	public void testJSONString() {
+		Car car = new Car();
+		car.setCost(10);
+		car.setWeight(1000);
+
+		String carJSON = JSONSerializeUtils.serializeToJSON(car);
+		JSONString jsonString = new JSONString(carJSON);
+		System.out.println("1:--\r\n" + carJSON);
+
+		String newJSONString = JSONSerializeUtils.serializeToJSON(jsonString);
+		assertEquals(carJSON, newJSONString);
+		System.out.println("2:--\r\n" + newJSONString);
+
+		JSONString newJSONString2 = JSONSerializeUtils.deserializeAs(newJSONString, JSONString.class);
+		assertEquals(carJSON, newJSONString2.toString());
+
+		String address = UUID.randomUUID().toString();
+		JSONString jsonAddress = new JSONString(JSONSerializeUtils.serializeToJSON(address));
+		String desAddress = JSONSerializeUtils.deserializeAs(jsonAddress, String.class);
+		assertEquals(address, desAddress);
+
+		String emptyStr = "";
+		JSONString emptyJsonStr = new JSONString(JSONSerializeUtils.serializeToJSON(emptyStr));
+		String desEmptyStr = JSONSerializeUtils.deserializeAs(emptyJsonStr, String.class);
+		assertEquals(emptyStr, desEmptyStr);
+
+		String nullStr = null;
+		String nullJson = JSONSerializeUtils.serializeToJSON(nullStr);
+		assertNull(nullJson);
+	}
+
+    
+test_code:
+public void testJSONString() {
+    Car car = new Car();
+    car.setCost(10);
+    car.setWeight(1000);
+
+    String carJSON = JSONSerializeUtils.serializeToJSON(car);
+    JSONString jsonString = new JSONString(carJSON);
+    System.out.println("1:--\r\n" + carJSON);
+
+    String newJSONString = JSONSerializeUtils.serializeToJSON(jsonString);
+    assertEquals(carJSON, newJSONString);
+    System.out.println("2:--\r\n" + newJSONString);
+
+    JSONString newJSONString2 = JSONSerializeUtils.deserializeAs(newJSONString, JSONString.class);
+    JsonParser parser = new JsonParser();
+    JsonElement o1 = parser.parse(carJSON);
+    JsonElement o2 = parser.parse(newJSONString2.toString());
+    assertEquals(o1, o2);
+
+    String address = UUID.randomUUID().toString();
+    JSONString jsonAddress = new JSONString(JSONSerializeUtils.serializeToJSON(address));
+    String desAddress = JSONSerializeUtils.deserializeAs(jsonAddress, String.class);
+    assertEquals(address, desAddress);
+
+    String emptyStr = "";
+    JSONString emptyJsonStr = new JSONString(JSONSerializeUtils.serializeToJSON(emptyStr));
+    String desEmptyStr = JSONSerializeUtils.deserializeAs(emptyJsonStr, String.class);
+    assertEquals(emptyStr, desEmptyStr);
+
+    String nullStr = null;
+    String nullJson = JSONSerializeUtils.serializeToJSON(nullStr);
+    assertNull(nullJson);
+}
+
+import:
+['import com.google.gson.JsonElement;', 'import com.google.gson.JsonParser;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

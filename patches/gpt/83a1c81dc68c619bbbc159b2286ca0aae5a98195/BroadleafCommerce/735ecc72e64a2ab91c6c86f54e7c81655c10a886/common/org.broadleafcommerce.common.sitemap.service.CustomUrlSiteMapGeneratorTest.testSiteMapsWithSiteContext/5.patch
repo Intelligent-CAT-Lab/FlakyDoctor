@@ -1,0 +1,76 @@
+Test File Path: projects/735ecc72e64a2ab91c6c86f54e7c81655c10a886/BroadleafCommerce/common/src/test/java/org/broadleafcommerce/common/sitemap/service/CustomUrlSiteMapGeneratorTest.java
+
+    Original Test Method:
+     public void testSiteMapsWithSiteContext() throws SiteMapException, IOException {
+        BroadleafRequestContext brc = new BroadleafRequestContext();
+        BroadleafRequestContext.setBroadleafRequestContext(brc);
+
+        Site site = new SiteImpl();
+        site.setId(256L);
+        brc.setSite(site);
+        
+        CustomUrlSiteMapGeneratorConfiguration smgc = getConfiguration();
+        testGenerator(smgc, new CustomUrlSiteMapGenerator());
+
+        File file1 = fileService.getResource("/sitemap_index.xml");
+        File file2 = fileService.getResource("/sitemap1.xml");
+        File file3 = fileService.getResource("/sitemap2.xml");
+        
+        assertThat(file1.getAbsolutePath(), containsString("site-256"));
+        assertThat(file2.getAbsolutePath(), containsString("site-256"));
+        assertThat(file3.getAbsolutePath(), containsString("site-256"));
+
+        compareFiles(file1, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap_index.xml");
+        compareFiles(file2, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap1.xml");
+        compareFiles(file3, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap2.xml");
+        
+        // Remove the request context from thread local so it doesn't get in the way of subsequent tests
+        BroadleafRequestContext.setBroadleafRequestContext(null);
+    }
+
+    
+test_code:
+public void testSiteMapsWithSiteContext() throws SiteMapException, IOException {
+    BroadleafRequestContext brc = new BroadleafRequestContext();
+    BroadleafRequestContext.setBroadleafRequestContext(brc);
+
+    Site site = new SiteImpl();
+    site.setId(256L);
+    brc.setSite(site);
+    
+    CustomUrlSiteMapGeneratorConfiguration smgc = getConfiguration();
+    testGenerator(smgc, new CustomUrlSiteMapGenerator());
+
+    File file1 = fileService.getResource("/sitemap_index.xml");
+    File file2 = fileService.getResource("/sitemap1.xml");
+    File file3 = fileService.getResource("/sitemap2.xml");
+    
+    org.junit.Assert.assertThat(file1.getAbsolutePath(), org.hamcrest.Matchers.containsString("site-256"));
+    org.junit.Assert.assertThat(file2.getAbsolutePath(), org.hamcrest.Matchers.containsString("site-256"));
+    org.junit.Assert.assertThat(file3.getAbsolutePath(), org.hamcrest.Matchers.containsString("site-256"));
+
+    List<String> expectedFiles = Arrays.asList(
+        "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap_index.xml",
+        "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap1.xml",
+        "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap2.xml"
+    );
+    List<File> actualFiles = Arrays.asList(file1, file2, file3);
+    actualFiles.sort(Comparator.comparing(File::getName));
+    expectedFiles.sort(Comparator.naturalOrder());
+
+    for (int i = 0; i < actualFiles.size(); i++) {
+        String actualPath = actualFiles.get(i).getAbsolutePath();
+        String expectedPath = expectedFiles.get(i);
+        String actualFileName = actualPath.substring(actualPath.lastIndexOf("/")+1);
+        String expectedFileName = expectedPath.substring(expectedPath.lastIndexOf("/")+1);
+        org.junit.Assert.assertThat(actualFileName, org.hamcrest.Matchers.is(org.hamcrest.Matchers.equalTo(expectedFileName)));
+    }
+    
+    // Remove the request context from thread local so it doesn't get in the way of subsequent tests
+    BroadleafRequestContext.setBroadleafRequestContext(null);
+}
+
+import:
+[]
+pom:
+

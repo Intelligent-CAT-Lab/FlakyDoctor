@@ -1,0 +1,53 @@
+Test File Path: projects/23c9b5ac50d04d28a34a87c78eb2d3331c06b74b/flink/flink-streaming-java/src/test/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGeneratorTest.java
+
+    Original Test Method:
+ 	public void testSlotSharingOnAllVerticesInSameSlotSharingGroupByDefaultDisabled() {
+		final StreamGraph streamGraph = createStreamGraphForSlotSharingTest();
+		streamGraph.setAllVerticesInSameSlotSharingGroupByDefault(false);
+		final JobGraph jobGraph = StreamingJobGraphGenerator.createJobGraph(streamGraph);
+
+		final List<JobVertex> verticesSorted = jobGraph.getVerticesSortedTopologicallyFromSources();
+		assertEquals(4, verticesSorted.size());
+
+		final JobVertex source1Vertex = verticesSorted.get(0);
+		final JobVertex source2Vertex = verticesSorted.get(1);
+		final JobVertex map1Vertex = verticesSorted.get(2);
+		final JobVertex map2Vertex = verticesSorted.get(3);
+
+		// vertices in the same region should be in the same slot sharing group
+		assertSameSlotSharingGroup(source1Vertex, map1Vertex);
+
+		// vertices in different regions should be in different slot sharing groups
+		assertDistinctSharingGroups(source1Vertex, source2Vertex, map2Vertex);
+	}
+
+    
+test_code:
+public void testSlotSharingOnAllVerticesInSameSlotSharingGroupByDefaultDisabled() {
+	final StreamGraph streamGraph = createStreamGraphForSlotSharingTest();
+	streamGraph.setAllVerticesInSameSlotSharingGroupByDefault(false);
+	final JobGraph jobGraph = StreamingJobGraphGenerator.createJobGraph(streamGraph);
+
+	final List<JobVertex> verticesSorted = new ArrayList<>(jobGraph.getVerticesSortedTopologicallyFromSources());
+	Collections.sort(verticesSorted, Comparator.comparing(JobVertex::getName));
+
+	assertEquals(4, verticesSorted.size());
+
+	final JobVertex source1Vertex = verticesSorted.get(0);
+	final JobVertex source2Vertex = verticesSorted.get(1);
+	final JobVertex map1Vertex = verticesSorted.get(2);
+	final JobVertex map2Vertex = verticesSorted.get(3);
+
+	// vertices in the same region should be in the same slot sharing group
+	assertEquals(source1Vertex.getSlotSharingGroup(), map1Vertex.getSlotSharingGroup());
+
+	// vertices in different regions should be in different slot sharing groups
+	assertNotEquals(source1Vertex.getSlotSharingGroup(), source2Vertex.getSlotSharingGroup());
+	assertNotEquals(source1Vertex.getSlotSharingGroup(), map2Vertex.getSlotSharingGroup());
+}
+
+import:
+['import java.util.ArrayList;', 'import java.util.Comparator;']
+pom:
+
+<!-- No changes needed -->

@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testCloseReason': 'public void testCloseReason() throws Exception {\n    \n\n    AnnotatedClientEndpoint.reset();\n    \n\n    MessageEndpoint.reset();\n\n    Session session = deployment.connectToServer(AnnotatedClientEndpoint.class, new URI("ws://" + DefaultServer.getHostAddress("default") + ":" + DefaultServer.getHostPort("default") + "/ws/chat/Bob"));\n\n    Assert.assertEquals("hi Bob (protocol=foo)", AnnotatedClientEndpoint.message());\n\n    session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Foo!"));\n    Assert.assertEquals("CLOSED", AnnotatedClientEndpoint.message());\n    CloseReason cr = MessageEndpoint.getReason();\n    Assert.assertEquals(CloseReason.CloseCodes.VIOLATED_POLICY.getCode(), cr.getCloseCode().getCode());\n    Assert.assertEquals("Foo!", cr.getReasonPhrase());\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testCloseReason']}polluter
+:code:
+{'fields': {}, 'methods': {'testCloseReason': 'public void testCloseReason() throws Exception {\n    \n\n    AnnotatedClientEndpoint.reset();\n    \n\n    MessageEndpoint.reset();\n\n    Session session = deployment.connectToServer(AnnotatedClientEndpoint.class, new URI("ws://" + DefaultServer.getHostAddress("default") + ":" + DefaultServer.getHostPort("default") + "/ws/chat/Bob"));\n\n    Assert.assertEquals("hi Bob (protocol=foo)", AnnotatedClientEndpoint.message());\n\n    session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Foo!"));\n    Assert.assertEquals("CLOSED", AnnotatedClientEndpoint.message());\n    CloseReason cr = MessageEndpoint.getReason();\n    Assert.assertEquals(CloseReason.CloseCodes.VIOLATED_POLICY.getCode(), cr.getCloseCode().getCode());\n    Assert.assertEquals("Foo!", cr.getReasonPhrase());\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testCloseReason']}

@@ -1,0 +1,47 @@
+Test File Path: dexfix_projects/038232e9b2f7fb22ccf50c04b74fb900732b345d/incubator-shardingsphere/sharding-orchestration/sharding-orchestration-core/src/test/java/org/apache/shardingsphere/orchestration/internal/registry/config/service/ConfigurationServiceTest.java
+
+    Original Test Method:
+     public void assertPersistConfigurationForMasterSlaveRuleWithAuthenticationAndIsOverwrite() {
+        ConfigurationService configurationService = new ConfigurationService("test", regCenter);
+        configurationService.persistConfiguration("sharding_db",
+                createDataSourceConfigurations(), createMasterSlaveRuleConfiguration(), createAuthentication(), createProperties(), true);
+        verify(regCenter).persist(eq("/test/config/schema/sharding_db/datasource"), ArgumentMatchers.<String>any());
+        verify(regCenter).persist("/test/config/schema/sharding_db/rule", MASTER_SLAVE_RULE_YAML);
+        verify(regCenter).persist("/test/config/authentication", AUTHENTICATION_YAML);
+        verify(regCenter).persist("/test/config/props", PROPS_YAML);
+    }
+
+    
+test_code:
+public void assertPersistConfigurationForMasterSlaveRuleWithAuthenticationAndIsOverwrite() {
+    ConfigurationService configurationService = new ConfigurationService("test", regCenter);
+    configurationService.persistConfiguration("sharding_db",
+            createDataSourceConfigurations(), createMasterSlaveRuleConfiguration(), createAuthentication(), createProperties(), true);
+    ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+    verify(regCenter).persist(eq("/test/config/schema/sharding_db/datasource"), ArgumentMatchers.<String>any());
+    verify(regCenter).persist(eq("/test/config/schema/sharding_db/rule"), eq(MASTER_SLAVE_RULE_YAML));
+    verify(regCenter).persist(eq("/test/config/authentication"), captor.capture());
+    verify(regCenter).persist(eq("/test/config/props"), eq(PROPS_YAML));
+    String actual = captor.getValue();
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+    JsonNode tree1 = null;
+    JsonNode tree2 = null;
+    try {
+        tree1 = mapper.readTree(AUTHENTICATION_YAML);
+        tree2 = mapper.readTree(actual);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    assertEquals(tree1, tree2);
+}
+
+import:
+['import com.fasterxml.jackson.databind.SerializationFeature;', 'import com.fasterxml.jackson.databind.JsonNode;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

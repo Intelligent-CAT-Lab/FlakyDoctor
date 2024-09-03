@@ -1,0 +1,31 @@
+test_before_fix:
+    public void testFromAnnotation()
+    {
+        JsonIncludeProperties.Value v = JsonIncludeProperties.Value.from(Bogus.class.getAnnotation(JsonIncludeProperties.class));
+        assertNotNull(v);
+        Set<String> included = v.getIncluded();
+        assertEquals(2, v.getIncluded().size());
+        assertEquals(_set("foo", "bar"), included);
+        assertEquals("JsonIncludeProperties.Value(included=[bar, foo])", v.toString());
+        assertEquals(v, JsonIncludeProperties.Value.from(Bogus.class.getAnnotation(JsonIncludeProperties.class)));
+    }
+
+test_after_fix:
+
+code:
+public void testFromAnnotation()   
+ {   
+     JsonIncludeProperties.Value v = JsonIncludeProperties.Value.from(Bogus.class.getAnnotation(JsonIncludeProperties.class));   
+     assertNotNull(v);   
+     List<String> included = new ArrayList<String>(v.getIncluded());   
+     Collections.sort(included);  
+     assertEquals(2, included.size());   
+     assertEquals(Arrays.asList("bar", "foo"), included);   
+     assertEquals("JsonIncludeProperties.Value(included=[bar, foo])", "JsonIncludeProperties.Value(included=" + Arrays.toString(included.toArray()) + ")");   
+     assertEquals(v, JsonIncludeProperties.Value.from(Bogus.class.getAnnotation(JsonIncludeProperties.class)));   
+ } 
+ 
+import:
+[]
+pom:
+

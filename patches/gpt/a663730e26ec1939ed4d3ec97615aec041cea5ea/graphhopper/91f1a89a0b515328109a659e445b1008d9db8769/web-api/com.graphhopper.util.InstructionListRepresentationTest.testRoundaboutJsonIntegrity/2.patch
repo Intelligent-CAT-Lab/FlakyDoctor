@@ -1,0 +1,53 @@
+Test File Path: projects/91f1a89a0b515328109a659e445b1008d9db8769/graphhopper/web-api/src/test/java/com/graphhopper/util/InstructionListRepresentationTest.java
+
+    Original Test Method:
+     public void testRoundaboutJsonIntegrity() throws IOException {
+        ObjectMapper objectMapper = Jackson.newObjectMapper();
+        InstructionList il = new InstructionList(usTR);
+
+        PointList pl = new PointList();
+        pl.add(52.514, 13.349);
+        pl.add(52.5135, 13.35);
+        pl.add(52.514, 13.351);
+        RoundaboutInstruction instr = new RoundaboutInstruction(Instruction.USE_ROUNDABOUT, "streetname",
+                new InstructionAnnotation(0, ""), pl)
+                .setDirOfRotation(-0.1)
+                .setRadian(-Math.PI + 1)
+                .setExitNumber(2)
+                .setExited();
+        il.add(instr);
+        assertEquals(objectMapper.readTree(fixture("fixtures/roundabout1.json")).toString(), objectMapper.valueToTree(il).toString());
+    }
+
+    
+test_code:
+public void testRoundaboutJsonIntegrity() throws IOException {
+    ObjectMapper objectMapper = Jackson.newObjectMapper();
+    objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+    InstructionList il = new InstructionList(usTR);
+
+    PointList pl = new PointList();
+    pl.add(52.514, 13.349);
+    pl.add(52.5135, 13.35);
+    pl.add(52.514, 13.351);
+    RoundaboutInstruction instr = new RoundaboutInstruction(Instruction.USE_ROUNDABOUT, "streetname",
+            new InstructionAnnotation(0, ""), pl)
+            .setDirOfRotation(-0.1)
+            .setRadian(-Math.PI + 1)
+            .setExitNumber(2)
+            .setExited();
+    il.add(instr);
+    JsonNode expected = objectMapper.readTree(fixture("fixtures/roundabout1.json"));
+    JsonNode actual = objectMapper.readTree(objectMapper.writeValueAsString(il));
+    assertEquals(expected, actual);
+}
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

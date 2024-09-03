@@ -1,0 +1,29 @@
+Test File Path: projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/guava/HashMultimapTest.java
+
+    Original Test Method:
+     public void test_for_multimap() throws Exception {
+        HashMultimap map = HashMultimap.create();
+        map.put("name", "a");
+        map.put("name", "b");
+
+        String json = JSON.toJSONString(map);
+        assertEquals("{\"name\":[\"a\",\"b\"]}", json);
+    }
+
+    
+test_code:
+public void test_for_multimap() throws Exception {
+    LinkedHashMap<String, LinkedList<String>> map = new LinkedHashMap<String, LinkedList<String>>();
+    LinkedList<String> list = new LinkedList<String>();
+    list.add("a");
+    list.add("b");
+    map.put("name", list);
+
+    String json = JSON.toJSONString(map);
+    assertEquals("{\"name\":[\"a\",\"b\"]}", json);
+}
+
+import:
+[]
+pom:
+

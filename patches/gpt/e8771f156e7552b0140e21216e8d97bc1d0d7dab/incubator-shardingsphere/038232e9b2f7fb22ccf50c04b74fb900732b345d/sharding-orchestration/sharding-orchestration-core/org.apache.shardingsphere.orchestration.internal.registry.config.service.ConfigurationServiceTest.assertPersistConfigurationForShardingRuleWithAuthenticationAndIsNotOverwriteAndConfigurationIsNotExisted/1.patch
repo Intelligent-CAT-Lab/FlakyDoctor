@@ -1,0 +1,27 @@
+Test File Path: dexfix_projects/038232e9b2f7fb22ccf50c04b74fb900732b345d/incubator-shardingsphere/sharding-orchestration/sharding-orchestration-core/src/test/java/org/apache/shardingsphere/orchestration/internal/registry/config/service/ConfigurationServiceTest.java
+
+    Original Test Method:
+     public void assertPersistConfigurationForShardingRuleWithAuthenticationAndIsNotOverwriteAndConfigurationIsNotExisted() {
+        ConfigurationService configurationService = new ConfigurationService("test", regCenter);
+        configurationService.persistConfiguration("sharding_db", createDataSourceConfigurations(), createShardingRuleConfiguration(), createAuthentication(), createProperties(), false);
+        verify(regCenter).persist(eq("/test/config/schema/sharding_db/datasource"), ArgumentMatchers.<String>any());
+        verify(regCenter).persist("/test/config/schema/sharding_db/rule", SHARDING_RULE_YAML);
+        verify(regCenter).persist("/test/config/authentication", AUTHENTICATION_YAML);
+        verify(regCenter).persist("/test/config/props", PROPS_YAML);
+    }
+
+    
+test_code:
+public void assertPersistConfigurationForShardingRuleWithAuthenticationAndIsNotOverwriteAndConfigurationIsNotExisted() {
+    ConfigurationService configurationService = new ConfigurationService("test", regCenter);
+    configurationService.persistConfiguration("sharding_db", createDataSourceConfigurations(), createShardingRuleConfiguration(), createAuthentication(), createProperties(), false);
+    verify(regCenter).persist(eq("/test/config/schema/sharding_db/datasource"), ArgumentMatchers.<String>any());
+    verify(regCenter).persist("/test/config/schema/sharding_db/rule", SHARDING_RULE_YAML);
+    verify(regCenter).persist(eq("/test/config/authentication"), ArgumentMatchers.<String>any());
+    verify(regCenter).persist("/test/config/props", PROPS_YAML);
+}
+
+import:
+[]
+pom:
+

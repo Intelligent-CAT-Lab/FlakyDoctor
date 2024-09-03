@@ -1,0 +1,55 @@
+Test File Path: projects/39547d3c2568eba11cab02c18827a68478d7cb47/groupmeal-java-sdk/src/test/java/JsonTest.java
+
+    Original Test Method:
+     public void payCallBackParam() {
+        PayCallbackParam param = new PayCallbackParam();
+        param.setStatus(1);
+        param.setMessage("fail");
+        param.setNotifyTime(System.currentTimeMillis() / 1000 + "");
+        param.setPaymentId("20210343");
+        param.setTotalAmount("2590");
+        param.setTradeNo("2340343433");
+
+        String json = JsonUtil.encode2UnderScore(param);
+        System.out.println(json);
+
+        PayCallbackParam param1 = JsonUtil.decode2Camel(json, PayCallbackParam.class);
+        String json1 = JsonUtil.encode2UnderScore(param1);
+        System.out.println(json1);
+        Assert.assertTrue(json.equals(json1));
+    }
+
+    
+test_code:
+    public void payCallBackParam() {
+        PayCallbackParam param = new PayCallbackParam();
+        param.setStatus(1);
+        param.setMessage("fail");
+        param.setNotifyTime(System.currentTimeMillis() / 1000 + "");
+        param.setPaymentId("20210343");
+        param.setTotalAmount("2590");
+        param.setTradeNo("2340343433");
+
+        String json = JsonUtil.encode2UnderScore(param);
+
+        PayCallbackParam param1 = JsonUtil.decode2Camel(json, PayCallbackParam.class);
+        String json1 = JsonUtil.encode2UnderScore(param1);
+
+        com.google.gson.JsonParser parser = new com.google.gson.JsonParser();
+        com.google.gson.JsonElement o1 = parser.parse(json);
+        com.google.gson.JsonElement o2 = parser.parse(json1);
+        Assert.assertTrue(o1.equals(o2));
+    }
+
+import:
+['import com.google.gson.JsonParser;']
+pom:
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+    </dependencies>
+ 

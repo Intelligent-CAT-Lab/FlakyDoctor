@@ -1,0 +1,49 @@
+Test File Path: od_projects/20de6f7f12319f54eb962ff6e8357b3f5695d54d/wikidata-toolkit/wdtk-dumpfiles/src/test/java/org/wikidata/wdtk/dumpfiles/MwDumpFileProcessingTest.java
+
+    Original Test Method:
+ 	public void testMwMostRecentFullDumpFileProcessing() throws IOException {
+		Path dmPath = Paths.get(System.getProperty("user.dir"));
+		MockDirectoryManager dm = new MockDirectoryManager(dmPath, true);
+		mockLocalDumpFile("20140418", 2, DumpContentType.FULL, dm);
+
+		DumpProcessingController dpc = new DumpProcessingController(
+				"wikidatawiki");
+		dpc.downloadDirectoryManager = dm;
+		dpc.setOfflineMode(true);
+
+		StatisticsMwRevisionProcessor mwrpStats = new StatisticsMwRevisionProcessor(
+				"stats", 2);
+		dpc.registerMwRevisionProcessor(mwrpStats, null, false);
+
+		dpc.processMostRecentMainDump();
+
+		assertEquals(9, mwrpStats.getTotalRevisionCount());
+		assertEquals(9, mwrpStats.getCurrentRevisionCount());
+	}
+
+    
+test_code:
+public void testMwMostRecentFullDumpFileProcessing() throws IOException {
+    Path dmPath = Paths.get(System.getProperty("user.dir"));
+    MockDirectoryManager dm = new MockDirectoryManager(dmPath, false);
+    mockLocalDumpFile("20140418", 2, DumpContentType.FULL, dm);
+
+    DumpProcessingController dpc = new DumpProcessingController(
+            "wikidatawiki");
+    dpc.downloadDirectoryManager = dm;
+    dpc.setOfflineMode(true);
+
+    StatisticsMwRevisionProcessor mwrpStats = new StatisticsMwRevisionProcessor(
+            "stats", 2);
+    dpc.registerMwRevisionProcessor(mwrpStats, null, false);
+
+    dpc.processMostRecentMainDump();
+
+    assertEquals(9, mwrpStats.getTotalRevisionCount());
+    assertEquals(9, mwrpStats.getCurrentRevisionCount());
+}
+
+import:
+[]
+pom:
+

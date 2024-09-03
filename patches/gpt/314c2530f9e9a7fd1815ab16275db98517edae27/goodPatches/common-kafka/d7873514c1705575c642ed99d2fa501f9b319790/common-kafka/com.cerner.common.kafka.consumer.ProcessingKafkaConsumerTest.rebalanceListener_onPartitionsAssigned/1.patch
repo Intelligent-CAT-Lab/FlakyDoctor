@@ -1,0 +1,30 @@
+test_before_fix:
+    public void rebalanceListener_onPartitionsAssigned() {
+        long rebalanceCount = ProcessingKafkaConsumer.REBALANCE_COUNTER.count();
+        TopicPartition newPartition = new TopicPartition("new-topic", 0);
+        when(consumer.committed(newPartition)).thenReturn(new OffsetAndMetadata(0L));
+        processingConsumer.rebalanceListener.onPartitionsAssigned(Arrays.asList(topicPartition, newPartition));
+        assertThat(processingConsumer.partitions.keySet(), contains(newPartition, topicPartition));
+        assertThat(ProcessingKafkaConsumer.REBALANCE_COUNTER.count(), is(rebalanceCount + 1));
+    }
+
+test_after_fix:
+
+code:
+public void rebalanceListener_onPartitionsAssigned() { 
+     long rebalanceCount = ProcessingKafkaConsumer.REBALANCE_COUNTER.count(); 
+     TopicPartition newPartition = new TopicPartition("new-topic", 0); 
+     when(consumer.committed(newPartition)).thenReturn(new OffsetAndMetadata(0L)); 
+     processingConsumer.rebalanceListener.onPartitionsAssigned(Arrays.asList(topicPartition, newPartition)); 
+     List<TopicPartition> expectedPartitions = Arrays.asList(newPartition, topicPartition); 
+     List<TopicPartition> actualPartitions = new ArrayList<>(processingConsumer.partitions.keySet()); 
+     Collections.sort(expectedPartitions, Comparator.comparing(TopicPartition::toString)); 
+     Collections.sort(actualPartitions, Comparator.comparing(TopicPartition::toString)); 
+     assertThat(actualPartitions, is(expectedPartitions)); 
+     assertThat(ProcessingKafkaConsumer.REBALANCE_COUNTER.count(), is(rebalanceCount + 1)); 
+ } 
+ 
+import:
+['import java.util.Comparator;\n ']
+pom:
+

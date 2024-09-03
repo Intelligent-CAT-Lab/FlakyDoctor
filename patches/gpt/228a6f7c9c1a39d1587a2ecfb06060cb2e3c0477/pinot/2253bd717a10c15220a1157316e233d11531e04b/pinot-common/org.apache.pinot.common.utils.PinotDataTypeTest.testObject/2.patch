@@ -1,0 +1,63 @@
+Test File Path: projects/2253bd717a10c15220a1157316e233d11531e04b/pinot/pinot-common/src/test/java/org/apache/pinot/common/utils/PinotDataTypeTest.java
+
+    Original Test Method:
+   public void testObject() {
+    assertEquals(OBJECT.toInt(new NumberObject("123")), 123);
+    assertEquals(OBJECT.toLong(new NumberObject("123")), 123L);
+    assertEquals(OBJECT.toFloat(new NumberObject("123")), 123f);
+    assertEquals(OBJECT.toDouble(new NumberObject("123")), 123.0);
+    assertTrue(OBJECT.toBoolean(new NumberObject("123")));
+    assertEquals(OBJECT.toTimestamp(new NumberObject("123")).getTime(), 123L);
+    assertEquals(OBJECT.toString(new NumberObject("123")), "123");
+
+    // check if a well formed JSON string string can be converted to JSON.
+    assertEquals(OBJECT.toJson(getGenericTestObject()),
+        "{\"bytes\":\"AAE=\",\"map\":{\"key1\":\"value\",\"key2\":null,\"array\":[-5.4,4,\"2\"]},"
+            + "\"timestamp\":1620324238610}");
+
+    // check if a Java string (which does not represent JSON) can be converted into JSON.
+    assertEquals(OBJECT.toJson("test"), "\"test\"");
+    assertEquals(OBJECT_ARRAY.getSingleValueType(), OBJECT);
+    // Non-zero value is treated as true.
+    assertTrue(OBJECT.toBoolean(1.1d));
+    assertTrue(OBJECT.toBoolean(0.1d));
+    assertFalse(OBJECT.toBoolean(0d));
+    assertTrue(OBJECT.toBoolean(-0.1d));
+  }
+
+    
+test_code:
+public void testObject() {
+    assertEquals(OBJECT.toInt(new NumberObject("123")), 123);
+    assertEquals(OBJECT.toLong(new NumberObject("123")), 123L);
+    assertEquals(OBJECT.toFloat(new NumberObject("123")), 123f);
+    assertEquals(OBJECT.toDouble(new NumberObject("123")), 123.0);
+    assertTrue(OBJECT.toBoolean(new NumberObject("123")));
+    assertEquals(OBJECT.toTimestamp(new NumberObject("123")).getTime(), 123L);
+    assertEquals(OBJECT.toString(new NumberObject("123")), "123");
+
+    // check if a well formed JSON string string can be converted to JSON.
+    String expectedJson = "{\"bytes\":\"AAE=\",\"map\":{\"key1\":\"value\",\"key2\":null,\"array\":[-5.4,4,\"2\"]},"
+            + "\"timestamp\":1620324238610}";
+    String actualJson = OBJECT.toJson(getGenericTestObject());
+    com.jayway.jsonpath.JsonPath jsonPath = com.jayway.jsonpath.JsonPath.compile("$");
+    net.minidev.json.JSONObject expectedJsonObject = new net.minidev.json.JSONObject((Map<String, ?>) jsonPath.read(expectedJson));
+    net.minidev.json.JSONObject actualJsonObject = new net.minidev.json.JSONObject((Map<String, ?>) jsonPath.read(actualJson));
+    assertEquals(expectedJsonObject, actualJsonObject);
+
+    // check if a Java string (which does not represent JSON) can be converted into JSON.
+    assertEquals(OBJECT.toJson("test"), "\"test\"");
+    assertEquals(OBJECT_ARRAY.getSingleValueType(), OBJECT);
+    // Non-zero value is treated as true.
+    assertTrue(OBJECT.toBoolean(1.1d));
+    assertTrue(OBJECT.toBoolean(0.1d));
+    assertFalse(OBJECT.toBoolean(0d));
+    assertTrue(OBJECT.toBoolean(-0.1d));
+}
+
+import:
+[]
+pom:
+
+ <!-- No changes needed -->
+ 

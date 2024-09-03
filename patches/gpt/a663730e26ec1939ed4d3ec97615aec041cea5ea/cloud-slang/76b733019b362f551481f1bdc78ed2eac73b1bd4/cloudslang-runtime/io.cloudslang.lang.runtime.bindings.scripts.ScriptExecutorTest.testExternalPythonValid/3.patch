@@ -1,0 +1,48 @@
+Test File Path: projects/76b733019b362f551481f1bdc78ed2eac73b1bd4/cloud-slang/cloudslang-runtime/src/test/java/io/cloudslang/lang/runtime/bindings/scripts/ScriptExecutorTest.java
+
+    Original Test Method:
+     public void testExternalPythonValid() {
+        Map<String, Value> scriptInputValues = new HashMap<>();
+        Value value1 = ValueFactory.create("value1");
+        Value value2 = ValueFactory.create("value2");
+        scriptInputValues.put("input1", value1);
+        scriptInputValues.put("input2", value2);
+        String script = PythonScriptGeneratorUtils.generateScript(scriptInputValues.keySet());
+        ArgumentCaptor<Map> callArgCaptor = ArgumentCaptor.forClass(Map.class);
+        when(externalPyhonRuntimeService.exec(any(), eq(script), callArgCaptor.capture()))
+                .thenReturn(new PythonExecutionResult(new HashMap<>()));
+
+        scriptExecutor.executeScript(script, scriptInputValues, false);
+
+        Map<String, Serializable> captured = callArgCaptor.getValue();
+        Assert.assertArrayEquals(scriptInputValues.keySet().toArray(), captured.keySet().toArray());
+    }
+
+    
+test_code:
+public void testExternalPythonValid() {
+    Map<String, Value> scriptInputValues = new LinkedHashMap<>();
+    Value value1 = ValueFactory.create("value1");
+    Value value2 = ValueFactory.create("value2");
+    scriptInputValues.put("input1", value1);
+    scriptInputValues.put("input2", value2);
+    String script = PythonScriptGeneratorUtils.generateScript(scriptInputValues.keySet());
+    ArgumentCaptor<Map> callArgCaptor = ArgumentCaptor.forClass(Map.class);
+    when(externalPyhonRuntimeService.exec(any(), eq(script), callArgCaptor.capture()))
+            .thenReturn(new PythonExecutionResult(new LinkedHashMap<>()));
+
+    scriptExecutor.executeScript(script, scriptInputValues, false);
+
+    Map<String, Serializable> captured = callArgCaptor.getValue();
+    List<String> expected = new ArrayList<>(scriptInputValues.keySet());
+    List<String> actual = new ArrayList<>(captured.keySet());
+    Collections.sort(expected);
+    Collections.sort(actual);
+    Assert.assertArrayEquals(expected.toArray(), actual.toArray());
+}
+
+import:
+['import java.util.Collections;']
+pom:
+
+<!-- No changes needed -->

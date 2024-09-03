@@ -1,0 +1,58 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog/plugins/views/search/views/ViewRequirementsTest.java
+
+    Original Test Method:
+     public void mergesMultipleResultsFromMultipleChecksWithConflictingKeys() {
+        final Map<String, PluginMetadataSummary> result = new ViewRequirements(
+                ImmutableSet.of(
+                        view -> ImmutableMap.of(
+                                "parameters", plugin,
+                                "aioverlord", plugin
+                        ),
+                        view -> Collections.emptyMap(),
+                        view -> ImmutableMap.of(
+                                "parameters", new EnterpriseMetadataSummary(),
+                                "aioverlord", new EnterpriseMetadataSummary()
+                        )
+                ),
+                view
+        );
+
+        assertThat(result).containsExactly(
+                Maps.immutableEntry("aioverlord", plugin),
+                Maps.immutableEntry("parameters", plugin)
+        );
+    }
+
+    
+test_code:
+public void mergesMultipleResultsFromMultipleChecksWithConflictingKeys() {
+    final Map<String, PluginMetadataSummary> result = new LinkedHashMap<>();
+    final List<Function<Object, Map<String, PluginMetadataSummary>>> checks = new ArrayList<>();
+    checks.add(view -> {
+        Map<String, PluginMetadataSummary> map = new LinkedHashMap<>();
+        map.put("parameters", plugin);
+        map.put("aioverlord", plugin);
+        return map;
+    });
+    checks.add(view -> new LinkedHashMap<>());
+    checks.add(view -> {
+        Map<String, PluginMetadataSummary> map = new LinkedHashMap<>();
+        map.put("parameters", new EnterpriseMetadataSummary());
+        map.put("aioverlord", new EnterpriseMetadataSummary());
+        return map;
+    });
+    for (Function<Object, Map<String, PluginMetadataSummary>> check : checks) {
+        Map<String, PluginMetadataSummary> checkResult = check.apply(new Object());
+        checkResult.forEach(result::putIfAbsent);
+    }
+
+    assertThat(result).containsOnly(
+            Maps.immutableEntry("aioverlord", plugin),
+            Maps.immutableEntry("parameters", plugin)
+    );
+}
+
+import:
+[]
+pom:
+

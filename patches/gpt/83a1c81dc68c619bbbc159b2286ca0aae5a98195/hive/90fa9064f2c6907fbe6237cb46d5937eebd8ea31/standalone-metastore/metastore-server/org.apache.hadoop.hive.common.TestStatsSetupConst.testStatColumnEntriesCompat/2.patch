@@ -1,0 +1,35 @@
+Test File Path: projects/90fa9064f2c6907fbe6237cb46d5937eebd8ea31/hive/standalone-metastore/metastore-server/src/test/java/org/apache/hadoop/hive/common/TestStatsSetupConst.java
+
+    Original Test Method:
+   public void testStatColumnEntriesCompat() {
+    Map<String, String> params0=new HashMap<>();
+    StatsSetupConst.setBasicStatsState(params0, String.valueOf(true));
+    StatsSetupConst.setColumnStatsState(params0, Lists.newArrayList("Foo"));
+
+    assertEquals("{\"BASIC_STATS\":\"true\",\"COLUMN_STATS\":{\"Foo\":\"true\"}}",params0.get(StatsSetupConst.COLUMN_STATS_ACCURATE));
+  }
+
+    
+test_code:
+public void testStatColumnEntriesCompat() {
+    Map<String, String> params0 = new LinkedHashMap<>();
+    StatsSetupConst.setBasicStatsState(params0, String.valueOf(true));
+    StatsSetupConst.setColumnStatsState(params0, Lists.newArrayList("Foo"));
+
+    String result = params0.get(StatsSetupConst.COLUMN_STATS_ACCURATE);
+    JsonParser parser = new JsonParser();
+    JsonElement resultJson = parser.parse(result);
+    JsonElement expectedJson = parser.parse("{\"BASIC_STATS\":\"true\",\"COLUMN_STATS\":{\"Foo\":\"true\"}}");
+
+    assertEquals(expectedJson, resultJson);
+}
+
+import:
+['import com.google.gson.JsonElement;', 'import com.google.gson.JsonParser;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

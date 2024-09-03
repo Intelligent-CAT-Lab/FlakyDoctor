@@ -1,0 +1,29 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/contentpacks/model/entities/references/ValueReferenceTest.java
+
+    Original Test Method:
+     public void serializeInteger() throws IOException {
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(1))).isEqualTo("{\"@type\":\"integer\",\"@value\":1}");
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(42))).isEqualTo("{\"@type\":\"integer\",\"@value\":42}");
+    }
+
+    
+test_code:
+public void serializeInteger() throws IOException {
+    JsonNode node1 = objectMapper.readTree(objectMapper.writeValueAsString(ValueReference.of(1)));
+    JsonNode expectedNode1 = objectMapper.readTree("{\"@type\":\"integer\",\"@value\":1}");
+    assertEquals(node1, expectedNode1);
+
+    JsonNode node2 = objectMapper.readTree(objectMapper.writeValueAsString(ValueReference.of(42)));
+    JsonNode expectedNode2 = objectMapper.readTree("{\"@type\":\"integer\",\"@value\":42}");
+    assertEquals(node2, expectedNode2);
+}
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;', 'import static org.junit.Assert.assertEquals;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

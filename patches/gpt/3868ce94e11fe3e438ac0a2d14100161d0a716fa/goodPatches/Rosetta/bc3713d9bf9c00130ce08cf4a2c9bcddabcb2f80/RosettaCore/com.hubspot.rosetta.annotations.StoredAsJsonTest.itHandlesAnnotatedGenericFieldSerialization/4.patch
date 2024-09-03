@@ -1,0 +1,40 @@
+test_before_fix:
+  public void itHandlesAnnotatedGenericFieldSerialization() {
+    bean.setTypeInfoField(typeInfoBean);
+
+    assertThat(Rosetta.getMapper().valueToTree(bean).get("typeInfoField"))
+        .isEqualTo(expectedTypeInfo);
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void itHandlesAnnotatedGenericFieldSerialization() { 
+     bean.setTypeInfoField(typeInfoBean); 
+  
+     JsonNode actual = Rosetta.getMapper().valueToTree(bean).get("typeInfoField"); 
+     JsonNode expected = Rosetta.getMapper().valueToTree(expectedTypeInfo); 
+  
+     List<JsonNode> actualElements = new ArrayList<>(); 
+     actual.elements().forEachRemaining(actualElements::add); 
+  
+     List<JsonNode> expectedElements = new ArrayList<>(); 
+     expected.elements().forEachRemaining(expectedElements::add); 
+  
+     Collections.sort(actualElements, Comparator.comparing(JsonNode::asText)); 
+     Collections.sort(expectedElements, Comparator.comparing(JsonNode::asText)); 
+  
+     for (int i = 0; i < actualElements.size(); i++) { 
+         assertThat(actualElements.get(i).asText()).isEqualTo(expectedElements.get(i).asText()); 
+     } 
+  
+     assertThat(actualElements.size()).isEqualTo(expectedElements.size()); 
+ } 
+  
+  
+ 
+import:
+['import java.util.ArrayList;\n ', 'import java.util.Comparator;\n ', 'import java.util.List;\n ']
+pom:

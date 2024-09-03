@@ -1,0 +1,89 @@
+Test File Path: projects/3009f363b84df6a0ba377e72f6cff6ce204af0e8/mockserver/mockserver-core/src/test/java/org/mockserver/serialization/WebSocketMessageSerializerTest.java
+
+    Original Test Method:
+     public void shouldSerializeCompleteResponse() throws IOException {
+        // when
+        String jsonHttpResponse = new WebSocketMessageSerializer(new MockServerLogger()).serialize(
+            new HttpResponseDTO()
+                .setStatusCode(123)
+                .setBody(BodyWithContentTypeDTO.createWithContentTypeDTO(exact("somebody")))
+                .setHeaders(new Headers().withEntries(
+                    header("someHeaderName", "someHeaderValue")
+                ))
+                .setCookies(new Cookies().withEntries(
+                    cookie("someCookieName", "someCookieValue")
+                ))
+                .setDelay(new DelayDTO(minutes(1)))
+                .buildObject()
+        );
+
+        // then
+        assertEquals("{" + NEW_LINE +
+            "  \"type\" : \"org.mockserver.model.HttpResponse\"," + NEW_LINE +
+            "  \"value\" : \"{" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  \\\"statusCode\\\" : 123," + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  \\\"headers\\\" : {" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "    \\\"someHeaderName\\\" : [ \\\"someHeaderValue\\\" ]" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  }," + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  \\\"cookies\\\" : {" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "    \\\"someCookieName\\\" : \\\"someCookieValue\\\"" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  }," + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  \\\"body\\\" : \\\"somebody\\\"," + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  \\\"delay\\\" : {" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "    \\\"timeUnit\\\" : \\\"MINUTES\\\"," + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "    \\\"value\\\" : 1" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "  }" + StringEscapeUtils.escapeJava(NEW_LINE) +
+            "}\"" + NEW_LINE +
+            "}", jsonHttpResponse);
+    }
+
+    
+test_code:
+public void shouldSerializeCompleteResponse() throws IOException {
+    // when
+    String jsonHttpResponse = new WebSocketMessageSerializer(new MockServerLogger()).serialize(
+        new HttpResponseDTO()
+            .setStatusCode(123)
+            .setBody(BodyWithContentTypeDTO.createWithContentTypeDTO(exact("somebody")))
+            .setHeaders(new Headers().withEntries(
+                header("someHeaderName", "someHeaderValue")
+            ))
+            .setCookies(new Cookies().withEntries(
+                cookie("someCookieName", "someCookieValue")
+            ))
+            .setDelay(new DelayDTO(minutes(1)))
+            .buildObject()
+    );
+
+    // then
+    JsonParser parser = new JsonParser();
+    JsonElement expected = parser.parse("{" + NEW_LINE +
+        "  \"type\" : \"org.mockserver.model.HttpResponse\"," + NEW_LINE +
+        "  \"value\" : \"{" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  \\\"statusCode\\\" : 123," + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  \\\"headers\\\" : {" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "    \\\"someHeaderName\\\" : [ \\\"someHeaderValue\\\" ]" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  }," + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  \\\"cookies\\\" : {" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "    \\\"someCookieName\\\" : \\\"someCookieValue\\\"" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  }," + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  \\\"body\\\" : \\\"somebody\\\"," + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  \\\"delay\\\" : {" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "    \\\"timeUnit\\\" : \\\"MINUTES\\\"," + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "    \\\"value\\\" : 1" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "  }" + StringEscapeUtils.escapeJava(NEW_LINE) +
+        "}\"" + NEW_LINE +
+        "}");
+    JsonElement result = parser.parse(jsonHttpResponse);
+    assertEquals(expected, result);
+}
+
+import:
+['import com.google.gson.JsonElement;', 'import com.google.gson.JsonParser;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

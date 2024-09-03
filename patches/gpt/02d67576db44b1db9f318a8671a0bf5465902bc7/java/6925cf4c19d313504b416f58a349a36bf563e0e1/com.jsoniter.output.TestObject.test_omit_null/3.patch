@@ -1,0 +1,53 @@
+Test File Path: projects/6925cf4c19d313504b416f58a349a36bf563e0e1/java/src/test/java/com/jsoniter/output/TestObject.java
+
+    Original Test Method:
+     public void test_omit_null() {
+        assertEquals("{\"field3\":null}", JsonStream.serialize(new TestObject11()));
+        TestObject11 obj = new TestObject11();
+        obj.field1 = "hello";
+        assertEquals("{\"field1\":\"hello\",\"field3\":null}", JsonStream.serialize(obj));
+        obj = new TestObject11();
+        obj.field2 = "hello";
+        assertEquals("{\"field2\":\"hello\",\"field3\":null}", JsonStream.serialize(obj));
+        obj = new TestObject11();
+        obj.field3 = 3;
+        assertEquals("{\"field3\":3}", JsonStream.serialize(obj));
+    }
+
+    
+test_code:
+public void test_omit_null() {
+    Gson gson = new GsonBuilder().serializeNulls().create();
+    Type type = new TypeToken<LinkedHashMap<String, Object>>(){}.getType();
+
+    TestObject11 obj = new TestObject11();
+    LinkedHashMap<String, Object> expected = new LinkedHashMap<String, Object>();
+    expected.put("field3", null);
+    assertEquals(expected, gson.fromJson(JsonStream.serialize(obj), type));
+
+    obj = new TestObject11();
+    obj.field1 = "hello";
+    expected = new LinkedHashMap<String, Object>();
+    expected.put("field1", "hello");
+    expected.put("field3", null);
+    assertEquals(expected, gson.fromJson(JsonStream.serialize(obj), type));
+
+    obj = new TestObject11();
+    obj.field2 = "hello";
+    expected = new LinkedHashMap<String, Object>();
+    expected.put("field2", "hello");
+    expected.put("field3", null);
+    assertEquals(expected, gson.fromJson(JsonStream.serialize(obj), type));
+
+    obj = new TestObject11();
+    obj.field3 = 3;
+    expected = new LinkedHashMap<String, Object>();
+    expected.put("field3", 3.0);
+    assertEquals(expected, gson.fromJson(JsonStream.serialize(obj), type));
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

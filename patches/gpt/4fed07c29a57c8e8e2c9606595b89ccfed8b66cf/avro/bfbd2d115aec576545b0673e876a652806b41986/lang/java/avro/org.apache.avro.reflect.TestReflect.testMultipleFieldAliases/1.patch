@@ -1,0 +1,40 @@
+Test File Path: projects/bfbd2d115aec576545b0673e876a652806b41986/avro/lang/java/avro/src/test/java/org/apache/avro/reflect/TestReflect.java
+
+    Original Test Method:
+   public void testMultipleFieldAliases() {
+
+    Schema expectedSchema = SchemaBuilder.record(ClassWithMultipleAliasesOnField.class.getSimpleName())
+        .namespace("org.apache.avro.reflect.TestReflect").fields().name("primitiveField").aliases("alias1", "alias2")
+        .type(Schema.create(org.apache.avro.Schema.Type.INT)).noDefault().endRecord();
+
+    check(ClassWithMultipleAliasesOnField.class, expectedSchema.toString());
+  }
+
+    
+test_code:
+public void testMultipleFieldAliases() {
+
+    Schema expectedSchema = SchemaBuilder.record(ClassWithMultipleAliasesOnField.class.getSimpleName())
+        .namespace("org.apache.avro.reflect.TestReflect").fields().name("primitiveField").aliases("alias1", "alias2")
+        .type(Schema.create(org.apache.avro.Schema.Type.INT)).noDefault().endRecord();
+
+    Schema actualSchema = ReflectData.get().getSchema(ClassWithMultipleAliasesOnField.class);
+
+    assertEquals(expectedSchema.getFields().size(), actualSchema.getFields().size());
+
+    for (int i = 0; i < expectedSchema.getFields().size(); i++) {
+        Schema.Field expectedField = expectedSchema.getFields().get(i);
+        Schema.Field actualField = actualSchema.getFields().get(i);
+
+        assertEquals(expectedField.name(), actualField.name());
+        assertEquals(expectedField.aliases(), actualField.aliases());
+        assertEquals(expectedField.schema(), actualField.schema());
+    }
+}
+
+import:
+['import org.apache.avro.Schema;', 'import org.apache.avro.reflect.ReflectData;', 'import org.apache.avro.SchemaBuilder;', 'import static org.junit.Assert.assertEquals;']
+pom:
+
+ <!-- No changes needed -->
+ 

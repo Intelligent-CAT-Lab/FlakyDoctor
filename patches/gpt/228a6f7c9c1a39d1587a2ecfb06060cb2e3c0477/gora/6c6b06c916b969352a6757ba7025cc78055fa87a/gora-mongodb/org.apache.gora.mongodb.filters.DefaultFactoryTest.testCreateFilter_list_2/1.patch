@@ -1,0 +1,44 @@
+Test File Path: projects/6c6b06c916b969352a6757ba7025cc78055fa87a/gora/gora-mongodb/src/test/java/org/apache/gora/mongodb/filters/DefaultFactoryTest.java
+
+    Original Test Method:
+   public void testCreateFilter_list_2() throws Exception {
+    FilterList<String, WebPage> filter = new FilterList<>();
+    MapFieldValueFilter<String, WebPage> hFilter = createHeadersFilter();
+    hFilter.setFilterIfMissing(true);
+    hFilter.setFilterOp(FilterOp.EQUALS);
+    filter.addFilter(hFilter);
+    SingleFieldValueFilter<String, WebPage> urlFilter = createUrlFilter();
+    urlFilter.setFilterIfMissing(true);
+    urlFilter.setFilterOp(FilterOp.EQUALS);
+    filter.addFilter(urlFilter);
+
+    Bson dbObject = filterFactory.createFilter(filter, store);
+    assertEquals(new JSONObject("{ \"h.C·T\" : \"text/html\" , \"url\" : \"http://www.example.com\"}").toString(),
+            new JSONObject(asJson(dbObject)).toString());
+  }
+
+    
+test_code:
+public void testCreateFilter_list_2() throws Exception {
+    FilterList<String, WebPage> filter = new FilterList<>();
+    MapFieldValueFilter<String, WebPage> hFilter = createHeadersFilter();
+    hFilter.setFilterIfMissing(true);
+    hFilter.setFilterOp(FilterOp.EQUALS);
+    filter.addFilter(hFilter);
+    SingleFieldValueFilter<String, WebPage> urlFilter = createUrlFilter();
+    urlFilter.setFilterIfMissing(true);
+    urlFilter.setFilterOp(FilterOp.EQUALS);
+    filter.addFilter(urlFilter);
+
+    Bson dbObject = filterFactory.createFilter(filter, store);
+    JSONObject expected = new JSONObject("{ \"h.C·T\" : \"text/html\" , \"url\" : \"http://www.example.com\"}");
+    JSONObject actual = new JSONObject(asJson(dbObject));
+    assertEquals(expected.get("h.C·T"), actual.get("h.C·T"));
+    assertEquals(expected.get("url"), actual.get("url"));
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

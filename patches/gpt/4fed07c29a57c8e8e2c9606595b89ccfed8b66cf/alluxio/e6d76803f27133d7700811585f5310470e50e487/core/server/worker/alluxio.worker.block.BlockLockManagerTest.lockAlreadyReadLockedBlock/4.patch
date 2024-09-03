@@ -1,0 +1,32 @@
+Test File Path: projects/e6d76803f27133d7700811585f5310470e50e487/alluxio/core/server/worker/src/test/java/alluxio/worker/block/BlockLockManagerTest.java
+
+    Original Test Method:
+   public void lockAlreadyReadLockedBlock() {
+    BlockLockManager manager = new BlockLockManager();
+    manager.lockBlock(1, 1, BlockLockType.READ);
+    mThrown.expect(IllegalStateException.class);
+    manager.lockBlock(1, 1, BlockLockType.WRITE);
+  }
+
+    
+test_code:
+public void lockAlreadyReadLockedBlock() {
+    BlockLockManager manager = new BlockLockManager();
+    manager.lockBlock(1, 1, BlockLockType.READ);
+    assertThrows(IllegalStateException.class, () -> {
+        manager.lockBlock(1, 1, BlockLockType.WRITE);
+    }, "Session 1 attempted to take a write lock on block 1, but the session already holds a lock on the block.");
+}
+
+import:
+[]
+pom:
+
+<dependencies>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>5.7.0</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>

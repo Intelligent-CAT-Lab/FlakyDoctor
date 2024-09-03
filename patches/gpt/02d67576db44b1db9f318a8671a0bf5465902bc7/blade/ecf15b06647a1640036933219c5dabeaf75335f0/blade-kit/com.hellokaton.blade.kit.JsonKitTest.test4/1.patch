@@ -1,0 +1,51 @@
+Test File Path: projects/ecf15b06647a1640036933219c5dabeaf75335f0/blade/blade-kit/src/test/java/com/hellokaton/blade/kit/JsonKitTest.java
+
+    Original Test Method:
+     public void test4() {
+        ChildBean childBean = new ChildBean();
+        childBean.setSuperField("super");
+        childBean.setChildField("child");
+        childBean.setRepeatField("sss");
+        String json = JsonKit.toString(childBean);
+
+        Assert.assertEquals("{\"repeatField\":\"sss\",\"childField\":\"child\",\"superField\":\"super\"}", json);
+
+        ChildBean formJson = JsonKit.fromJson(json, ChildBean.class);
+
+        Assert.assertEquals(formJson, childBean);
+    }
+
+    
+test_code:
+public void test4() {
+    ChildBean childBean = new ChildBean();
+    childBean.setSuperField("super");
+    childBean.setChildField("child");
+    childBean.setRepeatField("sss");
+    String json = JsonKit.toString(childBean);
+
+    JsonObject expectedJson = new JsonObject();
+    expectedJson.addProperty("repeatField", "sss");
+    expectedJson.addProperty("childField", "child");
+    expectedJson.addProperty("superField", "super");
+
+    JsonParser parser = new JsonParser();
+    JsonObject actualJson = parser.parse(json).getAsJsonObject();
+
+    Assert.assertEquals(expectedJson, actualJson);
+
+    ChildBean formJson = JsonKit.fromJson(json, ChildBean.class);
+
+    Assert.assertEquals(formJson, childBean);
+}
+
+import:
+['import com.google.gson.JsonObject;', 'import com.google.gson.JsonParser;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>
+ 

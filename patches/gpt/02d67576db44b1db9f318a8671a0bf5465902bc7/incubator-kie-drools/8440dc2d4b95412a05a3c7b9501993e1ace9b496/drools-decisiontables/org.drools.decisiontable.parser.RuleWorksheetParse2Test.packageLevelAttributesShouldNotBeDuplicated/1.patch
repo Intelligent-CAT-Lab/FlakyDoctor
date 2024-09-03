@@ -1,0 +1,39 @@
+Test File Path: projects/8440dc2d4b95412a05a3c7b9501993e1ace9b496/incubator-kie-drools/drools-decisiontables/src/test/java/org/drools/decisiontable/parser/RuleWorksheetParse2Test.java
+
+    Original Test Method:
+     public void packageLevelAttributesShouldNotBeDuplicated() {
+        makeRuleSet();
+        makeAttribute("agenda-group", "agroup");  // B3, C3
+        makeAttribute("agenda-group", "bgroup");  // B3. B4
+        makeRuleTable();
+        makeRow(11, "C",              "A",         "P");
+        makeRow(12, "Foo",            "Foo");
+        makeRow(13, "attr == $param", "x");
+        makeRow(15, "1",              "show()",   "10");
+        listener.finishSheet();
+        
+        assertThatException().isThrownBy(() -> listener.getRuleSet()).withMessageContaining("C3, C4");
+
+    }
+
+    
+test_code:
+public void packageLevelAttributesShouldNotBeDuplicated() {
+    makeRuleSet();
+    makeAttribute("agenda-group", "agroup");  // B3, C3
+    makeAttribute("agenda-group", "bgroup");  // B3. B4
+    makeRuleTable();
+    makeRow(11, "C",              "A",         "P");
+    makeRow(12, "Foo",            "Foo");
+    makeRow(13, "attr == $param", "x");
+    makeRow(15, "1",              "show()",   "10");
+    listener.finishSheet();
+
+    assertThatException().isThrownBy(() -> listener.getRuleSet()).withMessageContaining("C4").withMessageContaining("C3");
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

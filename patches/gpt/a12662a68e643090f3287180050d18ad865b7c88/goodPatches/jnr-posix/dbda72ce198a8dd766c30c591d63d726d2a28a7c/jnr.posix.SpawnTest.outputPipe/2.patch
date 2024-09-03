@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'outputPipe': 'public void outputPipe() {\n    if (Platform.getNativePlatform().isUnix()) {\n        int[] outputPipe = { -1, -1 };\n        long pid = -1;\n        try {\n            assertFalse(libc.pipe(outputPipe) < 0);\n            assertNotSame(-1, outputPipe[0]);\n            assertNotSame(-1, outputPipe[1]);\n\n            List<SpawnFileAction> actions = Arrays.asList(dup(outputPipe[1], 1));\n\n            // Reset the environment variable "PATH" before calling posix_spawnp\n            String originalPath = posix.getenv("PATH");\n            posix.setenv("PATH", originalPath, 1);\n\n            pid = posix.posix_spawnp("echo", actions, Arrays.asList("echo", "bar"), emptyEnv);\n            assertTrue(pid != -1);\n\n            // close the write side of the output pipe, so read() will return immediately once the process has exited\n            posix.libc().close(outputPipe[1]);\n\n            ByteBuffer output = ByteBuffer.allocate(100);\n            long nbytes = posix.libc().read(outputPipe[0], output, output.remaining());\n            assertEquals(4L, nbytes);\n            output.position((int) nbytes).flip();\n            byte[] bytes = new byte[output.remaining()];\n            output.get(bytes);\n            assertEquals("bar", new String(bytes).trim());\n        } finally {\n            closePipe(outputPipe);\n            killChild(pid);\n        }\n    }\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['outputPipe']}polluter
+:code:
+{'fields': {}, 'methods': {'outputPipe': 'public void outputPipe() {\n    if (Platform.getNativePlatform().isUnix()) {\n        int[] outputPipe = { -1, -1 };\n        long pid = -1;\n        try {\n            assertFalse(libc.pipe(outputPipe) < 0);\n            assertNotSame(-1, outputPipe[0]);\n            assertNotSame(-1, outputPipe[1]);\n\n            List<SpawnFileAction> actions = Arrays.asList(dup(outputPipe[1], 1));\n\n            // Reset the environment variable "PATH" before calling posix_spawnp\n            String originalPath = posix.getenv("PATH");\n            posix.setenv("PATH", originalPath, 1);\n\n            pid = posix.posix_spawnp("echo", actions, Arrays.asList("echo", "bar"), emptyEnv);\n            assertTrue(pid != -1);\n\n            // close the write side of the output pipe, so read() will return immediately once the process has exited\n            posix.libc().close(outputPipe[1]);\n\n            ByteBuffer output = ByteBuffer.allocate(100);\n            long nbytes = posix.libc().read(outputPipe[0], output, output.remaining());\n            assertEquals(4L, nbytes);\n            output.position((int) nbytes).flip();\n            byte[] bytes = new byte[output.remaining()];\n            output.get(bytes);\n            assertEquals("bar", new String(bytes).trim());\n        } finally {\n            closePipe(outputPipe);\n            killChild(pid);\n        }\n    }\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['outputPipe']}

@@ -1,0 +1,35 @@
+Test File Path: projects/6ef5f20eaff6a8bad3713b4aee6a482cdbd6e256/zerocode/core/src/test/java/org/jsmart/zerocode/core/httpclient/BasicHttpClientTest.java
+
+    Original Test Method:
+     public void createRequestBuilder() throws IOException {
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        String reqBodyAsString = "{\"Company\":\"Amazon\",\"age\":30,\"worthInBillion\":999.999}";
+        RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
+        String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
+        assertThat(requestBuilder.getMethod(), is("POST"));
+        assertThat(nameValuePairString, is("Company=Amazon&worthInBillion=999.999&age=30"));
+    }
+
+    
+test_code:
+public void createRequestBuilder() throws IOException {
+    header.put("Content-Type", "application/x-www-form-urlencoded");
+    String reqBodyAsString = "{\"Company\":\"Amazon\",\"age\":30,\"worthInBillion\":999.999}";
+    RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
+    String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
+
+    String[] expected = {"Company=Amazon", "worthInBillion=999.999", "age=30"};
+    List<String> expectedList = Arrays.asList(expected);
+    List<String> actualList = Arrays.asList(nameValuePairString.split("&"));
+    Collections.sort(expectedList);
+    Collections.sort(actualList);
+
+    assertThat(requestBuilder.getMethod(), is("POST"));
+    assertThat(actualList, is(expectedList));
+}
+
+import:
+['import java.util.Arrays;', 'import java.util.Collections;', 'import java.util.List;']
+pom:
+
+<!-- No changes needed -->

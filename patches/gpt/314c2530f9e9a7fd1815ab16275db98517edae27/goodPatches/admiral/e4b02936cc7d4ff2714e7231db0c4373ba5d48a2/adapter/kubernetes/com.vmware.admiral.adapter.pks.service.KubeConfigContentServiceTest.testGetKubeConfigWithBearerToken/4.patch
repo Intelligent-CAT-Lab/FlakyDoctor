@@ -1,0 +1,50 @@
+test_before_fix:
+    public void testGetKubeConfigWithBearerToken() throws Throwable {
+        String authCredentialsLink = createCredentials(AuthCredentialsType.Bearer, true)
+                .documentSelfLink;
+        String hostLink = createCompute(authCredentialsLink, true, true).documentSelfLink;
+
+        URI serviceUri = UriUtils.buildUri(host, KubeConfigContentService.SELF_LINK,
+                UriUtils.buildUriQuery("hostLink", hostLink));
+
+        verifyOperation(Operation.createGet(serviceUri), o -> {
+            assertEquals("attachment; filename=\"kubeconfig\"",
+                    o.getResponseHeader("Content-Disposition"));
+            assertEquals(KUBE_CONFIG_YAML, o.getBody(String.class));
+        });
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testGetKubeConfigWithBearerToken() throws Throwable { 
+     String authCredentialsLink = createCredentials(AuthCredentialsType.Bearer, true) 
+             .documentSelfLink; 
+     String hostLink = createCompute(authCredentialsLink, true, true).documentSelfLink; 
+  
+     URI serviceUri = UriUtils.buildUri(host, KubeConfigContentService.SELF_LINK, 
+             UriUtils.buildUriQuery("hostLink", hostLink)); 
+  
+     verifyOperation(Operation.createGet(serviceUri), o -> { 
+         assertEquals("attachment; filename=\"kubeconfig\"", 
+                 o.getResponseHeader("Content-Disposition")); 
+         ObjectMapper mapper = new ObjectMapper(); 
+         mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true); 
+         try { 
+             JsonNode expected = mapper.readTree(KUBE_CONFIG_YAML); 
+             JsonNode actual = mapper.readTree(o.getBody(String.class)); 
+             assertEquals(expected, actual); 
+         } catch (IOException e) { 
+             throw new RuntimeException("Failed to parse JSON: " + e.getMessage()); 
+         } 
+     }); 
+ } 
+  
+  
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ']
+pom:
+

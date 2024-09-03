@@ -1,0 +1,34 @@
+Test File Path: dexfix_projects/7c32e527651a8a235d1b78b2f5d3f53d5e9bb6cb/commons-lang/src/test/java/org/apache/commons/lang3/reflect/FieldUtilsTest.java
+
+    Original Test Method:
+     public void testGetFieldsWithAnnotation() throws NoSuchFieldException {
+        assertArrayEquals(new Field[0], FieldUtils.getFieldsWithAnnotation(Object.class, Annotated.class));
+        final Field[] annotatedFields = new Field[]{
+                FieldUtilsTest.class.getDeclaredField("publicChild"),
+                FieldUtilsTest.class.getDeclaredField("privatelyShadowedChild")
+        };
+        assertArrayEquals(annotatedFields, FieldUtils.getFieldsWithAnnotation(FieldUtilsTest.class, Annotated.class));
+    }
+
+    
+test_code:
+public void testGetFieldsWithAnnotation() throws NoSuchFieldException {
+    assertArrayEquals(new Field[0], FieldUtils.getFieldsWithAnnotation(Object.class, Annotated.class));
+    final List<Field> annotatedFields = new ArrayList<Field>(){
+        {
+            add(FieldUtilsTest.class.getDeclaredField("publicChild"));
+            add(FieldUtilsTest.class.getDeclaredField("privatelyShadowedChild"));
+        }
+    };
+    final List<Field> actualFields = Arrays.asList(FieldUtils.getFieldsWithAnnotation(FieldUtilsTest.class, Annotated.class));
+    Collections.sort(annotatedFields, Comparator.comparing(Field::getName));
+    Collections.sort(actualFields, Comparator.comparing(Field::getName));
+    assertArrayEquals(annotatedFields.toArray(), actualFields.toArray());
+}
+
+import:
+['import java.util.Collections;', 'import java.util.Comparator;']
+pom:
+
+ <!-- No changes needed -->
+ 

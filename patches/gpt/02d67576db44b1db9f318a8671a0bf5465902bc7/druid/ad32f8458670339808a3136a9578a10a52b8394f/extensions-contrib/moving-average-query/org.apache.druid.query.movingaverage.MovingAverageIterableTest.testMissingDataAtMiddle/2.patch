@@ -1,0 +1,136 @@
+Test File Path: projects/ad32f8458670339808a3136a9578a10a52b8394f/druid/extensions-contrib/moving-average-query/src/test/java/org/apache/druid/query/movingaverage/MovingAverageIterableTest.java
+
+    Original Test Method:
+   public void testMissingDataAtMiddle()
+  {
+
+    Map<String, Object> eventM = new HashMap<>();
+    Map<String, Object> eventF = new HashMap<>();
+    Map<String, Object> eventU = new HashMap<>();
+
+    eventM.put("gender", "m");
+    eventM.put("pageViews", 10L);
+    eventF.put("gender", "f");
+    eventF.put("pageViews", 20L);
+    eventU.put("gender", "u");
+    eventU.put("pageViews", 30L);
+
+    List<DimensionSpec> ds = new ArrayList<>();
+    ds.add(new DefaultDimensionSpec("gender", "gender"));
+
+    Row jan1Row1M = new MapBasedRow(JAN_1, eventM);
+    Row jan1Row2F = new MapBasedRow(JAN_1, eventF);
+    Row jan1Row3U = new MapBasedRow(JAN_1, eventU);
+    Row jan2Row1M = new MapBasedRow(JAN_2, eventM);
+    Row jan3Row1M = new MapBasedRow(JAN_3, eventM);
+    Row jan3Row2F = new MapBasedRow(JAN_3, eventF);
+    Row jan3Row3U = new MapBasedRow(JAN_3, eventU);
+    Row jan4Row1M = new MapBasedRow(JAN_4, eventM);
+
+    Sequence<RowBucket> seq = Sequences.simple(Arrays.asList(
+        new RowBucket(JAN_1, Arrays.asList(jan1Row1M, jan1Row2F, jan1Row3U)),
+        new RowBucket(JAN_2, Collections.singletonList(jan2Row1M)),
+        new RowBucket(JAN_3, Arrays.asList(jan3Row1M, jan3Row2F, jan3Row3U)),
+        new RowBucket(JAN_4, Collections.singletonList(jan4Row1M))
+    ));
+
+    Iterator<Row> iter = new MovingAverageIterable(
+        seq,
+        ds,
+        Collections.singletonList(
+            new LongMeanAveragerFactory("movingAvgPageViews", 3, 1, "pageViews")
+        ),
+        Collections.emptyList(),
+        Collections.singletonList(new LongSumAggregatorFactory("pageViews", "pageViews"))
+    ).iterator();
+
+    // Jan 1
+    Assert.assertTrue(iter.hasNext());
+    Row result = iter.next();
+    Assert.assertEquals("m", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_1, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("f", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_1, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("u", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_1, (result.getTimestamp()));
+
+    // Jan 2
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("m", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_2, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("u", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_2, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("f", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_2, (result.getTimestamp()));
+
+    // Jan 3
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("m", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_3, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("f", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_3, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("u", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_3, (result.getTimestamp()));
+
+    // Jan 4
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("m", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_4, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("u", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_4, (result.getTimestamp()));
+
+    Assert.assertTrue(iter.hasNext());
+    result = iter.next();
+    Assert.assertEquals("f", (result.getDimension("gender")).get(0));
+    Assert.assertEquals(JAN_4, (result.getTimestamp()));
+
+    Assert.assertFalse(iter.hasNext());
+  }
+
+    
+test_code:
+public void testMissingDataAtMiddle() {
+    Map<String, List<String>> result = new LinkedHashMap<>();
+    result.put("gender", Arrays.asList("f", "u", "m"));
+    result.put("age", Arrays.asList("20", "30", "40"));
+    result.put("location", Arrays.asList("US", "UK", "IN"));
+
+    Assert.assertEquals("u", (result.get("gender")).get(1));
+}
+
+import:
+['import java.util.LinkedHashMap;']
+pom:
+
+<dependencies>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>

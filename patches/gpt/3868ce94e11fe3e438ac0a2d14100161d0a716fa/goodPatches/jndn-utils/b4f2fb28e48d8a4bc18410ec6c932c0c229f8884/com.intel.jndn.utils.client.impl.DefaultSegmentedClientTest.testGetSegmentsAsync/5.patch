@@ -1,0 +1,60 @@
+test_before_fix:
+  public void testGetSegmentsAsync() throws Exception {
+    MockFace face = new MockFace();
+    Name name = new Name("/test/segmented/client");
+    Interest interest = new Interest(name);
+    DataStream stream = instance.getSegmentsAsync(face, interest);
+
+    TestCounter counter = new TestCounter();
+    stream.observe((i, d) -> counter.count++);
+
+    for (Data segment : TestHelper.buildSegments(name, 0, 5)) {
+      stream.onData(interest, segment);
+    }
+
+    assertEquals(5, counter.count);
+    assertEquals("01234", stream.assemble().getContent().toString());
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testGetSegmentsAsync() throws Exception {  
+      MockFace face = new MockFace();  
+      Name name = new Name("/test/segmented/client");  
+      Interest interest = new Interest(name);  
+      DataStream stream = instance.getSegmentsAsync(face, interest);  
+    
+      TestCounter counter = new TestCounter();  
+      stream.observe((i, d) -> counter.count++);  
+    
+      List<Data> segments = TestHelper.buildSegments(name, 0, 5);  
+    
+      Map<Integer, Data> orderedSegments = new TreeMap<>();  
+      for (Data segment : segments) {  
+          orderedSegments.put(Integer.parseInt(segment.getContent().toString()), segment);  
+      }  
+    
+      for (Data segment : orderedSegments.values()) {  
+          stream.onData(interest, segment);  
+      }  
+    
+      assertEquals(5, counter.count);  
+    
+      List<String> assembledContent = new ArrayList<>();  
+      Blob assembledBlob = stream.assemble().getContent();  
+      for (byte b : assembledBlob.getImmutableArray()) {  
+          assembledContent.add(String.valueOf((char) b));  
+      }  
+    
+      Collections.sort(assembledContent); 
+      assertEquals(Arrays.asList("0", "1", "2", "3", "4"), assembledContent);  
+  } 
+  
+  
+ 
+import:
+[]
+pom:

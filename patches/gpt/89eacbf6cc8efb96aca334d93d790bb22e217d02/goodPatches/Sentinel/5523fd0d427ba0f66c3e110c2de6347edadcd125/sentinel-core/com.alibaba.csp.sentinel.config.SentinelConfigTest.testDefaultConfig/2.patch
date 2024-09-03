@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testDefaultConfig': 'public void testDefaultConfig() {\n    // Reset the SentinelConfig to its default state before running the test\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, String.valueOf(SentinelConfig.DEFAULT_COLD_FACTOR));\n\n    assertEquals(SentinelConfig.DEFAULT_CHARSET, SentinelConfig.charset());\n    assertEquals(SentinelConfig.DEFAULT_SINGLE_METRIC_FILE_SIZE, SentinelConfig.singleMetricFileSize());\n    assertEquals(SentinelConfig.DEFAULT_TOTAL_METRIC_FILE_COUNT, SentinelConfig.totalMetricFileCount());\n    assertEquals(SentinelConfig.DEFAULT_COLD_FACTOR, SentinelConfig.coldFactor());\n    assertEquals(SentinelConfig.DEFAULT_STATISTIC_MAX_RT, SentinelConfig.statisticMaxRt());\n}\n', 'testColdFactoryLargerThanOne': 'public void testColdFactoryLargerThanOne() {\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, "2");\n    assertEquals(2, SentinelConfig.coldFactor());\n\n    // Reset the SentinelConfig to its default state after running the test\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, String.valueOf(SentinelConfig.DEFAULT_COLD_FACTOR));\n\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, "4");\n    assertEquals(4, SentinelConfig.coldFactor());\n\n    // Reset the SentinelConfig to its default state after running the test\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, String.valueOf(SentinelConfig.DEFAULT_COLD_FACTOR));\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testDefaultConfig', 'testColdFactoryLargerThanOne']}polluter
+:code:
+{'fields': {}, 'methods': {'testDefaultConfig': 'public void testDefaultConfig() {\n    // Reset the SentinelConfig to its default state before running the test\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, String.valueOf(SentinelConfig.DEFAULT_COLD_FACTOR));\n\n    assertEquals(SentinelConfig.DEFAULT_CHARSET, SentinelConfig.charset());\n    assertEquals(SentinelConfig.DEFAULT_SINGLE_METRIC_FILE_SIZE, SentinelConfig.singleMetricFileSize());\n    assertEquals(SentinelConfig.DEFAULT_TOTAL_METRIC_FILE_COUNT, SentinelConfig.totalMetricFileCount());\n    assertEquals(SentinelConfig.DEFAULT_COLD_FACTOR, SentinelConfig.coldFactor());\n    assertEquals(SentinelConfig.DEFAULT_STATISTIC_MAX_RT, SentinelConfig.statisticMaxRt());\n}\n', 'testColdFactoryLargerThanOne': 'public void testColdFactoryLargerThanOne() {\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, "2");\n    assertEquals(2, SentinelConfig.coldFactor());\n\n    // Reset the SentinelConfig to its default state after running the test\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, String.valueOf(SentinelConfig.DEFAULT_COLD_FACTOR));\n\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, "4");\n    assertEquals(4, SentinelConfig.coldFactor());\n\n    // Reset the SentinelConfig to its default state after running the test\n    SentinelConfig.setConfig(SentinelConfig.COLD_FACTOR, String.valueOf(SentinelConfig.DEFAULT_COLD_FACTOR));\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testDefaultConfig', 'testColdFactoryLargerThanOne']}

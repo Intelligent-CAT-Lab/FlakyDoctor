@@ -1,0 +1,46 @@
+Test File Path: projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/writeClassName/WriteDuplicateType.java
+
+    Original Test Method:
+     public void test_dupType() throws Exception {
+        DianDianCart cart = new DianDianCart();
+        cart.setId(1001);
+        
+        LinkedHashMap<String, JSONObject> cartMap = new LinkedHashMap<String, JSONObject>();
+        
+        JSONObject obj = new JSONObject();
+        obj.put("id", 1001);
+        obj.put(JSON.DEFAULT_TYPE_KEY, "com.alibaba.json.bvt.writeClassName.WriteDuplicateType$DianDianCart");
+        cartMap.put("1001", obj);
+        
+        String text1 = JSON.toJSONString(cartMap, SerializerFeature.WriteClassName);
+        Assert.assertEquals("{\"@type\":\"java.util.LinkedHashMap\",\"1001\":{\"@type\":\"com.alibaba.json.bvt.writeClassName.WriteDuplicateType$DianDianCart\",\"id\":1001}}", text1);
+        
+    }
+
+    
+test_code:
+public void test_dupType() throws Exception {
+    DianDianCart cart = new DianDianCart();
+    cart.setId(1001);
+
+    LinkedHashMap<String, JSONObject> cartMap = new LinkedHashMap<String, JSONObject>();
+
+    JSONObject obj = new JSONObject();
+    obj.put("id", 1001);
+    obj.put(JSON.DEFAULT_TYPE_KEY, "com.alibaba.json.bvt.writeClassName.WriteDuplicateType$DianDianCart");
+    cartMap.put("1001", obj);
+
+    String text1 = JSON.toJSONString(cartMap, SerializerFeature.WriteClassName, SerializerFeature.SortField);
+    String expected = "{\"@type\":\"java.util.LinkedHashMap\",\"1001\":{\"@type\":\"com.alibaba.json.bvt.writeClassName.WriteDuplicateType$DianDianCart\",\"id\":1001}}";
+    JSONAssert.assertEquals(expected, text1, JSONCompareMode.STRICT_ORDER);
+}
+
+import:
+['import org.skyscreamer.jsonassert.JSONAssert;', 'import org.skyscreamer.jsonassert.JSONCompareMode;']
+pom:
+
+<dependency>
+    <groupId>org.skyscreamer</groupId>
+    <artifactId>jsonassert</artifactId>
+    <version>1.5.0</version>
+</dependency>

@@ -1,0 +1,364 @@
+Test File Path: dexfix_projects/23c9b5ac50d04d28a34a87c78eb2d3331c06b74b/flink/flink-runtime/src/test/java/org/apache/flink/runtime/state/OperatorStateBackendTest.java
+
+    Original Test Method:
+ 	public void testSnapshotRestoreSync() throws Exception {
+		AbstractStateBackend abstractStateBackend = new MemoryStateBackend(2 * 4096);
+
+		OperatorStateBackend operatorStateBackend = abstractStateBackend.createOperatorStateBackend(
+			createMockEnvironment(),
+			"test-op-name",
+			emptyStateHandles,
+			new CloseableRegistry());
+		ListStateDescriptor<Serializable> stateDescriptor1 = new ListStateDescriptor<>("test1", new JavaSerializer<>());
+		ListStateDescriptor<Serializable> stateDescriptor2 = new ListStateDescriptor<>("test2", new JavaSerializer<>());
+		ListStateDescriptor<Serializable> stateDescriptor3 = new ListStateDescriptor<>("test3", new JavaSerializer<>());
+
+		MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor1 = new MapStateDescriptor<>("test4", new JavaSerializer<>(), new JavaSerializer<>());
+		MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor2 = new MapStateDescriptor<>("test5", new JavaSerializer<>(), new JavaSerializer<>());
+		MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor3 = new MapStateDescriptor<>("test6", new JavaSerializer<>(), new JavaSerializer<>());
+
+		ListState<Serializable> listState1 = operatorStateBackend.getListState(stateDescriptor1);
+		ListState<Serializable> listState2 = operatorStateBackend.getListState(stateDescriptor2);
+		ListState<Serializable> listState3 = operatorStateBackend.getUnionListState(stateDescriptor3);
+
+		BroadcastState<Serializable, Serializable> broadcastState1 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor1);
+		BroadcastState<Serializable, Serializable> broadcastState2 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor2);
+		BroadcastState<Serializable, Serializable> broadcastState3 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor3);
+
+		listState1.add(42);
+		listState1.add(4711);
+
+		listState2.add(7);
+		listState2.add(13);
+		listState2.add(23);
+
+		listState3.add(17);
+		listState3.add(18);
+		listState3.add(19);
+		listState3.add(20);
+
+		broadcastState1.put(1, 2);
+		broadcastState1.put(2, 5);
+
+		broadcastState2.put(2, 5);
+
+		CheckpointStreamFactory streamFactory = new MemCheckpointStreamFactory(2 * 4096);
+		RunnableFuture<SnapshotResult<OperatorStateHandle>> snapshot =
+			operatorStateBackend.snapshot(1L, 1L, streamFactory, CheckpointOptions.forCheckpointWithDefaultLocation());
+
+		SnapshotResult<OperatorStateHandle> snapshotResult = FutureUtils.runIfNotDoneAndGet(snapshot);
+		OperatorStateHandle stateHandle = snapshotResult.getJobManagerOwnedSnapshot();
+
+		try {
+
+			operatorStateBackend.close();
+			operatorStateBackend.dispose();
+
+			operatorStateBackend = abstractStateBackend.createOperatorStateBackend(
+					createMockEnvironment(),
+					"testOperator",
+				StateObjectCollection.singleton(stateHandle),
+				new CloseableRegistry());
+
+			assertEquals(3, operatorStateBackend.getRegisteredStateNames().size());
+			assertEquals(3, operatorStateBackend.getRegisteredBroadcastStateNames().size());
+
+			listState1 = operatorStateBackend.getListState(stateDescriptor1);
+			listState2 = operatorStateBackend.getListState(stateDescriptor2);
+			listState3 = operatorStateBackend.getUnionListState(stateDescriptor3);
+
+			broadcastState1 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor1);
+			broadcastState2 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor2);
+			broadcastState3 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor3);
+
+			assertEquals(3, operatorStateBackend.getRegisteredStateNames().size());
+			assertEquals(3, operatorStateBackend.getRegisteredBroadcastStateNames().size());
+
+			Iterator<Serializable> it = listState1.get().iterator();
+			assertEquals(42, it.next());
+			assertEquals(4711, it.next());
+			assertFalse(it.hasNext());
+
+			it = listState2.get().iterator();
+			assertEquals(7, it.next());
+			assertEquals(13, it.next());
+			assertEquals(23, it.next());
+			assertFalse(it.hasNext());
+
+			it = listState3.get().iterator();
+			assertEquals(17, it.next());
+			assertEquals(18, it.next());
+			assertEquals(19, it.next());
+			assertEquals(20, it.next());
+			assertFalse(it.hasNext());
+
+			Iterator<Map.Entry<Serializable, Serializable>> bIt = broadcastState1.iterator();
+			assertTrue(bIt.hasNext());
+			Map.Entry<Serializable, Serializable> entry = bIt.next();
+			assertEquals(1, entry.getKey());
+			assertEquals(2, entry.getValue());
+			assertTrue(bIt.hasNext());
+			entry = bIt.next();
+			assertEquals(2, entry.getKey());
+			assertEquals(5, entry.getValue());
+			assertFalse(bIt.hasNext());
+
+			bIt = broadcastState2.iterator();
+			assertTrue(bIt.hasNext());
+			entry = bIt.next();
+			assertEquals(2, entry.getKey());
+			assertEquals(5, entry.getValue());
+			assertFalse(bIt.hasNext());
+
+			bIt = broadcastState3.iterator();
+			assertFalse(bIt.hasNext());
+
+			operatorStateBackend.close();
+			operatorStateBackend.dispose();
+		} finally {
+			stateHandle.discardState();
+		}
+	}
+
+    
+Patch after Stitching:
+
+test_code:
+public void testSnapshotRestoreSync() throws Exception {
+	AbstractStateBackend abstractStateBackend = new MemoryStateBackend(2 * 4096);
+
+	OperatorStateBackend operatorStateBackend = abstractStateBackend.createOperatorStateBackend(
+		createMockEnvironment(),
+		"test-op-name",
+		emptyStateHandles,
+		new CloseableRegistry());
+	ListStateDescriptor<Serializable> stateDescriptor1 = new ListStateDescriptor<>("test1", new JavaSerializer<>());
+	ListStateDescriptor<Serializable> stateDescriptor2 = new ListStateDescriptor<>("test2", new JavaSerializer<>());
+	ListStateDescriptor<Serializable> stateDescriptor3 = new ListStateDescriptor<>("test3", new JavaSerializer<>());
+
+	MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor1 = new MapStateDescriptor<>("test4", new JavaSerializer<>(), new JavaSerializer<>());
+	MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor2 = new MapStateDescriptor<>("test5", new JavaSerializer<>(), new JavaSerializer<>());
+	MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor3 = new MapStateDescriptor<>("test6", new JavaSerializer<>(), new JavaSerializer<>());
+
+	ListState<Serializable> listState1 = operatorStateBackend.getListState(stateDescriptor1);
+	ListState<Serializable> listState2 = operatorStateBackend.getListState(stateDescriptor2);
+	ListState<Serializable> listState3 = operatorStateBackend.getUnionListState(stateDescriptor3);
+
+	BroadcastState<Serializable, Serializable> broadcastState1 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor1);
+	BroadcastState<Serializable, Serializable> broadcastState2 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor2);
+	BroadcastState<Serializable, Serializable> broadcastState3 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor3);
+
+	listState1.add(42);
+	listState1.add(4711);
+
+	listState2.add(7);
+	listState2.add(13);
+	listState2.add(23);
+
+	listState3.add(17);
+	listState3.add(18);
+	listState3.add(19);
+	listState3.add(20);
+
+	broadcastState1.put(1, 2);
+	broadcastState1.put(2, 5);
+
+	broadcastState2.put(2, 5);
+
+	CheckpointStreamFactory streamFactory = new MemCheckpointStreamFactory(2 * 4096);
+	RunnableFuture<SnapshotResult<OperatorStateHandle>> snapshot =
+		operatorStateBackend.snapshot(1L, 1L, streamFactory, CheckpointOptions.forCheckpointWithDefaultLocation());
+
+	SnapshotResult<OperatorStateHandle> snapshotResult = FutureUtils.runIfNotDoneAndGet(snapshot);
+	OperatorStateHandle stateHandle = snapshotResult.getJobManagerOwnedSnapshot();
+
+	try {
+
+		operatorStateBackend.close();
+		operatorStateBackend.dispose();
+
+		operatorStateBackend = abstractStateBackend.createOperatorStateBackend(
+				createMockEnvironment(),
+				"testOperator",
+			StateObjectCollection.singleton(stateHandle),
+			new CloseableRegistry());
+
+		assertEquals(3, operatorStateBackend.getRegisteredStateNames().size());
+		assertEquals(3, operatorStateBackend.getRegisteredBroadcastStateNames().size());
+
+		listState1 = operatorStateBackend.getListState(stateDescriptor1);
+		listState2 = operatorStateBackend.getListState(stateDescriptor2);
+		listState3 = operatorStateBackend.getUnionListState(stateDescriptor3);
+
+		broadcastState1 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor1);
+		broadcastState2 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor2);
+		broadcastState3 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor3);
+
+		assertEquals(3, operatorStateBackend.getRegisteredStateNames().size());
+		assertEquals(3, operatorStateBackend.getRegisteredBroadcastStateNames().size());
+
+		Iterator<Serializable> it = listState1.get().iterator();
+		assertEquals(42, it.next());
+		assertEquals(4711, it.next());
+		assertFalse(it.hasNext());
+
+		it = listState2.get().iterator();
+		assertEquals(7, it.next());
+		assertEquals(13, it.next());
+		assertEquals(23, it.next());
+		assertFalse(it.hasNext());
+
+		it = listState3.get().iterator();
+		assertEquals(17, it.next());
+		assertEquals(18, it.next());
+		assertEquals(19, it.next());
+		assertEquals(20, it.next());
+		assertFalse(it.hasNext());
+
+		Map<Serializable, Serializable> broadcastState1Map = new LinkedHashMap<>();
+		broadcastState1.iterator().forEachRemaining(entry -> broadcastState1Map.put(entry.getKey(), entry.getValue()));
+		assertEquals(2, broadcastState1Map.size());
+		assertEquals(2, broadcastState1Map.get(1));
+		assertEquals(5, broadcastState1Map.get(2));
+
+		Map<Serializable, Serializable> broadcastState2Map = new LinkedHashMap<>();
+		broadcastState2.iterator().forEachRemaining(entry -> broadcastState2Map.put(entry.getKey(), entry.getValue()));
+		assertEquals(1, broadcastState2Map.size());
+		assertEquals(5, broadcastState2Map.get(2));
+
+		Map<Serializable, Serializable> broadcastState3Map = new LinkedHashMap<>();
+		broadcastState3.iterator().forEachRemaining(entry -> broadcastState3Map.put(entry.getKey(), entry.getValue()));
+		assertTrue(broadcastState3Map.isEmpty());
+
+		operatorStateBackend.close();
+		operatorStateBackend.dispose();
+	} finally {
+		stateHandle.discardState();
+	}
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+
+Patch before Stitching:
+
+test_code:
+public void testSnapshotRestoreSync() throws Exception {
+	AbstractStateBackend abstractStateBackend = new MemoryStateBackend(2 * 4096);
+
+	OperatorStateBackend operatorStateBackend = abstractStateBackend.createOperatorStateBackend(
+		createMockEnvironment(),
+		"test-op-name",
+		emptyStateHandles,
+		new CloseableRegistry());
+	ListStateDescriptor<Serializable> stateDescriptor1 = new ListStateDescriptor<>("test1", new JavaSerializer<>());
+	ListStateDescriptor<Serializable> stateDescriptor2 = new ListStateDescriptor<>("test2", new JavaSerializer<>());
+	ListStateDescriptor<Serializable> stateDescriptor3 = new ListStateDescriptor<>("test3", new JavaSerializer<>());
+
+	MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor1 = new MapStateDescriptor<>("test4", new JavaSerializer<>(), new JavaSerializer<>());
+	MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor2 = new MapStateDescriptor<>("test5", new JavaSerializer<>(), new JavaSerializer<>());
+	MapStateDescriptor<Serializable, Serializable> broadcastStateDescriptor3 = new MapStateDescriptor<>("test6", new JavaSerializer<>(), new JavaSerializer<>());
+
+	ListState<Serializable> listState1 = operatorStateBackend.getListState(stateDescriptor1);
+	ListState<Serializable> listState2 = operatorStateBackend.getListState(stateDescriptor2);
+	ListState<Serializable> listState3 = operatorStateBackend.getUnionListState(stateDescriptor3);
+
+	BroadcastState<Serializable, Serializable> broadcastState1 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor1);
+	BroadcastState<Serializable, Serializable> broadcastState2 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor2);
+	BroadcastState<Serializable, Serializable> broadcastState3 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor3);
+
+	listState1.add(42);
+	listState1.add(4711);
+
+	listState2.add(7);
+	listState2.add(13);
+	listState2.add(23);
+
+	listState3.add(17);
+	listState3.add(18);
+	listState3.add(19);
+	listState3.add(20);
+
+	broadcastState1.put(1, 2);
+	broadcastState1.put(2, 5);
+
+	broadcastState2.put(2, 5);
+
+	CheckpointStreamFactory streamFactory = new MemCheckpointStreamFactory(2 * 4096);
+	RunnableFuture<SnapshotResult<OperatorStateHandle>> snapshot =
+		operatorStateBackend.snapshot(1L, 1L, streamFactory, CheckpointOptions.forCheckpointWithDefaultLocation());
+
+	SnapshotResult<OperatorStateHandle> snapshotResult = FutureUtils.runIfNotDoneAndGet(snapshot);
+	OperatorStateHandle stateHandle = snapshotResult.getJobManagerOwnedSnapshot();
+
+	try {
+
+		operatorStateBackend.close();
+		operatorStateBackend.dispose();
+
+		operatorStateBackend = abstractStateBackend.createOperatorStateBackend(
+				createMockEnvironment(),
+				"testOperator",
+			StateObjectCollection.singleton(stateHandle),
+			new CloseableRegistry());
+
+		assertEquals(3, operatorStateBackend.getRegisteredStateNames().size());
+		assertEquals(3, operatorStateBackend.getRegisteredBroadcastStateNames().size());
+
+		listState1 = operatorStateBackend.getListState(stateDescriptor1);
+		listState2 = operatorStateBackend.getListState(stateDescriptor2);
+		listState3 = operatorStateBackend.getUnionListState(stateDescriptor3);
+
+		broadcastState1 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor1);
+		broadcastState2 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor2);
+		broadcastState3 = operatorStateBackend.getBroadcastState(broadcastStateDescriptor3);
+
+		assertEquals(3, operatorStateBackend.getRegisteredStateNames().size());
+		assertEquals(3, operatorStateBackend.getRegisteredBroadcastStateNames().size());
+
+		Iterator<Serializable> it = listState1.get().iterator();
+		assertEquals(42, it.next());
+		assertEquals(4711, it.next());
+		assertFalse(it.hasNext());
+
+		it = listState2.get().iterator();
+		assertEquals(7, it.next());
+		assertEquals(13, it.next());
+		assertEquals(23, it.next());
+		assertFalse(it.hasNext());
+
+		it = listState3.get().iterator();
+		assertEquals(17, it.next());
+		assertEquals(18, it.next());
+		assertEquals(19, it.next());
+		assertEquals(20, it.next());
+		assertFalse(it.hasNext());
+
+		Map<Serializable, Serializable> broadcastState1Map = new LinkedHashMap<>();
+		broadcastState1.iterator().forEachRemaining(entry -> broadcastState1Map.put(entry.getKey(), entry.getValue()));
+		assertEquals(2, broadcastState1Map.size());
+		assertEquals(2, broadcastState1Map.get(1));
+		assertEquals(5, broadcastState1Map.get(2));
+
+		Map<Serializable, Serializable> broadcastState2Map = new LinkedHashMap<>();
+		broadcastState2.iterator().forEachRemaining(entry -> broadcastState2Map.put(entry.getKey(), entry.getValue()));
+		assertEquals(1, broadcastState2Map.size());
+		assertEquals(5, broadcastState2Map.get(2));
+
+		Map<Serializable, Serializable> broadcastState3Map = new LinkedHashMap<>();
+		broadcastState3.iterator().forEachRemaining(entry -> broadcastState3Map.put(entry.getKey(), entry.getValue()));
+		assertTrue(broadcastState3Map.isEmpty());
+
+		operatorStateBackend.close();
+		operatorStateBackend.dispose();
+	} finally {
+		stateHandle.discardState();
+	}
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+

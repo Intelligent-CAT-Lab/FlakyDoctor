@@ -1,0 +1,31 @@
+Test File Path: projects/523009b2576b9f54ed78c6f4720fba87f79b1466/JSONassert/src/test/java/org/skyscreamer/jsonassert/comparator/CustomComparatorTest.java
+
+    Original Test Method:
+     public void testFullArrayComparison() throws Exception {
+        JSONCompareResult compareResult = JSONCompare.compareJSON(
+                "[{id:1}, {id:3}, {id:5}]",
+                "[{id:1}, {id:3}, {id:6}, {id:7}]", new ArrayOfJsonObjectsComparator(JSONCompareMode.LENIENT)
+        );
+
+        Assert.assertTrue(compareResult.failed());
+        String message = compareResult.getMessage().replaceAll("\n", "");
+        Assert.assertTrue(message, message.matches(".*id=5.*Expected.*id=6.*Unexpected.*id=7.*Unexpected.*"));
+    }
+
+    
+test_code:
+public void testFullArrayComparison() throws Exception {
+    JSONCompareResult compareResult = JSONCompare.compareJSON(
+            "[{id:1}, {id:3}, {id:5}]",
+            "[{id:1}, {id:3}, {id:6}, {id:7}]", new ArrayOfJsonObjectsComparator(JSONCompareMode.LENIENT)
+    );
+
+    Assert.assertTrue(compareResult.failed());
+    String message = compareResult.getMessage().replaceAll("\n", "");
+    Assert.assertTrue(message, message.contains("id=5") && message.contains("Expected") && message.contains("id=6") && message.contains("Unexpected") && message.contains("id=7") && message.contains("Unexpected"));
+}
+
+import:
+[]
+pom:
+

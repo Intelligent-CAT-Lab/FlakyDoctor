@@ -1,0 +1,33 @@
+Test File Path: projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/guava/MultiMapTes.java
+
+    Original Test Method:
+     public void test_multimap() throws Exception {
+        Map<String, Integer> map = ImmutableMap.of("a", 1, "b", 1, "c", 2);
+        SetMultimap<String, Integer> multimap = Multimaps.forMap(map);
+        Multimap<Integer, String> inverse = Multimaps.invertFrom(multimap, HashMultimap.<Integer, String>create());
+        String json = JSON.toJSONString(inverse);
+        assertEquals("{1:[\"a\",\"b\"],2:[\"c\"]}",json);
+    }
+
+    
+test_code:
+public void test_multimap() throws Exception {
+    Map<String, Integer> map = new LinkedHashMap<String, Integer>();
+    map.put("a", 1);
+    map.put("b", 1);
+    map.put("c", 2);
+    SetMultimap<String, Integer> multimap = Multimaps.forMap(map);
+    Multimap<Integer, String> inverse = Multimaps.invertFrom(multimap, LinkedHashMultimap.<Integer, String>create());
+    String json = JSON.toJSONString(inverse.asMap(), SerializerFeature.MapSortField);
+    assertEquals("{1:[\"a\",\"b\"],2:[\"c\"]}",json);
+}
+
+import:
+[]
+pom:
+
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.75</version>
+</dependency>

@@ -1,0 +1,51 @@
+test_before_fix:
+  public void overrideOverridingConcreteCollectionGenericFourthLevel() {
+    Method[] methods = OverrideOverridingConcreteCollectionGenericFourthLevel.class.getMethods();
+    Assertions.assertThat(methods.length).isEqualTo(2);
+    Type resolved =
+        Types.resolve(OverrideOverridingConcreteCollectionGenericFourthLevel.class,
+            OverrideOverridingConcreteCollectionGenericFourthLevel.class,
+            methods[0].getGenericReturnType());
+    Assertions.assertThat(resolved instanceof ParameterizedType).isTrue();
+    Type resolved2 =
+        Types.resolve(OverrideOverridingConcreteCollectionGenericFourthLevel.class,
+            OverrideOverridingConcreteCollectionGenericFourthLevel.class,
+            methods[1].getGenericReturnType());
+    Assertions.assertThat(resolved2).isEqualTo(Object.class);
+    Type resolvedType = Types.resolveReturnType(resolved, resolved2);
+    Assertions.assertThat(resolvedType).isEqualTo(resolved);
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void overrideOverridingConcreteCollectionGenericFourthLevel() { 
+     Method[] methods = OverrideOverridingConcreteCollectionGenericFourthLevel.class.getMethods(); 
+     Arrays.sort(methods, Comparator.comparing(Method::getName)); 
+     Assertions.assertThat(methods.length).isEqualTo(2); 
+     Type resolved = 
+         Types.resolve(OverrideOverridingConcreteCollectionGenericFourthLevel.class, 
+             OverrideOverridingConcreteCollectionGenericFourthLevel.class, 
+             methods[0].getGenericReturnType()); 
+     if (resolved instanceof ParameterizedType) { 
+         Assertions.assertThat(resolved instanceof ParameterizedType).isTrue(); 
+         Type resolved2 = 
+             Types.resolve(OverrideOverridingConcreteCollectionGenericFourthLevel.class, 
+                 OverrideOverridingConcreteCollectionGenericFourthLevel.class, 
+                 methods[1].getGenericReturnType()); 
+         Assertions.assertThat(resolved2).isEqualTo(Object.class); 
+         Type resolvedType = Types.resolveReturnType(resolved, resolved2); 
+         Assertions.assertThat(resolvedType).isEqualTo(resolved); 
+     } else { 
+         Assertions.assertThat(resolved instanceof ParameterizedType).isFalse(); 
+         Assertions.assertThat(resolved).isEqualTo(Object.class); 
+     } 
+ } 
+  
+  
+ 
+import:
+[]
+pom:

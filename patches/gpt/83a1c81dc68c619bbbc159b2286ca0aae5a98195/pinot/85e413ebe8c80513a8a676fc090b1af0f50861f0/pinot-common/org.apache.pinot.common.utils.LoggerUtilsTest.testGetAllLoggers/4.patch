@@ -1,0 +1,25 @@
+Test File Path: projects/85e413ebe8c80513a8a676fc090b1af0f50861f0/pinot/pinot-common/src/test/java/org/apache/pinot/common/utils/LoggerUtilsTest.java
+
+    Original Test Method:
+   public void testGetAllLoggers() {
+    List<String> allLoggers = LoggerUtils.getAllLoggers();
+    assertEquals(allLoggers.size(), 2);
+    assertEquals(allLoggers.get(0), ROOT);
+    assertEquals(allLoggers.get(1), PINOT);
+  }
+
+    
+test_code:
+public void testGetAllLoggers() {
+    List<String> allLoggers = new ArrayList<>(LoggerUtils.getAllLoggers());
+    Collections.sort(allLoggers);
+    assertTrue(allLoggers.contains(ROOT));
+    assertTrue(allLoggers.contains(PINOT));
+    assertEquals(2, allLoggers.size());
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

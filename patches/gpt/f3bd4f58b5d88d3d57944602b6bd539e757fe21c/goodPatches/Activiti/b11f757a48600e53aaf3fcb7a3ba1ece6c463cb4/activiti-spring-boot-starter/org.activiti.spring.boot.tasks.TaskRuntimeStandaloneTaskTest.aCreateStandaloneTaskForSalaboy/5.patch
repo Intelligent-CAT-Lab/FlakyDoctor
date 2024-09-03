@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'aCreateStandaloneTaskForSalaboy': 'public void aCreateStandaloneTaskForSalaboy() {\n\n    String authenticatedUserId = securityManager.getAuthenticatedUserId();\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("cure Skipper")\n            .withAssignee(authenticatedUserId)\n            .build());\n\n    assertThat(RuntimeTestConfiguration.createdTasks).contains(standAloneTask.getId());\n\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // Filter the tasks by the assignee\n    List<Task> filteredTasks = tasks.getContent().stream()\n            .filter(task -> task.getAssignee().equals(authenticatedUserId) && task.getName().equals("cure Skipper"))\n            .collect(Collectors.toList());\n\n    assertThat(filteredTasks).hasSize(1);\n    Task task = filteredTasks.get(0);\n\n    assertThat(task.getAssignee()).isEqualTo(authenticatedUserId);\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n\n    Task deletedTask = taskRuntime.delete(TaskPayloadBuilder\n            .delete()\n            .withTaskId(task.getId())\n            .withReason("test clean up")\n            .build());\n\n    assertThat(deletedTask).isNotNull();\n    assertThat(deletedTask.getStatus()).isEqualTo(Task.TaskStatus.DELETED);\n\n    tasks = taskRuntime.tasks(Pageable.of(0, 50));\n    assertThat(tasks.getContent().stream().filter(t -> t.getAssignee().equals(authenticatedUserId) && t.getName().equals("cure Skipper")).collect(Collectors.toList())).hasSize(0);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['aCreateStandaloneTaskForSalaboy']}polluter
+:code:
+{'fields': {}, 'methods': {'aCreateStandaloneTaskForSalaboy': 'public void aCreateStandaloneTaskForSalaboy() {\n\n    String authenticatedUserId = securityManager.getAuthenticatedUserId();\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("cure Skipper")\n            .withAssignee(authenticatedUserId)\n            .build());\n\n    assertThat(RuntimeTestConfiguration.createdTasks).contains(standAloneTask.getId());\n\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // Filter the tasks by the assignee\n    List<Task> filteredTasks = tasks.getContent().stream()\n            .filter(task -> task.getAssignee().equals(authenticatedUserId) && task.getName().equals("cure Skipper"))\n            .collect(Collectors.toList());\n\n    assertThat(filteredTasks).hasSize(1);\n    Task task = filteredTasks.get(0);\n\n    assertThat(task.getAssignee()).isEqualTo(authenticatedUserId);\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n\n    Task deletedTask = taskRuntime.delete(TaskPayloadBuilder\n            .delete()\n            .withTaskId(task.getId())\n            .withReason("test clean up")\n            .build());\n\n    assertThat(deletedTask).isNotNull();\n    assertThat(deletedTask.getStatus()).isEqualTo(Task.TaskStatus.DELETED);\n\n    tasks = taskRuntime.tasks(Pageable.of(0, 50));\n    assertThat(tasks.getContent().stream().filter(t -> t.getAssignee().equals(authenticatedUserId) && t.getName().equals("cure Skipper")).collect(Collectors.toList())).hasSize(0);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['aCreateStandaloneTaskForSalaboy']}

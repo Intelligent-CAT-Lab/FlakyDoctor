@@ -1,0 +1,47 @@
+test_before_fix:
+    public void toModelImportMapTest() {
+        TypeScriptAxiosClientCodegen codegen = new TypeScriptAxiosClientCodegen();
+
+        Map<String, String[]> types = new HashMap<String, String[]>() {{
+            put("Schema & AnotherSchema", new String[]{ "Schema", "AnotherSchema" });
+            put("Schema | AnotherSchema", new String[]{ "Schema", "AnotherSchema" });
+            put("Schema & object", new String[]{ "Schema" });
+            put("Schema | object", new String[]{ "Schema" });
+        }};
+
+        for (Map.Entry<String, String[]> entry : types.entrySet()) {
+            String[] mapped = codegen.toModelImportMap(entry.getKey()).values().toArray(new String[0]);
+            Assert.assertEquals(mapped, entry.getValue());
+        }
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void toModelImportMapTest() { 
+     TypeScriptAxiosClientCodegen codegen = new TypeScriptAxiosClientCodegen(); 
+  
+     Map<String, String[]> types = new LinkedHashMap<String, String[]>() {{ 
+         put("Schema & AnotherSchema", new String[]{"Schema", "AnotherSchema"}); 
+         put("Schema | AnotherSchema", new String[]{"Schema", "AnotherSchema"}); 
+         put("Schema & object", new String[]{"Schema"}); 
+         put("Schema | object", new String[]{"Schema"}); 
+     }}; 
+  
+     for (Map.Entry<String, String[]> entry : types.entrySet()) { 
+         Map<String, String> mappedMap = codegen.toModelImportMap(entry.getKey()); 
+         List<String> mapped = new ArrayList<>(mappedMap.values()); 
+         Collections.sort(mapped); 
+         List<String> expected = Arrays.asList(entry.getValue()); 
+         Collections.sort(expected); 
+         Assert.assertEquals(mapped.toArray(new String[0]), expected.toArray(new String[0])); 
+     } 
+ } 
+  
+  
+ 
+import:
+['import java.util.ArrayList;\n ', 'import java.util.Arrays;\n ', 'import java.util.Collections;\n ']
+pom:

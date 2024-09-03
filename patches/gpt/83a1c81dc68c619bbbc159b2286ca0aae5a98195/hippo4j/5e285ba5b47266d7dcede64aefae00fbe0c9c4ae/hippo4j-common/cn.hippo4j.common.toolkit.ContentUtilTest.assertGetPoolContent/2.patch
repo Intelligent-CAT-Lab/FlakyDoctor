@@ -1,0 +1,47 @@
+Test File Path: projects/5e285ba5b47266d7dcede64aefae00fbe0c9c4ae/hippo4j/hippo4j-common/src/test/java/cn/hippo4j/common/toolkit/ContentUtilTest.java
+
+    Original Test Method:
+     public void assertGetPoolContent() {
+        String testText = "{\"tenantId\":\"prescription\",\"itemId\":\"dynamic-threadpool-example\",\"tpId\":" +
+                "\"message-consume\",\"queueType\":1,\"capacity\":4,\"keepAliveTime\":513,\"rejectedType\":4,\"isAlarm\"" +
+                ":1,\"capacityAlarm\":80,\"livenessAlarm\":80,\"allowCoreThreadTimeOut\":1}";
+        ThreadPoolParameterInfo threadPoolParameterInfo = ThreadPoolParameterInfo.builder().tenantId("prescription")
+                .itemId("dynamic-threadpool-example").tpId("message-consume").content("描述信息").corePoolSize(1)
+                .maximumPoolSize(2).queueType(1).capacity(4).keepAliveTime(513).executeTimeOut(null).rejectedType(4)
+                .isAlarm(1).capacityAlarm(80).livenessAlarm(80).allowCoreThreadTimeOut(1).build();
+        Assert.isTrue(testText.equals(ContentUtil.getPoolContent(threadPoolParameterInfo)));
+    }
+
+    
+test_code:
+public void assertGetPoolContent() throws Exception {
+    String testText = "{\"tenantId\":\"prescription\",\"itemId\":\"dynamic-threadpool-example\",\"tpId\":" +
+            "\"message-consume\",\"queueType\":1,\"capacity\":4,\"keepAliveTime\":513,\"rejectedType\":4,\"isAlarm\"" +
+            ":1,\"capacityAlarm\":80,\"livenessAlarm\":80,\"allowCoreThreadTimeOut\":1}";
+    ThreadPoolParameterInfo threadPoolParameterInfo = ThreadPoolParameterInfo.builder().tenantId("prescription")
+            .itemId("dynamic-threadpool-example").tpId("message-consume").content("描述信息").corePoolSize(1)
+            .maximumPoolSize(2).queueType(1).capacity(4).keepAliveTime(513).executeTimeOut(null).rejectedType(4)
+            .isAlarm(1).capacityAlarm(80).livenessAlarm(80).allowCoreThreadTimeOut(1).build();
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+    objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+    String sortedTestText = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(testText, Object.class));
+    String sortedPoolContent = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readValue(ContentUtil.getPoolContent(threadPoolParameterInfo), Object.class));
+    Assert.isTrue(sortedTestText.equals(sortedPoolContent));
+}
+
+import:
+['import org.springframework.util.Assert;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <version>2.4.5</version>
+    <scope>test</scope>
+</dependency>

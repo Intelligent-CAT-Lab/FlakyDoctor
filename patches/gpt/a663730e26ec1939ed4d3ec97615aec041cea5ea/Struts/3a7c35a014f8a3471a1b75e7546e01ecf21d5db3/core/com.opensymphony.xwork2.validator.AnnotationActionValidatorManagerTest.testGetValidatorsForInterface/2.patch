@@ -1,0 +1,58 @@
+Test File Path: projects/3a7c35a014f8a3471a1b75e7546e01ecf21d5db3/Struts/core/src/test/java/com/opensymphony/xwork2/validator/AnnotationActionValidatorManagerTest.java
+
+    Original Test Method:
+     public void testGetValidatorsForInterface() {
+        List validatorList = annotationActionValidatorManager.getValidators(AnnotationDataAware2.class, alias);
+
+        // 1 in interface hierarchy, 2 from parent interface (1 default + 1 context)
+        assertEquals(3, validatorList.size());
+
+        final FieldValidator dataValidator1 = (FieldValidator) validatorList.get(0);
+        assertEquals("data", dataValidator1.getFieldName());
+        assertTrue(dataValidator1 instanceof RequiredFieldValidator);
+
+        final FieldValidator dataValidator2 = (FieldValidator) validatorList.get(1);
+        assertEquals("data", dataValidator2.getFieldName());
+        assertTrue(dataValidator2 instanceof RequiredStringValidator);
+
+        final FieldValidator blingValidator = (FieldValidator) validatorList.get(2);
+        assertEquals("bling", blingValidator.getFieldName());
+        assertTrue(blingValidator instanceof RequiredStringValidator);
+    }
+
+    
+test_code:
+public void testGetValidatorsForInterface() {
+    List<Validator> validatorList = new ArrayList<>(annotationActionValidatorManager.getValidators(AnnotationDataAware2.class, alias));
+
+    // Sort the list based on the instance type of FieldValidator
+    validatorList.sort((v1, v2) -> {
+        if (v1 instanceof RequiredFieldValidator && v2 instanceof RequiredStringValidator) {
+            return -1;
+        } else if (v1 instanceof RequiredStringValidator && v2 instanceof RequiredFieldValidator) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+
+    // 1 in interface hierarchy, 2 from parent interface (1 default + 1 context)
+    assertEquals(3, validatorList.size());
+
+    final Validator dataValidator1 = validatorList.get(0);
+    assertEquals("data", ((FieldValidator)dataValidator1).getFieldName());
+    assertTrue(dataValidator1 instanceof RequiredFieldValidator);
+
+    final Validator dataValidator2 = validatorList.get(1);
+    assertEquals("data", ((FieldValidator)dataValidator2).getFieldName());
+    assertTrue(dataValidator2 instanceof RequiredStringValidator);
+
+    final Validator blingValidator = validatorList.get(2);
+    assertEquals("bling", ((FieldValidator)blingValidator).getFieldName());
+    assertTrue(blingValidator instanceof RequiredStringValidator);
+}
+
+import:
+[]
+pom:
+

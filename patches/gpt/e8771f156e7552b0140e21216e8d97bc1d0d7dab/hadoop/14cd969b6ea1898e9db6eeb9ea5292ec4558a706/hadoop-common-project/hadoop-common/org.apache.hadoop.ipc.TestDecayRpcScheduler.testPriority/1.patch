@@ -1,0 +1,92 @@
+Test File Path: dexfix_projects/14cd969b6ea1898e9db6eeb9ea5292ec4558a706/hadoop/hadoop-common-project/hadoop-common/src/test/java/org/apache/hadoop/ipc/TestDecayRpcScheduler.java
+
+    Original Test Method:
+   public void testPriority() throws Exception {
+    Configuration conf = new Configuration();
+    final String namespace = "ns";
+    conf.set(namespace + "." + DecayRpcScheduler
+        .IPC_FCQ_DECAYSCHEDULER_PERIOD_KEY, "99999999"); // Never flush
+    conf.set(namespace + "." + DecayRpcScheduler
+        .IPC_FCQ_DECAYSCHEDULER_THRESHOLDS_KEY, "25, 50, 75");
+    scheduler = new DecayRpcScheduler(4, namespace, conf);
+
+    assertEquals(0, getPriorityIncrementCallCount("A")); // 0 out of 0 calls
+    assertEquals(3, getPriorityIncrementCallCount("A")); // 1 out of 1 calls
+    assertEquals(0, getPriorityIncrementCallCount("B")); // 0 out of 2 calls
+    assertEquals(1, getPriorityIncrementCallCount("B")); // 1 out of 3 calls
+    assertEquals(0, getPriorityIncrementCallCount("C")); // 0 out of 4 calls
+    assertEquals(0, getPriorityIncrementCallCount("C")); // 1 out of 5 calls
+    assertEquals(1, getPriorityIncrementCallCount("A")); // 2 out of 6 calls
+    assertEquals(1, getPriorityIncrementCallCount("A")); // 3 out of 7 calls
+    assertEquals(2, getPriorityIncrementCallCount("A")); // 4 out of 8 calls
+    assertEquals(2, getPriorityIncrementCallCount("A")); // 5 out of 9 calls
+
+    MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+    ObjectName mxbeanName = new ObjectName(
+        "Hadoop:service="+ namespace + ",name=DecayRpcScheduler");
+
+    String cvs1 = (String) mbs.getAttribute(mxbeanName, "CallVolumeSummary");
+    assertTrue("Get expected JMX of CallVolumeSummary before decay",
+        cvs1.equals("{\"A\":6,\"B\":2,\"C\":2}"));
+
+    scheduler.forceDecay();
+
+    String cvs2 = (String) mbs.getAttribute(mxbeanName, "CallVolumeSummary");
+    assertTrue("Get expected JMX for CallVolumeSummary after decay",
+        cvs2.equals("{\"A\":3,\"B\":1,\"C\":1}"));
+  }
+
+    
+test_code:
+public void testPriority() throws Exception {
+    Configuration conf = new Configuration();
+    final String namespace = "ns";
+    conf.set(namespace + "." + DecayRpcScheduler
+        .IPC_FCQ_DECAYSCHEDULER_PERIOD_KEY, "99999999"); // Never flush
+    conf.set(namespace + "." + DecayRpcScheduler
+        .IPC_FCQ_DECAYSCHEDULER_THRESHOLDS_KEY, "25, 50, 75");
+    scheduler = new DecayRpcScheduler(4, namespace, conf);
+
+    assertEquals(0, getPriorityIncrementCallCount("A")); // 0 out of 0 calls
+    assertEquals(3, getPriorityIncrementCallCount("A")); // 1 out of 1 calls
+    assertEquals(0, getPriorityIncrementCallCount("B")); // 0 out of 2 calls
+    assertEquals(1, getPriorityIncrementCallCount("B")); // 1 out of 3 calls
+    assertEquals(0, getPriorityIncrementCallCount("C")); // 0 out of 4 calls
+    assertEquals(0, getPriorityIncrementCallCount("C")); // 1 out of 5 calls
+    assertEquals(1, getPriorityIncrementCallCount("A")); // 2 out of 6 calls
+    assertEquals(1, getPriorityIncrementCallCount("A")); // 3 out of 7 calls
+    assertEquals(2, getPriorityIncrementCallCount("A")); // 4 out of 8 calls
+    assertEquals(2, getPriorityIncrementCallCount("A")); // 5 out of 9 calls
+
+    MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+    ObjectName mxbeanName = new ObjectName(
+        "Hadoop:service="+ namespace + ",name=DecayRpcScheduler");
+
+    String cvs1 = (String) mbs.getAttribute(mxbeanName, "CallVolumeSummary");
+    Map<String, Integer> cvs1Map = new Gson().fromJson(cvs1, new TypeToken<Map<String, Integer>>(){}.getType());
+    Map<String, Integer> expectedCvs1Map = new LinkedHashMap<>();
+    expectedCvs1Map.put("A", 6);
+    expectedCvs1Map.put("B", 2);
+    expectedCvs1Map.put("C", 2);
+    assertEquals("Get expected JMX of CallVolumeSummary before decay", expectedCvs1Map, cvs1Map);
+
+    scheduler.forceDecay();
+
+    String cvs2 = (String) mbs.getAttribute(mxbeanName, "CallVolumeSummary");
+    Map<String, Integer> cvs2Map = new Gson().fromJson(cvs2, new TypeToken<Map<String, Integer>>(){}.getType());
+    Map<String, Integer> expectedCvs2Map = new LinkedHashMap<>();
+    expectedCvs2Map.put("A", 3);
+    expectedCvs2Map.put("B", 1);
+    expectedCvs2Map.put("C", 1);
+    assertEquals("Get expected JMX for CallVolumeSummary after decay", expectedCvs2Map, cvs2Map);
+}
+
+import:
+['import com.google.gson.Gson;', 'import com.google.gson.reflect.TypeToken;', 'import java.util.Map;', 'import java.util.LinkedHashMap;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

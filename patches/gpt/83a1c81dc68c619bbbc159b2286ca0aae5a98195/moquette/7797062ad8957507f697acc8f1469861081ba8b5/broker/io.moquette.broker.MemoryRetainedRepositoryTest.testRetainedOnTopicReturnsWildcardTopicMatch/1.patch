@@ -1,0 +1,74 @@
+Test File Path: projects/7797062ad8957507f697acc8f1469861081ba8b5/moquette/broker/src/test/java/io/moquette/broker/MemoryRetainedRepositoryTest.java
+
+    Original Test Method:
+     public void testRetainedOnTopicReturnsWildcardTopicMatch() {
+        MemoryRetainedRepository repository = new MemoryRetainedRepository();
+        Topic retainedTopic = new Topic("foo/bar/baz");
+        Topic otherRetainedTopic = new Topic("foo/baz/bar");
+
+        repository.retain(retainedTopic, MqttMessageBuilders
+            .publish()
+            .qos(MqttQoS.AT_LEAST_ONCE)
+            .topicName("foo/bar/baz")
+            .retained(true)
+            .payload(Unpooled.buffer(0))
+            .build());
+        repository.retain(otherRetainedTopic, MqttMessageBuilders
+            .publish()
+            .qos(MqttQoS.AT_LEAST_ONCE)
+            .topicName("foo/baz/bar")
+            .retained(true)
+            .payload(Unpooled.buffer(0))
+            .build());
+
+        List<RetainedMessage> retainedMessages = repository.retainedOnTopic("foo/bar/#");
+
+        assertEquals(1, retainedMessages.size());
+        assertEquals("foo/bar/baz", retainedMessages.get(0).getTopic().toString());
+
+        retainedMessages = repository.retainedOnTopic("foo/#");
+
+        assertEquals(2, retainedMessages.size());
+        assertEquals("foo/bar/baz", retainedMessages.get(0).getTopic().toString());
+        assertEquals("foo/baz/bar", retainedMessages.get(1).getTopic().toString());
+    }
+
+    
+test_code:
+public void testRetainedOnTopicReturnsWildcardTopicMatch() {
+    MemoryRetainedRepository repository = new MemoryRetainedRepository();
+    Topic retainedTopic = new Topic("foo/bar/baz");
+    Topic otherRetainedTopic = new Topic("foo/baz/bar");
+
+    repository.retain(retainedTopic, MqttMessageBuilders
+        .publish()
+        .qos(MqttQoS.AT_LEAST_ONCE)
+        .topicName("foo/bar/baz")
+        .retained(true)
+        .payload(Unpooled.buffer(0))
+        .build());
+    repository.retain(otherRetainedTopic, MqttMessageBuilders
+        .publish()
+        .qos(MqttQoS.AT_LEAST_ONCE)
+        .topicName("foo/baz/bar")
+        .retained(true)
+        .payload(Unpooled.buffer(0))
+        .build());
+
+    List<RetainedMessage> retainedMessages = repository.retainedOnTopic("foo/bar/#");
+
+    assertEquals(1, retainedMessages.size());
+    assertTrue(retainedMessages.stream().anyMatch(msg -> msg.getTopic().toString().equals("foo/bar/baz")));
+
+    retainedMessages = repository.retainedOnTopic("foo/#");
+
+    assertEquals(2, retainedMessages.size());
+    assertTrue(retainedMessages.stream().anyMatch(msg -> msg.getTopic().toString().equals("foo/bar/baz")));
+    assertTrue(retainedMessages.stream().anyMatch(msg -> msg.getTopic().toString().equals("foo/baz/bar")));
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

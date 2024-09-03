@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testSyncSimpleProperty': 'public void testSyncSimpleProperty() throws Exception {\n\n    tMtTable1.insert(1, "g1", "s1");\n\n    CayenneContext c1 = (CayenneContext) runtime.newContext();\n    CayenneContext c2 = (CayenneContext) runtime.newContext();\n    assertNotSame(c1, c2);\n\n    ClientMtTable1 o1 = (ClientMtTable1) Cayenne.objectForQuery(\n            c1,\n            new ObjectIdQuery(ObjectId.of("MtTable1", "TABLE1_ID", 1)));\n\n    ClientMtTable1 o2 = (ClientMtTable1) Cayenne.objectForQuery(\n            c2,\n            new ObjectIdQuery(ObjectId.of("MtTable1", "TABLE1_ID", 1)));\n\n    assertEquals("g1", o1.getGlobalAttribute1());\n    assertEquals("g1", o2.getGlobalAttribute1());\n\n    o1.setGlobalAttribute1("X");\n    c1.commitChanges();\n    \n    // let the events propagate to peers\n    Thread.sleep(500);\n\n    assertEquals("X", o2.getGlobalAttribute1());\n    assertFalse(c1.internalGraphManager().hasChanges());\n    assertFalse(c2.internalGraphManager().hasChanges());\n\n    \n\n    // Reset the global attribute back to "g1" to ensure the state of the database is consistent for other tests\n    o1.setGlobalAttribute1("g1");\n    c1.commitChanges();\n    \n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testSyncSimpleProperty']}polluter
+:code:
+{'fields': {}, 'methods': {'testSyncSimpleProperty': 'public void testSyncSimpleProperty() throws Exception {\n\n    tMtTable1.insert(1, "g1", "s1");\n\n    CayenneContext c1 = (CayenneContext) runtime.newContext();\n    CayenneContext c2 = (CayenneContext) runtime.newContext();\n    assertNotSame(c1, c2);\n\n    ClientMtTable1 o1 = (ClientMtTable1) Cayenne.objectForQuery(\n            c1,\n            new ObjectIdQuery(ObjectId.of("MtTable1", "TABLE1_ID", 1)));\n\n    ClientMtTable1 o2 = (ClientMtTable1) Cayenne.objectForQuery(\n            c2,\n            new ObjectIdQuery(ObjectId.of("MtTable1", "TABLE1_ID", 1)));\n\n    assertEquals("g1", o1.getGlobalAttribute1());\n    assertEquals("g1", o2.getGlobalAttribute1());\n\n    o1.setGlobalAttribute1("X");\n    c1.commitChanges();\n    \n    // let the events propagate to peers\n    Thread.sleep(500);\n\n    assertEquals("X", o2.getGlobalAttribute1());\n    assertFalse(c1.internalGraphManager().hasChanges());\n    assertFalse(c2.internalGraphManager().hasChanges());\n\n    \n\n    // Reset the global attribute back to "g1" to ensure the state of the database is consistent for other tests\n    o1.setGlobalAttribute1("g1");\n    c1.commitChanges();\n    \n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testSyncSimpleProperty']}

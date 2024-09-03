@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'bCreateStandaloneTaskForGroup': 'public void bCreateStandaloneTaskForGroup() {\n    \n\n    // Clear the task list at the start of the test\n    Page<Task> allTasks = taskRuntime.tasks(Pageable.of(0, 50));\n    for (Task task : allTasks.getContent()) {\n        taskRuntime.delete(TaskPayloadBuilder\n            .delete()\n            .withTaskId(task.getId())\n            .withReason("test clean up")\n            .build());\n    }\n    \n\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("find Lucien Sanchez")\n            .withGroup("doctor")\n            .build());\n\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    assertThat(tasks.getContent()).hasSize(1);\n    Task task = tasks.getContent().get(0);\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n\n    Task claimedTask = taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(task.getId()).build());\n\n    assertThat(claimedTask.getAssignee()).isEqualTo(securityManager.getAuthenticatedUserId());\n    assertThat(claimedTask.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n\n    Task deletedTask = taskRuntime.delete(TaskPayloadBuilder\n            .delete()\n            .withTaskId(task.getId())\n            .withReason("test clean up")\n            .build());\n\n    assertThat(deletedTask).isNotNull();\n    assertThat(deletedTask.getStatus()).isEqualTo(Task.TaskStatus.DELETED);\n\n    tasks = taskRuntime.tasks(Pageable.of(0, 50));\n    assertThat(tasks.getContent()).hasSize(0);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['bCreateStandaloneTaskForGroup']}polluter
+:code:
+{'fields': {}, 'methods': {'bCreateStandaloneTaskForGroup': 'public void bCreateStandaloneTaskForGroup() {\n    \n\n    // Clear the task list at the start of the test\n    Page<Task> allTasks = taskRuntime.tasks(Pageable.of(0, 50));\n    for (Task task : allTasks.getContent()) {\n        taskRuntime.delete(TaskPayloadBuilder\n            .delete()\n            .withTaskId(task.getId())\n            .withReason("test clean up")\n            .build());\n    }\n    \n\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("find Lucien Sanchez")\n            .withGroup("doctor")\n            .build());\n\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    assertThat(tasks.getContent()).hasSize(1);\n    Task task = tasks.getContent().get(0);\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n\n    Task claimedTask = taskRuntime.claim(TaskPayloadBuilder.claim().withTaskId(task.getId()).build());\n\n    assertThat(claimedTask.getAssignee()).isEqualTo(securityManager.getAuthenticatedUserId());\n    assertThat(claimedTask.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n\n    Task deletedTask = taskRuntime.delete(TaskPayloadBuilder\n            .delete()\n            .withTaskId(task.getId())\n            .withReason("test clean up")\n            .build());\n\n    assertThat(deletedTask).isNotNull();\n    assertThat(deletedTask.getStatus()).isEqualTo(Task.TaskStatus.DELETED);\n\n    tasks = taskRuntime.tasks(Pageable.of(0, 50));\n    assertThat(tasks.getContent()).hasSize(0);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['bCreateStandaloneTaskForGroup']}

@@ -1,0 +1,84 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog/plugins/views/search/rest/ViewSharingResourceTest.java
+
+    Original Test Method:
+     public void summarizeUsersReturnsListOfUsersWithoutTheCurrent() {
+        when(currentUser.getName()).thenReturn("peter");
+        final User user1 = mock(User.class);
+        when(user1.getName()).thenReturn("franz");
+        when(user1.getFullName()).thenReturn("Franz Josef Strauss");
+        final User user2 = mock(User.class);
+        when(user2.getName()).thenReturn("friedrich");
+        when(user2.getFullName()).thenReturn("Friedrich Merz");
+        final User peter = mock(User.class);
+        when(peter.getName()).thenReturn("peter");
+
+        when(userService.loadAll()).thenReturn(ImmutableList.of(user1, user2, peter));
+
+        final Set<UserShortSummary> users = this.viewSharingResource.summarizeUsers("viewId");
+
+        assertThat(users).containsExactly(
+                UserShortSummary.create("franz", "Franz Josef Strauss"),
+                UserShortSummary.create("friedrich", "Friedrich Merz")
+        );
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+public void summarizeUsersReturnsListOfUsersWithoutTheCurrent() {
+    when(currentUser.getName()).thenReturn("peter");
+    final User user1 = mock(User.class);
+    when(user1.getName()).thenReturn("franz");
+    when(user1.getFullName()).thenReturn("Franz Josef Strauss");
+    final User user2 = mock(User.class);
+    when(user2.getName()).thenReturn("friedrich");
+    when(user2.getFullName()).thenReturn("Friedrich Merz");
+    final User peter = mock(User.class);
+    when(peter.getName()).thenReturn("peter");
+
+    when(userService.loadAll()).thenReturn(ImmutableList.of(user1, user2, peter));
+
+    final Set<UserShortSummary> users = this.viewSharingResource.summarizeUsers("viewId");
+
+    Set<UserShortSummary> expectedUsers = new LinkedHashSet<>();
+    expectedUsers.add(UserShortSummary.create("franz", "Franz Josef Strauss"));
+    expectedUsers.add(UserShortSummary.create("friedrich", "Friedrich Merz"));
+
+    assertThat(users).isEqualTo(expectedUsers);
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+
+
+Patch before Stitching:
+
+test_code:
+public void summarizeUsersReturnsListOfUsersWithoutTheCurrent() {
+    when(currentUser.getName()).thenReturn("peter");
+    final User user1 = mock(User.class);
+    when(user1.getName()).thenReturn("franz");
+    when(user1.getFullName()).thenReturn("Franz Josef Strauss");
+    final User user2 = mock(User.class);
+    when(user2.getName()).thenReturn("friedrich");
+    when(user2.getFullName()).thenReturn("Friedrich Merz");
+    final User peter = mock(User.class);
+    when(peter.getName()).thenReturn("peter");
+
+    when(userService.loadAll()).thenReturn(ImmutableList.of(user1, user2, peter));
+
+    final Set<UserShortSummary> users = this.viewSharingResource.summarizeUsers("viewId");
+
+    Set<UserShortSummary> expectedUsers = new LinkedHashSet<>();
+    expectedUsers.add(UserShortSummary.create("franz", "Franz Josef Strauss"));
+    expectedUsers.add(UserShortSummary.create("friedrich", "Friedrich Merz"));
+
+    assertThat(users).isEqualTo(expectedUsers);
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+

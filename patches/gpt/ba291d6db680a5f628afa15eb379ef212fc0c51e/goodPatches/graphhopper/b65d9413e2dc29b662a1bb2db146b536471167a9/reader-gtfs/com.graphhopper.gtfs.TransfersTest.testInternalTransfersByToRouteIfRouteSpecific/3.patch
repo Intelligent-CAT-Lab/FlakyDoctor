@@ -1,0 +1,42 @@
+test_before_fix:
+    public void testInternalTransfersByToRouteIfRouteSpecific() {
+        List<Transfer> transfersToStop = sampleFeed.getTransfersToStop("BEATTY_AIRPORT", "AB");
+        assertEquals(5, transfersToStop.size());
+        assertEquals("AB", transfersToStop.get(0).from_route_id);
+        assertEquals("FUNNY_BLOCK_AB", transfersToStop.get(1).from_route_id);
+        assertEquals("STBA", transfersToStop.get(2).from_route_id);
+        assertEquals("AAMV", transfersToStop.get(3).from_route_id);
+        assertEquals("ABBFC", transfersToStop.get(4).from_route_id);
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+  
+  
+  
+  
+  
+ public void testInternalTransfersByToRouteIfRouteSpecific() { 
+     List<Transfer> transfersToStop = sampleFeed.getTransfersToStop("BEATTY_AIRPORT", "AB"); 
+     Collections.sort(transfersToStop, new Comparator<Transfer>() { 
+         @Override 
+         public int compare(Transfer o1, Transfer o2) { 
+             return o1.from_route_id.compareTo(o2.from_route_id); 
+         } 
+     }); 
+     assertEquals(5, transfersToStop.size()); 
+     List<String> expectedRoutes = Arrays.asList("AB", "AAMV", "ABBFC", "FUNNY_BLOCK_AB", "STBA"); 
+     Collections.sort(expectedRoutes); 
+     for (int i = 0; i < transfersToStop.size(); i++) { 
+         assertEquals(expectedRoutes.get(i), transfersToStop.get(i).from_route_id); 
+     } 
+ } 
+  
+  
+ 
+import:
+['import java.util.Arrays;\n ']
+pom:

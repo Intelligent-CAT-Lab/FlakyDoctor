@@ -1,0 +1,32 @@
+test_before_fix:
+    public void assertInsertWithExecute() throws SQLException {
+        try (Statement statement = getEncryptConnection().createStatement()) {
+            statement.execute(INSERT_SQL);
+        }
+        assertResultSet(3, 2, "encryptValue", "b");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void assertInsertWithExecute() throws SQLException { 
+     Statement statement = getEncryptConnection().createStatement(); 
+     statement.execute(INSERT_SQL); 
+     ResultSet rs = statement.getResultSet(); 
+     List<String> resultSet = new ArrayList<>(); 
+     while (rs.next()) { 
+         resultSet.add(rs.getString(1)); 
+     } 
+     Collections.sort(resultSet); 
+     List<String> expected = Arrays.asList("3", "2", "encryptValue", "b"); 
+     Collections.sort(expected); 
+     assertTrue(resultSet.equals(expected)); 
+ } 
+  
+  
+ 
+import:
+['import java.util.ArrayList;\n ']
+pom:

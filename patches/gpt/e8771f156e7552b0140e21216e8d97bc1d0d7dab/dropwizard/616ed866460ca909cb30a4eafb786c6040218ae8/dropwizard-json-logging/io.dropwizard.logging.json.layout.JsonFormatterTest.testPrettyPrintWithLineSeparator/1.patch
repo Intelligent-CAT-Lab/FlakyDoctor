@@ -1,0 +1,30 @@
+Test File Path: dexfix_projects/616ed866460ca909cb30a4eafb786c6040218ae8/dropwizard/dropwizard-json-logging/src/test/java/io/dropwizard/logging/json/layout/JsonFormatterTest.java
+
+    Original Test Method:
+     public void testPrettyPrintWithLineSeparator() {
+        JsonFormatter formatter = new JsonFormatter(objectMapper, true, true);
+        assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
+                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
+                "  \"name\" : \"Jim\"%n" +
+                "}%n"));
+    }
+
+    
+test_code:
+    public void testPrettyPrintWithLineSeparator() {
+        JsonFormatter formatter = new JsonFormatter(objectMapper, true, true);
+        Map<String, Object> orderedMap = new LinkedHashMap<>();
+        orderedMap.put("hobbies", Arrays.asList("Reading", "Biking", "Snorkeling"));
+        orderedMap.put("name", "Jim");
+        assertThat(formatter.toJson(orderedMap)).isEqualTo(String.format("{%n" +
+                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
+                "  \"name\" : \"Jim\"%n" +
+                "}%n"));
+    }
+
+import:
+['import java.util.LinkedHashMap;']
+pom:
+
+ <!-- No changes needed -->
+ 

@@ -1,0 +1,55 @@
+test_before_fix:
+    public void testRoundaboutJsonNaN() throws IOException {
+        ObjectMapper objectMapper = Jackson.newObjectMapper();
+        InstructionList il = new InstructionList(usTR);
+
+        PointList pl = new PointList();
+        pl.add(52.514, 13.349);
+        pl.add(52.5135, 13.35);
+        pl.add(52.514, 13.351);
+        RoundaboutInstruction instr = new RoundaboutInstruction(Instruction.USE_ROUNDABOUT, "streetname",
+                new InstructionAnnotation(0, ""), pl)
+                .setRadian(-Math.PI + 1)
+                .setExitNumber(2)
+                .setExited();
+        il.add(instr);
+        assertEquals(objectMapper.readTree(fixture("fixtures/roundabout2.json")).toString(), objectMapper.valueToTree(il).toString());
+    }
+
+test_after_fix:
+
+code:
+public void testRoundaboutJsonNaN() throws IOException {  
+     ObjectMapper objectMapper = Jackson.newObjectMapper();  
+     objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);  
+     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);  
+     objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);  
+  
+     InstructionList il = new InstructionList(usTR);  
+  
+     PointList pl = new PointList();  
+     pl.add(52.514, 13.349);  
+     pl.add(52.5135, 13.35);  
+     pl.add(52.514, 13.351);  
+  
+     RoundaboutInstruction instr = new RoundaboutInstruction(Instruction.USE_ROUNDABOUT, "streetname",  
+             new InstructionAnnotation(0, ""), pl)  
+             .setRadian(-Math.PI + 1)  
+             .setExitNumber(2)  
+             .setExited();  
+  
+     il.add(instr);  
+  
+     JsonNode expected = objectMapper.readTree(fixture("fixtures/roundabout2.json"));  
+     JsonNode actual = objectMapper.valueToTree(il);  
+  
+     // Convert both expected and actual JsonNode to TreeMap to ensure order 
+     TreeMap<String, Object> expectedMap = objectMapper.convertValue(expected, TreeMap.class); 
+     TreeMap<String, Object> actualMap = objectMapper.convertValue(actual, TreeMap.class); 
+  
+     assertEquals(expectedMap, actualMap);  
+ } 
+ 
+import:
+['import java.util.TreeMap;\n ']
+pom:

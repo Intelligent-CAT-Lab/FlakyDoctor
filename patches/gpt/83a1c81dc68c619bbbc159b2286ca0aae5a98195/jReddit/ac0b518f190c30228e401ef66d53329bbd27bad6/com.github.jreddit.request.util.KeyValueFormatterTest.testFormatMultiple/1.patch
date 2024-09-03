@@ -1,0 +1,55 @@
+Test File Path: projects/ac0b518f190c30228e401ef66d53329bbd27bad6/jReddit/src/test/java/com/github/jreddit/request/util/KeyValueFormatterTest.java
+
+    Original Test Method:
+     public void testFormatMultiple() {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("a", "b");
+        params.put("a", "b");
+        params.put("b", "c");
+        
+        Assert.assertTrue(
+                ("a=b&b=c").equals(KeyValueFormatter.format(params, true))
+                ||
+                ("b=c&a=b").equals(KeyValueFormatter.format(params, true))
+                );
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+    public void testFormatMultiple() {
+        LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
+        params.put("a", "b");
+        params.put("b", "c");
+
+        Assert.assertTrue(
+                ("a=b&b=c").equals(KeyValueFormatter.format(params, true))
+        );
+    }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+ <!-- No changes needed -->
+ 
+Patch before Stitching:
+
+test_code:
+    public void testFormatMultiple() {
+        LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
+        params.put("a", "b");
+        params.put("b", "c");
+
+        Assert.assertTrue(
+                ("a=b&b=c").equals(KeyValueFormatter.format(params, true))
+        );
+    }
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+ <!-- No changes needed -->
+ 

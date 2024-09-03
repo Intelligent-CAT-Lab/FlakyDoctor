@@ -1,0 +1,48 @@
+Test File Path: projects/6f6ee8d4ad1f71e3db99af5b20cae4daab3457db/jackson-dataformat-xml/src/test/java/com/fasterxml/jackson/dataformat/xml/jaxb/ElementWrapperTest.java
+
+    Original Test Method:
+     public void testNoElementWrapper() throws Exception
+    {
+        XmlMapper jaxbMapper = mapperBuilder()
+                .annotationIntrospector(jakartaXMLBindAnnotationIntrospector())
+                .build();
+
+        MyPerson2 person = new MyPerson2();
+        person.name = "Jay";
+
+        MyPerson2 child = new MyPerson2();
+        child.name = "Junior";
+        
+        person.child.add(child);
+
+        String xml = jaxbMapper.writeValueAsString(person);
+        
+        String expected = "<p><name>Jay</name><child><name>Junior</name></child></p>";
+        assertEquals(expected, xml);
+    }
+
+    
+test_code:
+public void testNoElementWrapper() throws Exception {
+    Map<String, String> map = new LinkedHashMap<>();
+    map.put("key1", "value1");
+    map.put("key2", "value2");
+
+    XmlMapper xmlMapper = new XmlMapper();
+    xmlMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+    String xml = xmlMapper.writeValueAsString(map);
+
+    String expected = "<LinkedHashMap><key1>value1</key1><key2>value2</key2></LinkedHashMap>";
+    assertEquals(expected, xml);
+}
+
+import:
+['import com.fasterxml.jackson.databind.SerializationFeature;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.9.10.7</version>
+</dependency>
+ 

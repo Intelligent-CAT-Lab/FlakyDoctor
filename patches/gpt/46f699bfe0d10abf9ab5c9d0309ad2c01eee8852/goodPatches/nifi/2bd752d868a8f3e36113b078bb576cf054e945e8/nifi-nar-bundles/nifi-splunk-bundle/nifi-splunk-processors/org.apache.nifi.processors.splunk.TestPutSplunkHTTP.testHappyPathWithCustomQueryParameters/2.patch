@@ -1,0 +1,56 @@
+test_before_fix:
+    public void testHappyPathWithCustomQueryParameters() throws Exception {
+        // given
+        testRunner.setProperty(PutSplunkHTTP.SOURCE, "test_source");
+        testRunner.setProperty(PutSplunkHTTP.SOURCE_TYPE, "test?source?type");
+        givenSplunkReturnsWithSuccess();
+
+        // when
+        testRunner.enqueue(EVENT);
+        testRunner.run();
+
+        // then
+        testRunner.assertAllFlowFilesTransferred(PutSplunkHTTP.RELATIONSHIP_SUCCESS, 1);
+        Assert.assertEquals("/services/collector/raw?sourcetype=test%3Fsource%3Ftype&source=test_source", path.getValue());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testHappyPathWithCustomQueryParameters() throws Exception { 
+     // given 
+     testRunner.setProperty(PutSplunkHTTP.SOURCE, "test_source"); 
+     testRunner.setProperty(PutSplunkHTTP.SOURCE_TYPE, "test?source?type"); 
+     givenSplunkReturnsWithSuccess(); 
+  
+     // when 
+     testRunner.enqueue(EVENT); 
+     testRunner.run(); 
+  
+     // then 
+     testRunner.assertAllFlowFilesTransferred(PutSplunkHTTP.RELATIONSHIP_SUCCESS, 1); 
+  
+     Map<String, String> expectedParameters = new LinkedHashMap<>(); 
+     expectedParameters.put("sourcetype", "test%3Fsource%3Ftype"); 
+     expectedParameters.put("source", "test_source"); 
+  
+     Map<String, String> actualParameters = new LinkedHashMap<>(); 
+     String[] params = path.getValue().split("\\?"); 
+     for (int i = 1; i < params.length; i++) { 
+         String[] keyValue = params[i].split("&"); 
+         for (String pair : keyValue) { 
+             String[] entry = pair.split("="); 
+             actualParameters.put(entry[0], entry[1]); 
+         } 
+     } 
+  
+     Assert.assertEquals(expectedParameters, actualParameters); 
+ } 
+  
+  
+ 
+import:
+[]
+pom:

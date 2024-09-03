@@ -1,0 +1,54 @@
+Test File Path: projects/69d682d794e47433b3f8e6ad586562ee2ab948b3/jackson-module-jsonSchema/src/test/java/com/fasterxml/jackson/module/jsonSchema/TestGenerateJsonSchema.java
+
+    Original Test Method:
+     public void testSinglePropertyDependency() throws Exception {
+        JsonSchemaGenerator generator = new JsonSchemaGenerator(MAPPER);
+        JsonSchema jsonSchema = generator.generateSchema(SimpleBean.class);
+        ((ObjectSchema) jsonSchema).addSimpleDependency("property1", "property2");
+
+        Map<String, Object> result = writeAndMap(MAPPER, jsonSchema);
+        assertNotNull(result);
+
+        String schemaString = MAPPER.writeValueAsString(jsonSchema);
+        assertEquals("{\"type\":\"object\"," +
+                "\"id\":\"urn:jsonschema:com:fasterxml:jackson:module:jsonSchema:TestGenerateJsonSchema:SimpleBean\"," +
+                "\"dependencies\":{\"property1\":[\"property2\"]}," +
+                "\"properties\":{\"property1\":{\"type\":\"integer\"}" +
+                ",\"property2\":{\"type\":\"string\"}," +
+                "\"property3\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}," +
+                "\"property4\":{\"type\":\"array\",\"items\":{\"type\":\"number\"}}," +
+                "\"property5\":{\"type\":\"string\",\"required\":true}}}", schemaString);
+    }
+
+    
+test_code:
+public void testSinglePropertyDependency() throws Exception {
+    JsonSchemaGenerator generator = new JsonSchemaGenerator(MAPPER);
+    JsonSchema jsonSchema = generator.generateSchema(SimpleBean.class);
+    ((ObjectSchema) jsonSchema).addSimpleDependency("property1", "property2");
+
+    Map<String, Object> result = writeAndMap(MAPPER, jsonSchema);
+    assertNotNull(result);
+
+    String schemaString = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(jsonSchema);
+    JsonNode expectedJson = MAPPER.readTree("{\"type\":\"object\"," +
+            "\"id\":\"urn:jsonschema:com:fasterxml:jackson:module:jsonSchema:TestGenerateJsonSchema:SimpleBean\"," +
+            "\"dependencies\":{\"property1\":[\"property2\"]}," +
+            "\"properties\":{\"property1\":{\"type\":\"integer\"}" +
+            ",\"property2\":{\"type\":\"string\"}," +
+            "\"property3\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}," +
+            "\"property4\":{\"type\":\"array\",\"items\":{\"type\":\"number\"}}," +
+            "\"property5\":{\"type\":\"string\",\"required\":true}}}");
+    JsonNode actualJson = MAPPER.readTree(schemaString);
+    assertEquals(expectedJson, actualJson);
+}
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.9.8</version>
+</dependency>

@@ -1,0 +1,24 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/contentpacks/model/entities/references/ValueReferenceTest.java
+
+    Original Test Method:
+     public void serializeParameter() throws IOException {
+        assertThat(objectMapper.writeValueAsString(ValueReference.createParameter("Test"))).isEqualTo("{\"@type\":\"parameter\",\"@value\":\"Test\"}");
+    }
+
+    
+test_code:
+public void serializeParameter() throws IOException {
+    JsonNode actual = objectMapper.readTree(objectMapper.writeValueAsString(ValueReference.createParameter("Test")));
+    JsonNode expected = objectMapper.readTree("{\"@type\":\"parameter\",\"@value\":\"Test\"}");
+    assertEquals(expected, actual);
+}
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;', 'import static org.junit.Assert.assertEquals;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

@@ -1,0 +1,60 @@
+Test File Path: od_projects/88732d9dbe5031dad9c9f85a4c4b35e5f1551f95/visualee/src/test/java/de/strullerbaumann/visualee/filter/boundary/FilterContainerTest.java
+od_projects/88732d9dbe5031dad9c9f85a4c4b35e5f1551f95/visualee/src/test/java/de/strullerbaumann/visualee/filter/boundary/FilterContainerTest.java
+
+    Original Polluter Method:
+    public void testIsOkIncludeFalse() {
+      SourcecodeFilter filter = new SourcecodeFilter();
+      filter.setFilterToken(".ag XYZ oncal.");
+      filter.setExclude(false);
+      FilterContainer.getInstance().add(filter);
+
+      assertEquals(false, FilterContainer.getInstance().isOk(javaSource));
+   }
+ 
+
+    Original Victim Method:
+    public void testIsOkIncludeTrue() {
+      SourcecodeFilter filter = new SourcecodeFilter();
+      filter.setFilterToken(".agoncal.");
+      filter.setExclude(false);
+      FilterContainer.getInstance().add(filter);
+
+      assertEquals(true, FilterContainer.getInstance().isOk(javaSource));
+   }
+ 
+
+    
+victim_test_code:
+public void testIsOkIncludeTrue() {
+    synchronized(FilterContainer.getInstance()) {
+        FilterContainer.getInstance().clear();
+        SourcecodeFilter filter = new SourcecodeFilter();
+        filter.setFilterToken(".agoncal.");
+        filter.setExclude(false);
+        FilterContainer.getInstance().add(filter);
+
+        boolean result = FilterContainer.getInstance().isOk(javaSource);
+        FilterContainer.getInstance().clear();
+        assertEquals(true, result);
+    }
+}
+
+polluter_test_code:
+public void testIsOkIncludeFalse() {
+    synchronized(FilterContainer.getInstance()) {
+        FilterContainer.getInstance().clear();
+        SourcecodeFilter filter = new SourcecodeFilter();
+        filter.setFilterToken(".ag XYZ oncal.");
+        filter.setExclude(false);
+        FilterContainer.getInstance().add(filter);
+
+        boolean result = FilterContainer.getInstance().isOk(javaSource);
+        FilterContainer.getInstance().clear();
+        assertEquals(false, result);
+    }
+}
+
+import:
+[]
+pom:
+

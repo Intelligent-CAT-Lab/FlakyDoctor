@@ -1,0 +1,34 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/utilities/IPSubnetConverterTest.java
+
+    Original Test Method:
+     public void testDefault() throws Exception {
+        final String defaultList = "127.0.0.1/32,0:0:0:0:0:0:0:1/128";
+        final Set<IpSubnet> results = converter.convertFrom(defaultList);
+        assertThat(results)
+            .hasSize(2)
+            .contains(new IpSubnet("127.0.0.1/32"))
+            .contains(new IpSubnet("0:0:0:0:0:0:0:1/128"));
+        assertThat(converter.convertTo(results)).isEqualTo(defaultList);
+    }
+
+    
+test_code:
+public void testDefault() throws Exception {
+    final String defaultList = "127.0.0.1/32,0:0:0:0:0:0:0:1/128";
+    final LinkedHashSet<IpSubnet> results = new LinkedHashSet<>(converter.convertFrom(defaultList));
+    assertThat(results)
+        .hasSize(2)
+        .contains(new IpSubnet("127.0.0.1/32"))
+        .contains(new IpSubnet("0:0:0:0:0:0:0:1/128"));
+    List<String> expectedList = Arrays.asList(defaultList.split(","));
+    List<String> actualList = Arrays.asList(converter.convertTo(results).split(","));
+    Collections.sort(expectedList);
+    Collections.sort(actualList);
+    assertThat(actualList).isEqualTo(expectedList);
+}
+
+import:
+['import java.util.Arrays;', 'import java.util.Collections;', 'import java.util.List;']
+pom:
+
+<!-- No changes needed -->

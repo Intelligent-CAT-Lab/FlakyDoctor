@@ -1,0 +1,94 @@
+test_before_fix:
+	public void toJson() throws Exception {
+		// Bean
+		TestBean bean = new TestBean("A");
+		String beanString = JsonMapper.INSTANCE.toJson(bean);
+		System.out.println("Bean:" + beanString);
+		assertThat(beanString)
+				.isEqualTo("{\"name\":\"A\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]}");
+
+		// Map
+		Map<String, Object> map = Maps.newLinkedHashMap();
+		map.put("name", "A");
+		map.put("age", 2);
+		String mapString = JsonMapper.INSTANCE.toJson(map);
+		System.out.println("Map:" + mapString);
+		assertThat(mapString).isEqualTo("{\"name\":\"A\",\"age\":2}");
+
+		// List<String>
+		List<String> stringList = Lists.newArrayList("A", "B", "C");
+		String listString = JsonMapper.INSTANCE.toJson(stringList);
+		System.out.println("String List:" + listString);
+		assertThat(listString).isEqualTo("[\"A\",\"B\",\"C\"]");
+
+		// List<Bean>
+		List<TestBean> beanList = Lists.newArrayList(new TestBean("A"), new TestBean("B"));
+		String beanListString = JsonMapper.INSTANCE.toJson(beanList);
+		System.out.println("Bean List:" + beanListString);
+		assertThat(beanListString).isEqualTo(
+				"[{\"name\":\"A\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]},{\"name\":\"B\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]}]");
+
+		// Bean[]
+		TestBean[] beanArray = new TestBean[] { new TestBean("A"), new TestBean("B") };
+		String beanArrayString = JsonMapper.INSTANCE.toJson(beanArray);
+		System.out.println("Array List:" + beanArrayString);
+		assertThat(beanArrayString).isEqualTo(
+				"[{\"name\":\"A\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]},{\"name\":\"B\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]}]");
+	}
+
+test_after_fix:
+
+code:
+public void toJson() throws Exception { 
+     // Bean 
+     TestBean bean = new TestBean("A"); 
+     String beanString = JsonMapper.INSTANCE.toJson(bean); 
+     System.out.println("Bean:" + beanString); 
+     JsonNode beanNode = new ObjectMapper().readTree(beanString); 
+     JsonNode expectedBeanNode = new ObjectMapper().readTree("{\"name\":\"A\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]}"); 
+     assertEquals(expectedBeanNode, beanNode); 
+  
+     // Map 
+     Map<String, Object> map = Maps.newLinkedHashMap(); 
+     map.put("name", "A"); 
+     map.put("age", 2); 
+     String mapString = JsonMapper.INSTANCE.toJson(map); 
+     System.out.println("Map:" + mapString); 
+     JsonNode mapNode = new ObjectMapper().readTree(mapString); 
+     JsonNode expectedMapNode = new ObjectMapper().readTree("{\"name\":\"A\",\"age\":2}"); 
+     assertEquals(expectedMapNode, mapNode); 
+  
+     // List<String> 
+     List<String> stringList = Lists.newArrayList("A", "B", "C"); 
+     String listString = JsonMapper.INSTANCE.toJson(stringList); 
+     System.out.println("String List:" + listString); 
+     JsonNode listNode = new ObjectMapper().readTree(listString); 
+     JsonNode expectedListNode = new ObjectMapper().readTree("[\"A\",\"B\",\"C\"]"); 
+     assertEquals(expectedListNode, listNode); 
+  
+     // List<Bean> 
+     List<TestBean> beanList = Lists.newArrayList(new TestBean("A"), new TestBean("B")); 
+     String beanListString = JsonMapper.INSTANCE.toJson(beanList); 
+     System.out.println("Bean List:" + beanListString); 
+     JsonNode beanListNode = new ObjectMapper().readTree(beanListString); 
+     JsonNode expectedBeanListNode = new ObjectMapper().readTree("[{\"name\":\"A\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]},{\"name\":\"B\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]}]"); 
+     assertEquals(expectedBeanListNode, beanListNode); 
+  
+     // Bean[] 
+     TestBean[] beanArray = new TestBean[] { new TestBean("A"), new TestBean("B") }; 
+     String beanArrayString = JsonMapper.INSTANCE.toJson(beanArray); 
+     System.out.println("Array List:" + beanArrayString); 
+     JsonNode beanArrayNode = new ObjectMapper().readTree(beanArrayString); 
+     JsonNode expectedBeanArrayNode = new ObjectMapper().readTree("[{\"name\":\"A\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]},{\"name\":\"B\",\"defaultValue\":\"hello\",\"nullValue\":null,\"emptyValue\":[]}]"); 
+     assertEquals(expectedBeanArrayNode, beanArrayNode); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ', 'import com.fasterxml.jackson.databind.ObjectMapper;\n ', 'import static org.junit.Assert.assertEquals;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

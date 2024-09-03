@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testSize': 'public void testSize() throws InterruptedException {\n    final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();\n    internalThreadLocal.set(1);\n    final InternalThreadLocal<String> internalThreadLocalString = new InternalThreadLocal<String>();\n    internalThreadLocalString.set("value");\n\n    // <fix start>\n    // Reset the InternalThreadLocal size before the assertions\n    InternalThreadLocal.removeAll();\n    internalThreadLocal.set(1);\n    Assert.assertTrue("size method is wrong!", InternalThreadLocal.size() == 1);\n    internalThreadLocalString.set("value");\n    Assert.assertTrue("size method is wrong!", InternalThreadLocal.size() == 2);\n    // <fix end>\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testSize']}polluter
+:code:
+{'fields': {}, 'methods': {'testSize': 'public void testSize() throws InterruptedException {\n    final InternalThreadLocal<Integer> internalThreadLocal = new InternalThreadLocal<Integer>();\n    internalThreadLocal.set(1);\n    final InternalThreadLocal<String> internalThreadLocalString = new InternalThreadLocal<String>();\n    internalThreadLocalString.set("value");\n\n    // <fix start>\n    // Reset the InternalThreadLocal size before the assertions\n    InternalThreadLocal.removeAll();\n    internalThreadLocal.set(1);\n    Assert.assertTrue("size method is wrong!", InternalThreadLocal.size() == 1);\n    internalThreadLocalString.set("value");\n    Assert.assertTrue("size method is wrong!", InternalThreadLocal.size() == 2);\n    // <fix end>\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testSize']}

@@ -1,0 +1,75 @@
+Test File Path: projects/13d9053050c9e4fb2ef049db6a37d3f6eebf48fa/Struts/plugins/json/src/test/java/org/apache/struts2/json/JSONValidationInterceptorTest.java
+
+    Original Test Method:
+     public void testValidationFails() throws Exception {
+        
+        action.addActionError("General error");
+        
+        Map parameters = new HashMap();
+        parameters.put("struts.enableJSONValidation", "true");
+        request.setParameterMap(parameters);
+        
+        validationInterceptor.intercept(invocation);
+        interceptor.intercept(invocation);
+
+        String json = stringWriter.toString();
+
+        String normalizedActual = TestUtils.normalize(json, true);
+
+        //json
+        assertThat(normalizedActual)
+                .contains("\"errors\":[\"Generalerror\"]")
+                .contains("\"fieldErrors\":{")
+                .contains("\"value\":[\"Minvalueis-1\"]")
+                .contains("\"text\":[\"Tooshort\",\"Thisisnoemail\"]")
+                .contains("\"password\":[\"Passwordisn'tcorrect\"]");
+
+        //execution
+        assertFalse(action.isExecuted());
+        //http status
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+        assertEquals("application/json", response.getContentType());
+        assertEquals("UTF-8", response.getCharacterEncoding());
+    }
+
+    
+test_code:
+public void testValidationFails() throws Exception {
+
+    action.addActionError("General error");
+
+    Map parameters = new LinkedHashMap();
+    parameters.put("struts.enableJSONValidation", "true");
+    request.setParameterMap(parameters);
+
+    validationInterceptor.intercept(invocation);
+    interceptor.intercept(invocation);
+
+    String json = stringWriter.toString();
+
+    JsonParser parser = new JsonParser();
+    JsonObject actual = parser.parse(json).getAsJsonObject();
+    JsonObject expected = parser.parse("{\"errors\":[\"General error\"],\"fieldErrors\":{\"password\":[\"Password isn't correct\"],\"value\":[\"Min value is -1\"],\"text\":[\"Too short\",\"This is no email\"]}}").getAsJsonObject();
+
+    assertEquals(expected.get("errors"), actual.get("errors"));
+    assertEquals(expected.get("fieldErrors").getAsJsonObject().get("password"), actual.get("fieldErrors").getAsJsonObject().get("password"));
+    assertEquals(expected.get("fieldErrors").getAsJsonObject().get("value"), actual.get("fieldErrors").getAsJsonObject().get("value"));
+
+    JsonArray expectedTextErrors = expected.get("fieldErrors").getAsJsonObject().get("text").getAsJsonArray();
+    JsonArray actualTextErrors = actual.get("fieldErrors").getAsJsonObject().get("text").getAsJsonArray();
+    assertEquals(expectedTextErrors.size(), actualTextErrors.size());
+    for (JsonElement error : expectedTextErrors) {
+        assertTrue(actualTextErrors.contains(error));
+    }
+
+    assertFalse(action.isExecuted());
+    assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+    assertEquals("application/json", response.getContentType());
+    assertEquals("UTF-8", response.getCharacterEncoding());
+}
+
+import:
+[]
+pom:
+
+ 

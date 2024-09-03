@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'aCreateStandaloneTaskForAnotherAssignee': 'public void aCreateStandaloneTaskForAnotherAssignee() {\n\n    taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("task for salaboy")\n            .withAssignee("salaboy")\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // Filter the tasks to only include the ones assigned to "salaboy"\n    List<Task> filteredTasks = tasks.getContent().stream()\n        .filter(task -> task.getAssignee().equals("salaboy"))\n        .collect(Collectors.toList());\n\n    assertThat(filteredTasks).hasSize(1);\n    Task task = filteredTasks.get(0);\n\n    assertThat(task.getAssignee()).isEqualTo("salaboy");\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n}\n'}}victim
+:import:
+['import java.util.List;\n ', 'import java.util.stream.Collectors;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['aCreateStandaloneTaskForAnotherAssignee']}polluter
+:code:
+{'fields': {}, 'methods': {'aCreateStandaloneTaskForAnotherAssignee': 'public void aCreateStandaloneTaskForAnotherAssignee() {\n\n    taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("task for salaboy")\n            .withAssignee("salaboy")\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0, 50));\n\n    // Filter the tasks to only include the ones assigned to "salaboy"\n    List<Task> filteredTasks = tasks.getContent().stream()\n        .filter(task -> task.getAssignee().equals("salaboy"))\n        .collect(Collectors.toList());\n\n    assertThat(filteredTasks).hasSize(1);\n    Task task = filteredTasks.get(0);\n\n    assertThat(task.getAssignee()).isEqualTo("salaboy");\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n}\n'}}polluter
+:import:
+['import java.util.List;\n ', 'import java.util.stream.Collectors;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['aCreateStandaloneTaskForAnotherAssignee']}

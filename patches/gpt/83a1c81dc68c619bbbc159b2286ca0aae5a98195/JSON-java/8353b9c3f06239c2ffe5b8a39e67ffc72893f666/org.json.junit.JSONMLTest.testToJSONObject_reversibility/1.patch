@@ -1,0 +1,38 @@
+Test File Path: projects/8353b9c3f06239c2ffe5b8a39e67ffc72893f666/JSON-java/src/test/java/org/json/junit/JSONMLTest.java
+
+    Original Test Method:
+     public void testToJSONObject_reversibility() {
+        final String originalXml = "<readResult><errors someAttr=\"arrtValue\"><code>400</code></errors><errors><code>402</code></errors></readResult>";
+        final JSONObject originalObject=JSONML.toJSONObject(originalXml,false);
+        final String originalJson = originalObject.toString();
+        final String xml = JSONML.toString(originalObject);
+        final JSONObject revertedObject = JSONML.toJSONObject(xml, false);
+        final String newJson = revertedObject.toString();
+        assertTrue("JSON Objects are not similar",originalObject.similar(revertedObject));
+        assertEquals("original JSON does not equal the new JSON",originalJson, newJson);
+    }
+
+    
+test_code:
+public void testToJSONObject_reversibility() throws JSONException {
+    final String originalXml = "<readResult><errors someAttr=\"arrtValue\"><code>400</code></errors><errors><code>402</code></errors></readResult>";
+    final JSONObject originalObject=JSONML.toJSONObject(originalXml,false);
+    final String originalJson = originalObject.toString();
+    final String xml = JSONML.toString(originalObject);
+    final JSONObject revertedObject = JSONML.toJSONObject(xml, false);
+    final String newJson = revertedObject.toString();
+    assertTrue("JSON Objects are not similar",originalObject.similar(revertedObject));
+    JSONAssert.assertEquals("original JSON does not equal the new JSON",originalJson, newJson, JSONCompareMode.STRICT_ORDER);
+}
+
+import:
+['import org.json.JSONObject;', 'import org.json.JSONML;', 'import org.json.JSONException;', 'import org.json.JSONArray;', 'import org.skyscreamer.jsonassert.JSONAssert;', 'import org.skyscreamer.jsonassert.JSONCompareMode;']
+pom:
+
+<dependency>
+    <groupId>org.skyscreamer</groupId>
+    <artifactId>jsonassert</artifactId>
+    <version>1.5.0</version>
+    <scope>test</scope>
+</dependency>
+ 

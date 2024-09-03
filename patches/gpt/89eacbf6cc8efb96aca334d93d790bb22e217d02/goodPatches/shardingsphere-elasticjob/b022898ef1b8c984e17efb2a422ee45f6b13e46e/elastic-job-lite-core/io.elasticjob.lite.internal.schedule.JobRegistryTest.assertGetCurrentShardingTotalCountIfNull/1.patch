@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'assertGetCurrentShardingTotalCountIfNull': 'public void assertGetCurrentShardingTotalCountIfNull() {\n    \n\n    JobRegistry.getInstance().setCurrentShardingTotalCount("exist_job_instance", 0);\n    \n\n    assertThat(JobRegistry.getInstance().getCurrentShardingTotalCount("exist_job_instance"), is(0));\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['assertGetCurrentShardingTotalCountIfNull']}polluter
+:code:
+{'fields': {}, 'methods': {'assertGetCurrentShardingTotalCountIfNull': 'public void assertGetCurrentShardingTotalCountIfNull() {\n    \n\n    JobRegistry.getInstance().setCurrentShardingTotalCount("exist_job_instance", 0);\n    \n\n    assertThat(JobRegistry.getInstance().getCurrentShardingTotalCount("exist_job_instance"), is(0));\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['assertGetCurrentShardingTotalCountIfNull']}

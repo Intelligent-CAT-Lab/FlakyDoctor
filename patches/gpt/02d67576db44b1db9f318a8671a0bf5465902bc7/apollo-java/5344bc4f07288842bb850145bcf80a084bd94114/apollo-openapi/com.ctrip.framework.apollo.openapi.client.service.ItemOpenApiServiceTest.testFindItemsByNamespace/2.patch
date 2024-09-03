@@ -1,0 +1,49 @@
+Test File Path: projects/5344bc4f07288842bb850145bcf80a084bd94114/apollo-java/apollo-openapi/src/test/java/com/ctrip/framework/apollo/openapi/client/service/ItemOpenApiServiceTest.java
+
+    Original Test Method:
+   public void testFindItemsByNamespace() throws Exception {
+    final int page = 0;
+    final int size = 50;
+    final ArgumentCaptor<HttpGet> request = ArgumentCaptor.forClass(HttpGet.class);
+
+    itemOpenApiService.findItemsByNamespace(someAppId, someEnv, someCluster, someNamespace, page, size);
+
+    verify(httpClient, times(1)).execute(request.capture());
+
+    HttpGet get = request.getValue();
+
+    assertEquals(String.format("%s/envs/%s/apps/%s/clusters/%s/namespaces/%s/items?size=%s&page=%s",
+            someBaseUrl, someEnv, someAppId, someCluster, someNamespace, size, page), get.getURI().toString());
+  }
+
+    
+test_code:
+public void testFindItemsByNamespace() throws Exception {
+    final int page = 0;
+    final int size = 50;
+    final ArgumentCaptor<HttpGet> request = ArgumentCaptor.forClass(HttpGet.class);
+
+    itemOpenApiService.findItemsByNamespace(someAppId, someEnv, someCluster, someNamespace, page, size);
+
+    verify(httpClient, times(1)).execute(request.capture());
+
+    HttpGet get = request.getValue();
+    URI uri = get.getURI();
+    List<NameValuePair> params = URLEncodedUtils.parse(uri, Charset.forName("UTF-8"));
+
+    Map<String, String> paramMap = params.stream()
+            .collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
+
+    String expectedUrl = someBaseUrl + "/envs/" + someEnv + "/apps/" + someAppId + "/clusters/" + someCluster + "/namespaces/" + someNamespace + "/items";
+    String actualUrl = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
+
+    assertEquals(expectedUrl, actualUrl);
+    assertEquals(String.valueOf(size), paramMap.get("size"));
+    assertEquals(String.valueOf(page), paramMap.get("page"));
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

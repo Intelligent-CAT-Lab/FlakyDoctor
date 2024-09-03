@@ -1,0 +1,95 @@
+test_before_fix:
+	public void testSimple() throws Exception {
+		@SuppressWarnings("unchecked")
+		TestMapBundleFunction func = new TestMapBundleFunction();
+		CountBundleTrigger<Tuple2<String, String>> trigger = new CountBundleTrigger<>(3);
+		KeySelector<Tuple2<String, String>, String> keySelector =
+				(KeySelector<Tuple2<String, String>, String>) value -> value.f0;
+
+		OneInputStreamOperatorTestHarness<Tuple2<String, String>, String> op =
+				new OneInputStreamOperatorTestHarness<>(
+						new MapBundleOperator<>(func, trigger, keySelector));
+		op.open();
+		synchronized (op.getCheckpointLock()) {
+			StreamRecord<Tuple2<String, String>> input = new StreamRecord<>(null);
+
+			input.replace(new Tuple2<>("k1", "v1"));
+			op.processElement(input);
+
+			input.replace(new Tuple2<>("k1", "v2"));
+			op.processElement(input);
+
+			assertEquals(0, func.getFinishCount());
+
+			input.replace(new Tuple2<>("k2", "v3"));
+			op.processElement(input);
+
+			assertEquals(1, func.getFinishCount());
+			assertThat(Arrays.asList("k1=v1,v2", "k2=v3"), is(func.getOutputs()));
+
+			input.replace(new Tuple2<>("k3", "v4"));
+			op.processElement(input);
+
+			input.replace(new Tuple2<>("k4", "v5"));
+			op.processElement(input);
+
+			assertEquals(1, func.getFinishCount());
+
+			op.close();
+			assertEquals(2, func.getFinishCount());
+			assertThat(Arrays.asList("k3=v4", "k4=v5"), is(func.getOutputs()));
+		}
+	}
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testSimple() throws Exception { 
+     @SuppressWarnings("unchecked") 
+     TestMapBundleFunction func = new TestMapBundleFunction(); 
+     CountBundleTrigger<Tuple2<String, String>> trigger = new CountBundleTrigger<>(3); 
+     KeySelector<Tuple2<String, String>, String> keySelector = 
+             (KeySelector<Tuple2<String, String>, String>) value -> value.f0; 
+  
+     OneInputStreamOperatorTestHarness<Tuple2<String, String>, String> op = 
+             new OneInputStreamOperatorTestHarness<>( 
+                     new MapBundleOperator<>(func, trigger, keySelector)); 
+     op.open(); 
+     synchronized (op.getCheckpointLock()) { 
+         StreamRecord<Tuple2<String, String>> input = new StreamRecord<>(null); 
+  
+         input.replace(new Tuple2<>("k1", "v1")); 
+         op.processElement(input); 
+  
+         input.replace(new Tuple2<>("k1", "v2")); 
+         op.processElement(input); 
+  
+         assertEquals(0, func.getFinishCount()); 
+  
+         input.replace(new Tuple2<>("k2", "v3")); 
+         op.processElement(input); 
+  
+         assertEquals(1, func.getFinishCount()); 
+         assertThat(new HashSet<>(func.getOutputs()), is(new HashSet<>(Arrays.asList("k1=v1,v2", "k2=v3")))); 
+  
+         input.replace(new Tuple2<>("k3", "v4")); 
+         op.processElement(input); 
+  
+         input.replace(new Tuple2<>("k4", "v5")); 
+         op.processElement(input); 
+  
+         assertEquals(1, func.getFinishCount()); 
+  
+         op.close(); 
+         assertEquals(2, func.getFinishCount()); 
+         assertThat(new HashSet<>(func.getOutputs()), is(new HashSet<>(Arrays.asList("k3=v4", "k4=v5")))); 
+     } 
+ } 
+  
+  
+ 
+import:
+['import java.util.HashSet;\n ']
+pom:

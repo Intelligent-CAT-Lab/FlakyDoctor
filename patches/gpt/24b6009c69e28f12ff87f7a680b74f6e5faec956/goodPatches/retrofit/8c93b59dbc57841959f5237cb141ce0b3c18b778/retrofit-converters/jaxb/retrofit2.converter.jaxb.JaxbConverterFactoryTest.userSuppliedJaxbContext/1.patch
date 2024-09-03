@@ -1,0 +1,61 @@
+test_before_fix:
+  @Test public void userSuppliedJaxbContext() throws Exception {
+    JAXBContext context = JAXBContext.newInstance(Contact.class);
+    JaxbConverterFactory factory = JaxbConverterFactory.create(context);
+    Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl(server.url("/"))
+        .addConverterFactory(factory)
+        .build();
+    service = retrofit.create(Service.class);
+
+    server.enqueue(new MockResponse());
+
+    Call<Void> call = service.postXml(SAMPLE_CONTACT);
+    call.execute();
+
+    RecordedRequest request = server.takeRequest();
+    assertThat(request.getHeader("Content-Type")).isEqualTo("application/xml; charset=utf-8");
+    assertThat(request.getBody().readUtf8()).isEqualTo(SAMPLE_CONTACT_XML);
+  }
+
+test_after_fix:
+
+code:
+public void userSuppliedJaxbContext() throws Exception { 
+     JAXBContext context = JAXBContext.newInstance(Contact.class); 
+     JaxbConverterFactory factory = JaxbConverterFactory.create(context); 
+     Retrofit retrofit = new Retrofit.Builder() 
+         .baseUrl(server.url("/")) 
+         .addConverterFactory(factory) 
+         .build(); 
+     service = retrofit.create(Service.class); 
+  
+     server.enqueue(new MockResponse()); 
+  
+     Call<Void> call = service.postXml(SAMPLE_CONTACT); 
+     call.execute(); 
+  
+     RecordedRequest request = server.takeRequest(); 
+     assertThat(request.getHeader("Content-Type")).isEqualTo("application/xml; charset=utf-8"); 
+  
+     String actualXml = request.getBody().readUtf8(); 
+     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance(); 
+     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder(); 
+     Document doc1 = dBuilder.parse(new InputSource(new StringReader(actualXml))); 
+     doc1.getDocumentElement().normalize(); 
+  
+     Document doc2 = dBuilder.parse(new InputSource(new StringReader(SAMPLE_CONTACT_XML))); 
+     doc2.getDocumentElement().normalize(); 
+  
+     assertThat(doc1.isEqualNode(doc2)).isTrue(); 
+ } 
+ 
+import:
+['import javax.xml.parsers.DocumentBuilderFactory;\n ', 'import javax.xml.parsers.DocumentBuilder;\n ', 'import org.w3c.dom.Document;\n ', 'import java.io.StringReader;\n ', 'import org.xml.sax.InputSource;\n ']
+pom:
+
+<dependency>
+    <groupId>javax.xml.parsers</groupId>
+    <artifactId>jaxp-api</artifactId>
+    <version>1.4.5</version>
+</dependency>

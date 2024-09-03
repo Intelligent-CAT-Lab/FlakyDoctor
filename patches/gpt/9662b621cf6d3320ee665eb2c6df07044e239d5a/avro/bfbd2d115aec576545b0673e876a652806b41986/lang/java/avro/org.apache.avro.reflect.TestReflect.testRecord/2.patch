@@ -1,0 +1,31 @@
+Test File Path: projects/bfbd2d115aec576545b0673e876a652806b41986/avro/lang/java/avro/src/test/java/org/apache/avro/reflect/TestReflect.java
+
+    Original Test Method:
+   public void testRecord() throws Exception {
+    check(R.class,
+        "{\"type\":\"record\",\"name\":\"R\",\"namespace\":" + "\"org.apache.avro.reflect.TestReflect\",\"fields\":["
+            + "{\"name\":\"a\",\"type\":\"int\"}," + "{\"name\":\"b\",\"type\":\"long\"}]}");
+  }
+
+    
+test_code:
+public void testRecord() throws Exception {
+    String schemaJson = "{\"type\":\"record\",\"name\":\"R\",\"namespace\":\"org.apache.avro.reflect.TestReflect\",\"fields\":["
+            + "{\"name\":\"a\",\"type\":\"int\"}," + "{\"name\":\"b\",\"type\":\"long\"}]}";
+    Schema schema = new Schema.Parser().parse(schemaJson);
+
+    Schema actualSchema = ReflectData.get().getSchema(R.class);
+    List<Field> actualFields = new ArrayList<>(actualSchema.getFields());
+    List<Field> expectedFields = new ArrayList<>(schema.getFields());
+
+    Collections.sort(actualFields, Comparator.comparing(Field::name));
+    Collections.sort(expectedFields, Comparator.comparing(Field::name));
+
+    assertEquals(expectedFields, actualFields);
+}
+
+import:
+['import java.util.ArrayList;', 'import java.util.Collections;', 'import java.util.Comparator;', 'import java.util.List;']
+pom:
+
+<!-- No changes needed -->

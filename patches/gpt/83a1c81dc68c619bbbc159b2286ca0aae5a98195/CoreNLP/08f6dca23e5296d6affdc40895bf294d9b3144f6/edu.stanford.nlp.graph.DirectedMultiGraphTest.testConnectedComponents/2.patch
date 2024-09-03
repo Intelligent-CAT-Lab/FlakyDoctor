@@ -1,0 +1,44 @@
+Test File Path: projects/08f6dca23e5296d6affdc40895bf294d9b3144f6/CoreNLP/test/src/edu/stanford/nlp/graph/DirectedMultiGraphTest.java
+
+    Original Test Method:
+   public void testConnectedComponents() {
+
+    System.out.println("graph is " + graph.toString());
+    List<Set<Integer>> ccs = graph.getConnectedComponents();
+    for (Set<Integer> cc : ccs) {
+      System.out.println("Connected component: " + cc);
+    }
+    assertEquals(ccs.size(), 4);
+    assertEquals(CollectionUtils.sorted(ccs.get(0)), 
+                 Arrays.asList(1, 2, 3, 4));
+  }
+
+    
+test_code:
+ public void testConnectedComponents() {
+    System.out.println("graph is " + graph.toString());
+    List<Set<Integer>> ccs = graph.getConnectedComponents();
+    List<Set<Integer>> sortedCCs = new ArrayList<>();
+    for (Set<Integer> cc : ccs) {
+      List<Integer> sortedList = new ArrayList<>(cc);
+      Collections.sort(sortedList);
+      sortedCCs.add(new LinkedHashSet<>(sortedList));
+      System.out.println("Connected component: " + sortedList);
+    }
+    Collections.sort(sortedCCs, new Comparator<Set<Integer>>() {
+        @Override
+        public int compare(Set<Integer> o1, Set<Integer> o2) {
+            return o1.iterator().next() - o2.iterator().next();
+        }
+    });
+    assertEquals(sortedCCs.size(), 4);
+    assertEquals(new ArrayList<>(sortedCCs.get(0)), 
+                 Arrays.asList(1, 2, 3, 4));
+  }
+
+import:
+['import java.util.Comparator;']
+pom:
+
+ <!-- No changes required in pom.xml -->
+ 

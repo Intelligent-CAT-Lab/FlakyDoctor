@@ -1,0 +1,27 @@
+test_before_fix:
+  public void encodesObject() {
+    new JsonEncoder().encode(jsonObject, JSONObject.class, requestTemplate);
+    assertEquals("{\"a\":\"b\",\"c\":1}", new String(requestTemplate.body(), UTF_8));
+  }
+
+test_after_fix:
+
+code:
+public void encodesObject() { 
+     new JsonEncoder().encode(jsonObject, JSONObject.class, requestTemplate); 
+     String body = new String(requestTemplate.body(), UTF_8); 
+     JsonParser parser = new JsonParser(); 
+     JsonElement expected = parser.parse("{\"a\":\"b\",\"c\":1}"); 
+     JsonElement result = parser.parse(body); 
+     assertEquals(expected, result); 
+ } 
+ 
+import:
+['import com.google.gson.JsonElement;\n ', 'import com.google.gson.JsonParser;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

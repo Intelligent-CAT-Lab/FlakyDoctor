@@ -1,0 +1,31 @@
+Test File Path: projects/3ea25de368b185e3c9f3d56e46a4cfcdb9265318/fastjson/src/test/java/com/alibaba/json/bvt/path/JSONPath_reverse_test.java
+
+    Original Test Method:
+     public void test_reserve3() throws Exception {
+        JSONObject object = JSON.parseObject("{\"player\":{\"id\":1001,\"name\":\"ljw\",\"age\":50}}");
+
+        assertEquals("{\"player\":{\"name\":\"ljw\",\"id\":1001}}", JSONPath.reserveToObject(object, "player.id", "player.name").toString());
+        assertEquals("{\"player\":{\"name\":\"ljw\",\"id\":1001}}", JSONPath.reserveToObject(object, "player.name", "player.id", "ab.c").toString());
+    }
+
+    
+test_code:
+public void test_reserve3() throws Exception {
+    JSONObject object = JSON.parseObject("{\"player\":{\"id\":1001,\"name\":\"ljw\",\"age\":50}}");
+
+    Map<String, Object> expected = new LinkedHashMap<String, Object>();
+    Map<String, Object> player = new LinkedHashMap<String, Object>();
+    player.put("name", "ljw");
+    player.put("id", 1001);
+    expected.put("player", player);
+
+    assertEquals(expected, JSONPath.reserveToObject(object, "player.id", "player.name"));
+    assertEquals(expected, JSONPath.reserveToObject(object, "player.name", "player.id", "ab.c"));
+}
+
+import:
+['import java.util.Map;', 'import static org.junit.Assert.assertEquals;']
+pom:
+
+ <!-- No changes needed -->
+ 

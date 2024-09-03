@@ -1,0 +1,45 @@
+Test File Path: projects/2bd752d868a8f3e36113b078bb576cf054e945e8/nifi/nifi-nar-bundles/nifi-azure-bundle/nifi-azure-reporting-task/src/test/java/org/apache/nifi/reporting/azure/loganalytics/TestAzureLogAnalyticsProvenanceReportingTask.java
+
+    Original Test Method:
+     public void testAddField2() throws IOException, InterruptedException, InitializationException {
+
+        final Map<String, Object> config = Collections.emptyMap();
+        final JsonBuilderFactory factory = Json.createBuilderFactory(config);
+        final JsonObjectBuilder builder = factory.createObjectBuilder();
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("TestKeyString1", "StringValue1");
+        values.put("TestKeyString2", "StringValue2");
+        AzureLogAnalyticsProvenanceReportingTask.addField(builder, factory, "TestKeyString", values, true);
+        javax.json.JsonObject actualJson = builder.build();
+        String expectedjsonString = "{\"TestKeyString\":{\"TestKeyString2\":\"StringValue2\",\"TestKeyString1\":\"StringValue1\"}}";
+        JsonObject expectedJson = new Gson().fromJson(expectedjsonString, JsonObject.class);
+        assertEquals(expectedJson.toString(), actualJson.toString());
+    }
+
+    
+test_code:
+public void testAddField2() throws IOException, InterruptedException, InitializationException {
+    final Map<String, Object> config = Collections.emptyMap();
+    final JsonBuilderFactory factory = Json.createBuilderFactory(config);
+    final JsonObjectBuilder builder = factory.createObjectBuilder();
+    Map<String, String> values = new LinkedHashMap<String, String>();
+    values.put("TestKeyString1", "StringValue1");
+    values.put("TestKeyString2", "StringValue2");
+    AzureLogAnalyticsProvenanceReportingTask.addField(builder, factory, "TestKeyString", values, true);
+    javax.json.JsonObject actualJson = builder.build();
+    String expectedjsonString = "{\"TestKeyString\":{\"TestKeyString1\":\"StringValue1\",\"TestKeyString2\":\"StringValue2\"}}";
+    JsonObject expectedJson = new Gson().fromJson(expectedjsonString, JsonObject.class);
+
+    // Convert both JsonObjects to LinkedHashMaps to ensure order
+    Type type = new TypeToken<LinkedHashMap<String, Object>>(){}.getType();
+    LinkedHashMap<String, Object> expectedMap = new Gson().fromJson(expectedJson.toString(), type);
+    LinkedHashMap<String, Object> actualMap = new Gson().fromJson(actualJson.toString(), type);
+
+    assertEquals(expectedMap, actualMap);
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

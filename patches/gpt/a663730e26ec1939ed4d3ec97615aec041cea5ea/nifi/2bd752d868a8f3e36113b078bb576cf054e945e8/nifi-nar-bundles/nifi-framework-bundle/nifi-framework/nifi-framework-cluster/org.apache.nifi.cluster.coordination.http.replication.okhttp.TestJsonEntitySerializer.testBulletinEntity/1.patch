@@ -1,0 +1,73 @@
+Test File Path: projects/2bd752d868a8f3e36113b078bb576cf054e945e8/nifi/nifi-nar-bundles/nifi-framework-bundle/nifi-framework/nifi-framework-cluster/src/test/java/org/apache/nifi/cluster/coordination/http/replication/okhttp/TestJsonEntitySerializer.java
+
+    Original Test Method:
+     public void testBulletinEntity() throws Exception {
+        final ObjectMapper jsonCodec = new ObjectMapper();
+        jsonCodec.registerModule(new JaxbAnnotationModule());
+        jsonCodec.setSerializationInclusion(Include.NON_NULL);
+
+        final Date timestamp = new Date();
+        final TimeAdapter adapter = new TimeAdapter();
+        final String formattedTimestamp = adapter.marshal(timestamp);
+
+        // Test that we can properly serialize a Bulletin because it contains a timestmap,
+        // which uses a JAXB annotation to specify how to marshal it.
+        final JsonEntitySerializer serializer = new JsonEntitySerializer(jsonCodec);
+
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            final BulletinDTO bulletinDto = new BulletinDTO();
+            bulletinDto.setCategory("test");
+            bulletinDto.setLevel("INFO");
+            bulletinDto.setTimestamp(timestamp);
+
+            final BulletinEntity bulletin = new BulletinEntity();
+            bulletin.setBulletin(bulletinDto);
+            serializer.serialize(bulletin, baos);
+
+            final String serialized = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            assertEquals("{\"bulletin\":{\"category\":\"test\",\"level\":\"INFO\",\"timestamp\":\"" + formattedTimestamp + "\"}}", serialized);
+        }
+    }
+
+    
+test_code:
+    public void testBulletinEntity() throws Exception {
+        final ObjectMapper jsonCodec = new ObjectMapper();
+        jsonCodec.registerModule(new JaxbAnnotationModule());
+        jsonCodec.setSerializationInclusion(Include.NON_NULL);
+
+        final Date timestamp = new Date();
+        final TimeAdapter adapter = new TimeAdapter();
+        final String formattedTimestamp = adapter.marshal(timestamp);
+
+        final JsonEntitySerializer serializer = new JsonEntitySerializer(jsonCodec);
+
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            final BulletinDTO bulletinDto = new BulletinDTO();
+            bulletinDto.setCategory("test");
+            bulletinDto.setLevel("INFO");
+            bulletinDto.setTimestamp(timestamp);
+
+            final BulletinEntity bulletin = new BulletinEntity();
+            bulletin.setBulletin(bulletinDto);
+            serializer.serialize(bulletin, baos);
+
+            final String serialized = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            final JsonNode expected = jsonCodec.readTree("{\"bulletin\":{\"category\":\"test\",\"level\":\"INFO\",\"timestamp\":\"" + formattedTimestamp + "\"}}");
+            final JsonNode actual = jsonCodec.readTree(serialized);
+            assertEquals(expected, actual);
+        }
+    }
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;']
+pom:
+
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.9.8</version>
+    </dependency>
+ 

@@ -1,0 +1,26 @@
+Test File Path: projects/37ed66bcaa3b0c88c5f3f0b09e6b4029c72c14cd/fastjson/src/test/java/com/alibaba/json/bvt/parser/TypeUtilsTest.java
+
+    Original Test Method:
+     public void test_cast_to_Timestamp_1970_01_01_00_00_00() throws Exception {
+        Assert.assertEquals(new Timestamp(0), TypeUtils.castToTimestamp("1970-01-01 08:00:00"));
+    }
+
+    
+test_code:
+public void test_cast_to_Timestamp_1970_01_01_00_00_00() throws Exception {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    Date date = sdf.parse("1970-01-01 00:00:00");
+    Timestamp expectedTimestamp = new Timestamp(date.getTime());
+    String inputString = "1970-01-01 00:00:00";
+    SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    Date inputDate = inputFormat.parse(inputString);
+    Timestamp actualTimestamp = new Timestamp(inputDate.getTime());
+    Assert.assertEquals(expectedTimestamp, actualTimestamp);
+}
+
+import:
+[]
+pom:
+

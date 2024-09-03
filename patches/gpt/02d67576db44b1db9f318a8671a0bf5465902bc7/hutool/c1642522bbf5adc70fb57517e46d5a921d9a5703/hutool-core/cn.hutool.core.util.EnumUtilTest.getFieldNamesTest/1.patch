@@ -1,0 +1,24 @@
+Test File Path: projects/c1642522bbf5adc70fb57517e46d5a921d9a5703/hutool/hutool-core/src/test/java/cn/hutool/core/util/EnumUtilTest.java
+
+    Original Test Method:
+ 	public void getFieldNamesTest() {
+		List<String> names = EnumUtil.getFieldNames(TestEnum.class);
+		Assert.assertEquals(CollUtil.newArrayList("type", "name"), names);
+	}
+
+    
+test_code:
+public void getFieldNamesTest() {
+    List<String> names = EnumUtil.getFieldNames(TestEnum.class);
+    Collections.sort(names);
+    List<String> expectedNames = CollUtil.newArrayList("type", "name");
+    Collections.sort(expectedNames);
+    Assert.assertEquals(expectedNames, names);
+}
+
+import:
+['import java.util.Collections;']
+pom:
+
+ <!-- No changes needed -->
+ 

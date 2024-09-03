@@ -1,0 +1,41 @@
+Test File Path: dexfix_projects/616ed866460ca909cb30a4eafb786c6040218ae8/dropwizard/dropwizard-views-freemarker/src/test/java/io/dropwizard/views/freemarker/MultipleContentTypeTest.java
+
+    Original Test Method:
+     public void testJsonContentType() {
+        final Response response = target("/").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(String.class)).isEqualTo("{\"title\":\"Title#TEST\",\"content\":\"Content#TEST\"}");
+    }
+
+    
+test_code:
+    public void testJsonContentType() {
+        final Response response = target("/").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+
+        String responseEntity = response.readEntity(String.class);
+        JsonReader jsonReader = Json.createReader(new StringReader(responseEntity));
+        JsonObject jsonObject = jsonReader.readObject();
+        jsonReader.close();
+
+        assertThat(jsonObject.getString("title")).isEqualTo("Title#TEST");
+        assertThat(jsonObject.getString("content")).isEqualTo("Content#TEST");
+    }
+
+import:
+['import javax.json.JsonReader;']
+pom:
+
+    <dependency>
+        <groupId>javax.json</groupId>
+        <artifactId>javax.json-api</artifactId>
+        <version>1.1.4</version>
+    </dependency>
+    <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+        <version>1.1.4</version>
+    </dependency>
+ 

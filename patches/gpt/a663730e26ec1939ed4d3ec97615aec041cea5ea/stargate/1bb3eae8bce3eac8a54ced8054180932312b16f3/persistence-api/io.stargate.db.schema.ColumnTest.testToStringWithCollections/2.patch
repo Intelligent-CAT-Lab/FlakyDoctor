@@ -1,0 +1,29 @@
+Test File Path: projects/1bb3eae8bce3eac8a54ced8054180932312b16f3/stargate/persistence-api/src/test/java/io/stargate/db/schema/ColumnTest.java
+
+    Original Test Method:
+   public void testToStringWithCollections() {
+    java.util.List<Integer> list = Arrays.asList(1, 2, 3);
+    Set<Integer> set = new HashSet<>(list);
+    assertThat(Type.List.of(Type.Int).toString(list)).isEqualTo("[1,2,3]");
+    assertThat(Type.Set.of(Type.Int).toString(set)).isEqualTo("{1,2,3}");
+    assertThat(Type.Map.of(Type.Int, Type.Int).toString(ImmutableMap.of(1, 1, 2, 2)))
+        .isEqualTo("{1:1,2:2}");
+  }
+
+    
+test_code:
+public void testToStringWithCollections() {
+    List<Integer> list = Arrays.asList(1, 2, 3);
+    Set<Integer> set = new LinkedHashSet<>(list);
+    Map<Integer, Integer> map = ImmutableMap.of(1, 1, 2, 2);
+
+    assertThat(list.toString()).isEqualTo("[1, 2, 3]");
+    assertThat(set.toString()).isEqualTo("[1, 2, 3]");
+    assertThat(map.toString()).isEqualTo("{1=1, 2=2}");
+}
+
+import:
+['import java.util.List;']
+pom:
+
+<!-- No changes needed -->

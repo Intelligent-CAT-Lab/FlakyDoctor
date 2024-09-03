@@ -1,0 +1,24 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/contentpacks/model/entities/references/ValueReferenceTest.java
+
+    Original Test Method:
+     public void serializeBoolean() throws IOException {
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(true))).isEqualTo("{\"@type\":\"boolean\",\"@value\":true}");
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(false))).isEqualTo("{\"@type\":\"boolean\",\"@value\":false}");
+    }
+
+    
+test_code:
+public void serializeBoolean() throws IOException {
+    JsonNode treeTrue = objectMapper.readTree(objectMapper.writeValueAsString(ValueReference.of(true)));
+    JsonNode treeFalse = objectMapper.readTree(objectMapper.writeValueAsString(ValueReference.of(false)));
+    assertThat(treeTrue.get("@type").asText()).isEqualTo("boolean");
+    assertThat(treeTrue.get("@value").asBoolean()).isEqualTo(true);
+    assertThat(treeFalse.get("@type").asText()).isEqualTo("boolean");
+    assertThat(treeFalse.get("@value").asBoolean()).isEqualTo(false);
+}
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;']
+pom:
+
+<!-- No changes needed -->

@@ -1,0 +1,25 @@
+Test File Path: projects/f3e98a564d3f194c0e68136c9ece157fb30723dc/jackson-jakarta-rs-providers/base/src/test/java/com/fasterxml/jackson/jakarta/rs/base/cfg/AnnotationBundleKeyTest.java
+
+    Original Test Method:
+     public void testWithClassAnnotations() throws Exception
+    {
+        _checkWith(Helper.class.getAnnotations(), Helper.class.getAnnotations());
+    }
+
+    
+test_code:
+public void testWithClassAnnotations() {
+    Annotation[] anns1 = Helper.class.getAnnotations();
+    Annotation[] anns2 = Helper.class.getAnnotations();
+
+    Arrays.sort(anns1, Comparator.comparing(Annotation::toString));
+    Arrays.sort(anns2, Comparator.comparing(Annotation::toString));
+
+    assertArrayEquals("Internal error: should never differ", anns1, anns2);
+    _checkWith(anns1, anns2);
+}
+
+import:
+[]
+pom:
+

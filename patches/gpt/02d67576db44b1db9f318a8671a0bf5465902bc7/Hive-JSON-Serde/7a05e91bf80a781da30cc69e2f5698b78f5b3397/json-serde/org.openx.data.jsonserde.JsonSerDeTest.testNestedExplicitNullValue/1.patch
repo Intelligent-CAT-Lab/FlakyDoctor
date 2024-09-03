@@ -1,0 +1,82 @@
+Test File Path: projects/7a05e91bf80a781da30cc69e2f5698b78f5b3397/Hive-JSON-Serde/json-serde/src/test/java/org/openx/data/jsonserde/JsonSerDeTest.java
+
+    Original Test Method:
+     public void testNestedExplicitNullValue() throws SerDeException, IOException {
+        System.out.println("testNestedExplicitNullValue");
+        JsonSerDe serde = new JsonSerDe();
+        Configuration conf = null;
+        Properties tbl = new Properties();
+        tbl.setProperty(serdeConstants.LIST_COLUMNS, "structCol,structNullCol,missingStructCol");
+        tbl.setProperty(serdeConstants.LIST_COLUMN_TYPES, "struct<name:string>,struct<name:string>,struct<name:string>");
+
+        // Set 'explicit.null' to true
+        tbl.setProperty(JsonSerDe.PROP_EXPLICIT_NULL, "true");
+
+        serde.initialize(conf, tbl);
+        StructObjectInspector soi = (StructObjectInspector) serde.getObjectInspector();
+        Object res = serde.deserialize(new Text("{\"structCol\":{\"name\":\"myName\"},\"structNullCol\":{\"name\":null}}"));
+
+        // Get the serialized json string
+        String jsonStr = serde.serialize(res, soi).toString();
+
+        StructObjectInspector structColSoi = (StructObjectInspector) soi.getStructFieldRef("structCol").getFieldObjectInspector();
+        Object structCol = soi.getStructFieldData(res, soi.getStructFieldRef("structCol"));
+        assertTrue(structColSoi.getStructFieldData(structCol, structColSoi.getStructFieldRef("name")).equals("myName"));
+
+        StructObjectInspector structNullColSoi = (StructObjectInspector) soi.getStructFieldRef("structNullCol").getFieldObjectInspector();
+        Object structNullCol = soi.getStructFieldData(res, soi.getStructFieldRef("structNullCol"));
+        assertNull(structNullColSoi.getStructFieldData(structNullCol, structNullColSoi.getStructFieldRef("name")));
+
+        assertNull(soi.getStructFieldData(res, soi.getStructFieldRef("missingStructCol")));
+
+        assertEquals(jsonStr,"{\"missingStructCol\":null,\"structCol\":{\"name\":\"myName\"},\"structNullCol\":{\"name\":null}}");
+    }
+
+    
+test_code:
+public void testNestedExplicitNullValue() throws SerDeException, IOException {
+    System.out.println("testNestedExplicitNullValue");
+    JsonSerDe serde = new JsonSerDe();
+    Configuration conf = null;
+    Properties tbl = new Properties();
+    tbl.setProperty(serdeConstants.LIST_COLUMNS, "structCol,structNullCol,missingStructCol");
+    tbl.setProperty(serdeConstants.LIST_COLUMN_TYPES, "struct<name:string>,struct<name:string>,struct<name:string>");
+
+    // Set 'explicit.null' to true
+    tbl.setProperty(JsonSerDe.PROP_EXPLICIT_NULL, "true");
+
+    serde.initialize(conf, tbl);
+    StructObjectInspector soi = (StructObjectInspector) serde.getObjectInspector();
+    Object res = serde.deserialize(new Text("{\"structCol\":{\"name\":\"myName\"},\"structNullCol\":{\"name\":null}}"));
+
+    // Get the serialized json string
+    String jsonStr = serde.serialize(res, soi).toString();
+
+    // Parse jsonStr into a LinkedHashMap to ensure order
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+    Map<String, Object> map = mapper.readValue(jsonStr, new TypeReference<LinkedHashMap<String, Object>>() {});
+    jsonStr = mapper.writeValueAsString(map);
+
+    StructObjectInspector structColSoi = (StructObjectInspector) soi.getStructFieldRef("structCol").getFieldObjectInspector();
+    Object structCol = soi.getStructFieldData(res, soi.getStructFieldRef("structCol"));
+    assertTrue(structColSoi.getStructFieldData(structCol, structColSoi.getStructFieldRef("name")).equals("myName"));
+
+    StructObjectInspector structNullColSoi = (StructObjectInspector) soi.getStructFieldRef("structNullCol").getFieldObjectInspector();
+    Object structNullCol = soi.getStructFieldData(res, soi.getStructFieldRef("structNullCol"));
+    assertNull(structNullColSoi.getStructFieldData(structNullCol, structNullColSoi.getStructFieldRef("name")));
+
+    assertNull(soi.getStructFieldData(res, soi.getStructFieldRef("missingStructCol")));
+
+    assertEquals(jsonStr,"{\"missingStructCol\":null,\"structCol\":{\"name\":\"myName\"},\"structNullCol\":{\"name\":null}}");
+}
+
+import:
+['import com.fasterxml.jackson.core.type.TypeReference;', 'import com.fasterxml.jackson.databind.ObjectMapper;', 'import com.fasterxml.jackson.databind.SerializationFeature;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

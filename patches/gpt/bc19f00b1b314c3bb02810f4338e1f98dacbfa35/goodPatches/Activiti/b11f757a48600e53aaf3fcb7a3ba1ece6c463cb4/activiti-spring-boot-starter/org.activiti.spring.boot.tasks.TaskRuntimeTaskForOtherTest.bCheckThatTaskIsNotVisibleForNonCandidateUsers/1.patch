@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'cCreateStandaloneGroupTaskClaimAndDeleteFail': 'public void cCreateStandaloneGroupTaskClaimAndDeleteFail() {\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("simple task")\n            .withGroup("activitiTeam")\n            .build());\n\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n            50));\n\n    assertThat(tasks.getContent()).hasSize(1);\n    Task task = tasks.getContent().get(0);\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n\n    currentTaskId = task.getId();\n\n    \n\n    // Delete the task after the test\n    taskRuntime.delete(TaskPayloadBuilder.delete().withTaskId(currentTaskId).build());\n    \n\n}\n', 'bCheckThatTaskIsNotVisibleForNonCandidateUsers': "public void bCheckThatTaskIsNotVisibleForNonCandidateUsers() {\n\n    // Other users beside the owner shouldn't see the task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n            50));\n\n    assertThat(tasks.getContent()).hasSize(0);\n\n}\n"}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['cCreateStandaloneGroupTaskClaimAndDeleteFail', 'bCheckThatTaskIsNotVisibleForNonCandidateUsers']}polluter
+:code:
+{'fields': {}, 'methods': {'cCreateStandaloneGroupTaskClaimAndDeleteFail': 'public void cCreateStandaloneGroupTaskClaimAndDeleteFail() {\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("simple task")\n            .withGroup("activitiTeam")\n            .build());\n\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n            50));\n\n    assertThat(tasks.getContent()).hasSize(1);\n    Task task = tasks.getContent().get(0);\n\n    assertThat(task.getAssignee()).isNull();\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.CREATED);\n\n    currentTaskId = task.getId();\n\n    \n\n    // Delete the task after the test\n    taskRuntime.delete(TaskPayloadBuilder.delete().withTaskId(currentTaskId).build());\n    \n\n}\n', 'bCheckThatTaskIsNotVisibleForNonCandidateUsers': "public void bCheckThatTaskIsNotVisibleForNonCandidateUsers() {\n\n    // Other users beside the owner shouldn't see the task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n            50));\n\n    assertThat(tasks.getContent()).hasSize(0);\n\n}\n"}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['cCreateStandaloneGroupTaskClaimAndDeleteFail', 'bCheckThatTaskIsNotVisibleForNonCandidateUsers']}

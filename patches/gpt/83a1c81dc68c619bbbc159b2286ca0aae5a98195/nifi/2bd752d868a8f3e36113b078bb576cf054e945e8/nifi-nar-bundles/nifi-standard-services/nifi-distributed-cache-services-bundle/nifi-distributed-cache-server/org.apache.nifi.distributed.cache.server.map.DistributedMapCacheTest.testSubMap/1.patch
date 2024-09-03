@@ -1,0 +1,63 @@
+Test File Path: projects/2bd752d868a8f3e36113b078bb576cf054e945e8/nifi/nifi-nar-bundles/nifi-standard-services/nifi-distributed-cache-services-bundle/nifi-distributed-cache-server/src/test/java/org/apache/nifi/distributed/cache/server/map/DistributedMapCacheTest.java
+
+    Original Test Method:
+     public void testSubMap() throws IOException {
+        final String key = "keySubMap";
+        final String value = "valueSubMap";
+        for (int i = 0; (i < 3); ++i) {
+            client.put(key + i, value + i, serializer, serializer);
+        }
+        final Set<String> keys = new HashSet<>(Arrays.asList("keySubMap0", "keySubMap1", "keySubMap2"));
+        final Map<String, String> subMap = client.subMap(keys, serializer, deserializer);
+        assertEquals(3, subMap.size());
+        for (int i = 0; (i < 3); ++i) {
+            assertEquals(value + i, subMap.get(key + i));
+        }
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+public void testSubMap() throws IOException {
+    final String key = "keySubMap";
+    final String value = "valueSubMap";
+    for (int i = 0; (i < 3); ++i) {
+        client.put(key + i, value + i, serializer, serializer);
+    }
+    final Set<String> keys = new LinkedHashSet<>(Arrays.asList("keySubMap0", "keySubMap1", "keySubMap2"));
+    final Map<String, String> subMap = client.subMap(keys, serializer, deserializer);
+    assertEquals(3, subMap.size());
+    for (int i = 0; (i < 3); ++i) {
+        assertEquals(value + i, subMap.get(key + i));
+    }
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+
+<!-- No changes needed -->
+
+Patch before Stitching:
+
+test_code:
+public void testSubMap() throws IOException {
+    final String key = "keySubMap";
+    final String value = "valueSubMap";
+    for (int i = 0; (i < 3); ++i) {
+        client.put(key + i, value + i, serializer, serializer);
+    }
+    final Set<String> keys = new LinkedHashSet<>(Arrays.asList("keySubMap0", "keySubMap1", "keySubMap2"));
+    final Map<String, String> subMap = client.subMap(keys, serializer, deserializer);
+    assertEquals(3, subMap.size());
+    for (int i = 0; (i < 3); ++i) {
+        assertEquals(value + i, subMap.get(key + i));
+    }
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+
+<!-- No changes needed -->
