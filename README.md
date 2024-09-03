@@ -28,7 +28,7 @@ Maven 3.6.3
 
 **1. Set up requirements:**
 ```
-git clone https://github.com/dserfe/FlakyDoctor
+git clone https://github.com/Intelligent-CAT-Lab/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh |& tee setup.log
 ```
@@ -67,7 +67,7 @@ Maven 3.6.3
 
 **1. Set up requirements:**
 ```
-git clone https://github.com/dserfe/FlakyDoctor
+git clone https://github.com/Intelligent-CAT-Lab/FlakyDoctor
 cd FlakyDoctor
 bash -x src/setup.sh
 ```
