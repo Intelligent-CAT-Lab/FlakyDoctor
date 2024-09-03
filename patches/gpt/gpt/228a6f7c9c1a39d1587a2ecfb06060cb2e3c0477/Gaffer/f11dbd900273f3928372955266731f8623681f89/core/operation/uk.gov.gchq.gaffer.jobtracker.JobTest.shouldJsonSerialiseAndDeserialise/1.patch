@@ -1,0 +1,72 @@
+Test File Path: projects/f11dbd900273f3928372955266731f8623681f89/Gaffer/core/operation/src/test/java/uk/gov/gchq/gaffer/jobtracker/JobTest.java
+
+    Original Test Method:
+     public void shouldJsonSerialiseAndDeserialise() throws SerialisationException {
+        // Given
+        final String json = "{" +
+                "\"repeat\":{" +
+                "\"initialDelay\":20," +
+                "\"repeatPeriod\":30," +
+                "\"timeUnit\":\"SECONDS\"" +
+                "}," +
+                "\"operation\":{" +
+                "\"class\":\"uk.gov.gchq.gaffer.operation.impl.get.GetAllElements\"" +
+                "}" +
+                "}";
+
+        // When
+        final Job deserialised = JSONSerialiser.deserialise(json, Job.class);
+
+        // Then
+        Job expected = new Job(new Repeat(20L, 30L, TimeUnit.SECONDS), new GetAllElements());
+        assertEquals(expected, deserialised);
+
+        // When
+        final String serialised = new String(JSONSerialiser.serialise(deserialised));
+
+        // Then
+        assertEquals(json, serialised);
+    }
+
+    
+test_code:
+public void shouldJsonSerialiseAndDeserialise() throws SerialisationException {
+    // Given
+    final String json = "{" +
+            "\"repeat\":{" +
+            "\"initialDelay\":20," +
+            "\"repeatPeriod\":30," +
+            "\"timeUnit\":\"SECONDS\"" +
+            "}," +
+            "\"operation\":{" +
+            "\"class\":\"uk.gov.gchq.gaffer.operation.impl.get.GetAllElements\"" +
+            "}" +
+            "}";
+
+    // When
+    final Job deserialised = JSONSerialiser.deserialise(json, Job.class);
+
+    // Then
+    Job expected = new Job(new Repeat(20L, 30L, TimeUnit.SECONDS), new GetAllElements());
+    assertEquals(expected, deserialised);
+
+    // When
+    final String serialised = new String(JSONSerialiser.serialise(deserialised));
+
+    // Then
+    JsonParser parser = new JsonParser();
+    JsonElement o1 = parser.parse(json);
+    JsonElement o2 = parser.parse(serialised);
+    assertEquals(o1, o2);
+}
+
+import:
+['import com.google.gson.JsonElement;', 'import com.google.gson.JsonParser;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>
+ 

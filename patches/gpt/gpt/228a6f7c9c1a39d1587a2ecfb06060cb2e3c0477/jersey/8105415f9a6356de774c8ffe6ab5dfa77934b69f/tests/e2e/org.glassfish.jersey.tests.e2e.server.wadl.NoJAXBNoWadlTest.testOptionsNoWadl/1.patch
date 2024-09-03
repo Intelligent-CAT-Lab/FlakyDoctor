@@ -1,0 +1,41 @@
+Test File Path: projects/8105415f9a6356de774c8ffe6ab5dfa77934b69f/jersey/tests/e2e/src/test/java/org/glassfish/jersey/tests/e2e/server/wadl/NoJAXBNoWadlTest.java
+
+    Original Test Method:
+     public void testOptionsNoWadl() {
+        final boolean shouldHaveJaxb = JdkVersion.getJdkVersion().getMajor() == 1;
+
+        // Make sure the test does not have JAX-B on a classpath
+        Assertions.assertFalse(ServiceFinder.find("javax.xml.bind.JAXBContext").iterator().hasNext());
+
+        try (Response r = target("dummy").request(MediaTypes.WADL_TYPE).options()) {
+            String headers = r.getHeaderString(HttpHeaders.ALLOW);
+            Assertions.assertEquals("OPTIONS,PUT", headers);
+        }
+        System.out.println(readableStream.toString());
+        Assertions.assertEquals(!shouldHaveJaxb,
+                readableStream.toString().contains(LocalizationMessages.WADL_FEATURE_DISABLED()));
+    }
+
+    
+test_code:
+public void testOptionsNoWadl() {
+    final boolean shouldHaveJaxb = JdkVersion.getJdkVersion().getMajor() == 1;
+
+    // Make sure the test does not have JAX-B on a classpath
+    Assertions.assertFalse(ServiceFinder.find("javax.xml.bind.JAXBContext").iterator().hasNext());
+
+    try (Response r = target("dummy").request(MediaTypes.WADL_TYPE).options()) {
+        String headers = r.getHeaderString(HttpHeaders.ALLOW);
+        List<String> headersList = Arrays.asList(headers.split(","));
+        Collections.sort(headersList);
+        Assertions.assertEquals(Arrays.asList("OPTIONS", "PUT"), headersList);
+    }
+    System.out.println(readableStream.toString());
+    Assertions.assertEquals(!shouldHaveJaxb,
+            readableStream.toString().contains(LocalizationMessages.WADL_FEATURE_DISABLED()));
+}
+
+import:
+['import java.util.Arrays;', 'import java.util.Collections;', 'import java.util.List;']
+pom:
+

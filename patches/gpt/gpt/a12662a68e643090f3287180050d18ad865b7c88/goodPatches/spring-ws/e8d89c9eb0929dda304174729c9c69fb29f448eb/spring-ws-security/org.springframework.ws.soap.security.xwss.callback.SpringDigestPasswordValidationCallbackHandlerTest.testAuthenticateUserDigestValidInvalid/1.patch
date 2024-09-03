@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testAuthenticateUserDigestValidInvalid': 'public void testAuthenticateUserDigestValidInvalid() throws Exception {\n    \n\n    // Clear the SecurityContextHolder to ensure it is in a clean state before the test is run\n    SecurityContextHolder.clearContext();\n    \n\n\n    User user = new User(username, "Big bird", true, true, true, true, Collections.<GrantedAuthority>emptyList());\n    expect(userDetailsService.loadUserByUsername(username)).andReturn(user);\n\n    replay(userDetailsService);\n\n    callbackHandler.handleInternal(callback);\n    boolean authenticated = callback.getResult();\n    Assert.assertFalse("Authenticated", authenticated);\n    Assert.assertNull("Authentication created", SecurityContextHolder.getContext().getAuthentication());\n\n    verify(userDetailsService);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testAuthenticateUserDigestValidInvalid']}polluter
+:code:
+{'fields': {}, 'methods': {'testAuthenticateUserDigestValidInvalid': 'public void testAuthenticateUserDigestValidInvalid() throws Exception {\n    \n\n    // Clear the SecurityContextHolder to ensure it is in a clean state before the test is run\n    SecurityContextHolder.clearContext();\n    \n\n\n    User user = new User(username, "Big bird", true, true, true, true, Collections.<GrantedAuthority>emptyList());\n    expect(userDetailsService.loadUserByUsername(username)).andReturn(user);\n\n    replay(userDetailsService);\n\n    callbackHandler.handleInternal(callback);\n    boolean authenticated = callback.getResult();\n    Assert.assertFalse("Authenticated", authenticated);\n    Assert.assertNull("Authentication created", SecurityContextHolder.getContext().getAuthentication());\n\n    verify(userDetailsService);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testAuthenticateUserDigestValidInvalid']}

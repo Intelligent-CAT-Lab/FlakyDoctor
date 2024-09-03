@@ -1,0 +1,69 @@
+Test File Path: projects/0ac96e1602baf1f516c3c614f13523adb2992e69/nacos/common/src/test/java/com/alibaba/nacos/common/utils/JacksonUtilsTest.java
+
+    Original Test Method:
+     public void testToJsonBytes() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("string", "你好，中国！");
+        map.put("integer", 999);
+        RestResult<Map<String, Object>> restResult = new RestResult();
+        restResult.setData(map);
+
+        byte[] bytes = JacksonUtils.toJsonBytes(restResult);
+        String jsonFromBytes = ByteUtils.toString(bytes);
+        String expectedJson = "{\"code\":0,\"data\":{\"string\":\"你好，中国！\",\"integer\":999}}";
+        Assert.assertEquals(expectedJson, jsonFromBytes);
+
+        // old `toJsonBytes` method implementation:
+        //     public static byte[] toJsonBytes(Object obj) {
+        //        try {
+        //            return ByteUtils.toBytes(mapper.writeValueAsString(obj));
+        //        } catch (JsonProcessingException e) {
+        //            throw new NacosSerializationException(obj.getClass(), e);
+        //        }
+        //    }
+
+        // here is a verification to compare with the old implementation
+        byte[] bytesFromOldImplementation = ByteUtils.toBytes(JacksonUtils.toJson(restResult));
+        Assert.assertEquals(expectedJson, new String(bytesFromOldImplementation, Charset.forName(Constants.ENCODE)));
+    }
+
+    
+test_code:
+public void testToJsonBytes() throws IOException {
+    Map<String, Object> map = new LinkedHashMap<String, Object>();
+    map.put("string", "你好，中国！");
+    map.put("integer", 999);
+    RestResult<Map<String, Object>> restResult = new RestResult();
+    restResult.setData(map);
+
+    byte[] bytes = JacksonUtils.toJsonBytes(restResult);
+    String jsonFromBytes = ByteUtils.toString(bytes);
+
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+
+    JsonNode expectedNode = mapper.readTree("{\"code\":0,\"data\":{\"integer\":999,\"string\":\"你好，中国！\"}}");
+    JsonNode actualNode = mapper.readTree(jsonFromBytes);
+    Assert.assertEquals(expectedNode, actualNode);
+
+    byte[] bytesFromOldImplementation = ByteUtils.toBytes(JacksonUtils.toJson(restResult));
+    actualNode = mapper.readTree(new String(bytesFromOldImplementation, Charset.forName(Constants.ENCODE)));
+    Assert.assertEquals(expectedNode, actualNode);
+}
+
+import:
+['import com.fasterxml.jackson.databind.MapperFeature;', 'import com.fasterxml.jackson.databind.SerializationFeature;', 'import java.io.IOException;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.11.0</version>
+</dependency>
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+</dependency>
+ 

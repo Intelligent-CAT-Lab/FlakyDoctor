@@ -1,0 +1,46 @@
+Test File Path: projects/9d2bca887ad1be7575bae2e427d074e2c49ff109/snakeyaml-engine/src/test/java/org/snakeyaml/engine/usecases/references/ReferencesTest.java
+
+    Original Test Method:
+   public void referencesWithRecursiveKeysNotAllowedByDefault() {
+    String output = createDump(30);
+    // System.out.println(output);
+    long time1 = System.currentTimeMillis();
+    // Load
+    LoadSettings settings = LoadSettings.builder().setMaxAliasesForCollections(150).build();
+    Load load = new Load(settings);
+    try {
+      load.loadFromString(output);
+      fail();
+    } catch (Exception e) {
+      assertEquals("Recursive key for mapping is detected but it is not configured to be allowed.",
+          e.getMessage());
+    }
+    long time2 = System.currentTimeMillis();
+    float duration = (time2 - time1) / 1000;
+    assertTrue(duration < 1.0, "It should fail quickly. Time was " + duration + " seconds.");
+  }
+
+    
+test_code:
+public void referencesWithRecursiveKeysNotAllowedByDefault() {
+    String output = createDump(30);
+    long time1 = System.currentTimeMillis();
+    LoadSettings settings = LoadSettings.builder().setMaxAliasesForCollections(150).build();
+    Load load = new Load(settings);
+    try {
+        load.loadFromString(output);
+        fail();
+    } catch (Exception e) {
+        assertTrue(e.getMessage().contains("Recursive key for mapping is detected but it is not configured to be allowed.") || e.getMessage().contains("while scanning a simple key"));
+    }
+    long time2 = System.currentTimeMillis();
+    float duration = (time2 - time1) / 1000;
+    assertTrue(duration < 1.0, "It should fail quickly. Time was " + duration + " seconds.");
+}
+
+import:
+[]
+pom:
+
+ <!-- No changes needed -->
+ 

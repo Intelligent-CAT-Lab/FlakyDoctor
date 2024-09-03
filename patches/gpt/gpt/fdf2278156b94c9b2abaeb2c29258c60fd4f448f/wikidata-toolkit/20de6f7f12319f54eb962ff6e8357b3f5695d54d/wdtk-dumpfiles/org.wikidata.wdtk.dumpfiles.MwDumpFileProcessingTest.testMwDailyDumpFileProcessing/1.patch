@@ -1,0 +1,182 @@
+Test File Path: od_projects/20de6f7f12319f54eb962ff6e8357b3f5695d54d/wikidata-toolkit/wdtk-dumpfiles/src/test/java/org/wikidata/wdtk/dumpfiles/MwDumpFileProcessingTest.java
+
+    Original Test Method:
+ 	public void testMwDailyDumpFileProcessing() throws IOException {
+		Path dmPath = Paths.get(System.getProperty("user.dir"));
+		MockDirectoryManager dm = new MockDirectoryManager(dmPath, true);
+		setLocalDumpFile("20140420", DumpContentType.DAILY, dm);
+
+		DumpProcessingController dpc = new DumpProcessingController(
+				"wikidatawiki");
+		dpc.downloadDirectoryManager = dm;
+		dpc.setOfflineMode(true);
+
+		StatisticsMwRevisionProcessor mwrpAllStats = new StatisticsMwRevisionProcessor(
+				"all", 2);
+		dpc.registerMwRevisionProcessor(mwrpAllStats, null, false);
+
+		TestMwRevisionProcessor tmrpAll = new TestMwRevisionProcessor();
+		dpc.registerMwRevisionProcessor(tmrpAll, null, false);
+		TestMwRevisionProcessor tmrpAllCurrent = new TestMwRevisionProcessor();
+		dpc.registerMwRevisionProcessor(tmrpAllCurrent, null, true);
+		TestMwRevisionProcessor tmrpAllItems = new TestMwRevisionProcessor();
+		dpc.registerMwRevisionProcessor(tmrpAllItems,
+				MwRevision.MODEL_WIKIBASE_ITEM, false);
+		TestEntityDocumentProcessor edpCurrentCounter = new TestEntityDocumentProcessor();
+		dpc.registerEntityDocumentProcessor(edpCurrentCounter,
+				MwRevision.MODEL_WIKIBASE_ITEM, true);
+		dpc.registerEntityDocumentProcessor(edpCurrentCounter,
+				MwRevision.MODEL_WIKIBASE_PROPERTY, true);
+		TestEntityDocumentProcessor edpAllCounter = new TestEntityDocumentProcessor();
+		dpc.registerEntityDocumentProcessor(edpAllCounter,
+				MwRevision.MODEL_WIKIBASE_ITEM, false);
+		dpc.registerEntityDocumentProcessor(edpAllCounter,
+				MwRevision.MODEL_WIKIBASE_PROPERTY, false);
+		TestMwRevisionProcessor tmrpAllProperties = new TestMwRevisionProcessor();
+		dpc.registerMwRevisionProcessor(tmrpAllProperties,
+				MwRevision.MODEL_WIKIBASE_PROPERTY, false);
+		TestMwRevisionProcessor tmrpAllLexemes = new TestMwRevisionProcessor();
+		dpc.registerMwRevisionProcessor(tmrpAllLexemes,
+				MwRevision.MODEL_WIKIBASE_LEXEME, false);
+
+		dpc.processDump(dpc.getMostRecentDump(DumpContentType.DAILY));
+
+		List<MwRevision> revisionsAllItems = new ArrayList<>();
+		revisionsAllItems.add(getItemRevision(4));
+		revisionsAllItems.add(getItemRevision(5));
+		revisionsAllItems.add(getItemRevision(3));
+		revisionsAllItems.add(getItemRevision(2));
+
+		List<MwRevision> revisionsAllProperties = new ArrayList<>();
+		revisionsAllProperties.add(getPropertyRevision(4));
+		revisionsAllProperties.add(getPropertyRevision(5));
+
+		List<MwRevision> revisionsAllLexemes = new ArrayList<>();
+		revisionsAllLexemes.add(getLexemeRevision(9));
+		revisionsAllLexemes.add(getLexemeRevision(10));
+
+		List<MwRevision> revisionsAll = new ArrayList<>(revisionsAllItems);
+		revisionsAll.add(getPageRevision(1));
+		revisionsAll.add(getPageRevision(2));
+		revisionsAll.addAll(revisionsAllProperties);
+		revisionsAll.addAll(revisionsAllLexemes);
+
+		List<MwRevision> revisionsAllCurrent = new ArrayList<>();
+		revisionsAllCurrent.add(getItemRevision(5));
+		revisionsAllCurrent.add(getPageRevision(2));
+		revisionsAllCurrent.add(getPropertyRevision(5));
+		revisionsAllCurrent.add(getLexemeRevision(10));
+
+		assertEquals("Wikidata Toolkit Test", tmrpAll.siteName);
+		assertEquals(revisionsAll.size(), mwrpAllStats.getTotalRevisionCount());
+		assertEquals(revisionsAll.size(),
+				mwrpAllStats.getCurrentRevisionCount());
+		assertEqualRevisionLists(revisionsAll, tmrpAll.revisions, "all");
+		assertEqualRevisionLists(revisionsAllItems, tmrpAllItems.revisions,
+				"allitems");
+		assertEqualRevisionLists(revisionsAllCurrent, tmrpAllCurrent.revisions,
+				"allcurrent");
+		assertEqualRevisionLists(revisionsAllProperties,
+				tmrpAllProperties.revisions, "allproperties");
+		assertEqualRevisionLists(revisionsAllLexemes,
+				tmrpAllLexemes.revisions, "alllexemes");
+
+		assertEquals(revisionsAllItems.size(), edpAllCounter.itemCount);
+		assertEquals(revisionsAllProperties.size(), edpAllCounter.propCount);
+		assertEquals(1, edpCurrentCounter.itemCount);
+		assertEquals(1, edpCurrentCounter.propCount);
+	}
+
+    
+test_code:
+public void testMwDailyDumpFileProcessing() throws IOException {
+	Path dmPath = Paths.get(System.getProperty("user.dir"));
+	MockDirectoryManager dm = new MockDirectoryManager(dmPath, false);
+
+	setLocalDumpFile("20140420", DumpContentType.DAILY, dm);
+
+	DumpProcessingController dpc = new DumpProcessingController(
+			"wikidatawiki");
+	dpc.downloadDirectoryManager = dm;
+	dpc.setOfflineMode(true);
+
+	StatisticsMwRevisionProcessor mwrpAllStats = new StatisticsMwRevisionProcessor(
+			"all", 2);
+	dpc.registerMwRevisionProcessor(mwrpAllStats, null, false);
+
+	TestMwRevisionProcessor tmrpAll = new TestMwRevisionProcessor();
+	dpc.registerMwRevisionProcessor(tmrpAll, null, false);
+	TestMwRevisionProcessor tmrpAllCurrent = new TestMwRevisionProcessor();
+	dpc.registerMwRevisionProcessor(tmrpAllCurrent, null, true);
+	TestMwRevisionProcessor tmrpAllItems = new TestMwRevisionProcessor();
+	dpc.registerMwRevisionProcessor(tmrpAllItems,
+			MwRevision.MODEL_WIKIBASE_ITEM, false);
+	TestEntityDocumentProcessor edpCurrentCounter = new TestEntityDocumentProcessor();
+	dpc.registerEntityDocumentProcessor(edpCurrentCounter,
+			MwRevision.MODEL_WIKIBASE_ITEM, true);
+	dpc.registerEntityDocumentProcessor(edpCurrentCounter,
+			MwRevision.MODEL_WIKIBASE_PROPERTY, true);
+	TestEntityDocumentProcessor edpAllCounter = new TestEntityDocumentProcessor();
+	dpc.registerEntityDocumentProcessor(edpAllCounter,
+			MwRevision.MODEL_WIKIBASE_ITEM, false);
+	dpc.registerEntityDocumentProcessor(edpAllCounter,
+			MwRevision.MODEL_WIKIBASE_PROPERTY, false);
+	TestMwRevisionProcessor tmrpAllProperties = new TestMwRevisionProcessor();
+	dpc.registerMwRevisionProcessor(tmrpAllProperties,
+			MwRevision.MODEL_WIKIBASE_PROPERTY, false);
+	TestMwRevisionProcessor tmrpAllLexemes = new TestMwRevisionProcessor();
+	dpc.registerMwRevisionProcessor(tmrpAllLexemes,
+			MwRevision.MODEL_WIKIBASE_LEXEME, false);
+
+	dpc.processDump(dpc.getMostRecentDump(DumpContentType.DAILY));
+
+	List<MwRevision> revisionsAllItems = new ArrayList<>();
+	revisionsAllItems.add(getItemRevision(4));
+	revisionsAllItems.add(getItemRevision(5));
+	revisionsAllItems.add(getItemRevision(3));
+	revisionsAllItems.add(getItemRevision(2));
+
+	List<MwRevision> revisionsAllProperties = new ArrayList<>();
+	revisionsAllProperties.add(getPropertyRevision(4));
+	revisionsAllProperties.add(getPropertyRevision(5));
+
+	List<MwRevision> revisionsAllLexemes = new ArrayList<>();
+	revisionsAllLexemes.add(getLexemeRevision(9));
+	revisionsAllLexemes.add(getLexemeRevision(10));
+
+	List<MwRevision> revisionsAll = new ArrayList<>(revisionsAllItems);
+	revisionsAll.add(getPageRevision(1));
+	revisionsAll.add(getPageRevision(2));
+	revisionsAll.addAll(revisionsAllProperties);
+	revisionsAll.addAll(revisionsAllLexemes);
+
+	List<MwRevision> revisionsAllCurrent = new ArrayList<>();
+	revisionsAllCurrent.add(getItemRevision(5));
+	revisionsAllCurrent.add(getPageRevision(2));
+	revisionsAllCurrent.add(getPropertyRevision(5));
+	revisionsAllCurrent.add(getLexemeRevision(10));
+
+	assertEquals("Wikidata Toolkit Test", tmrpAll.siteName);
+	assertEquals(revisionsAll.size(), mwrpAllStats.getTotalRevisionCount());
+	assertEquals(revisionsAll.size(),
+			mwrpAllStats.getCurrentRevisionCount());
+	assertEqualRevisionLists(revisionsAll, tmrpAll.revisions, "all");
+	assertEqualRevisionLists(revisionsAllItems, tmrpAllItems.revisions,
+			"allitems");
+	assertEqualRevisionLists(revisionsAllCurrent, tmrpAllCurrent.revisions,
+			"allcurrent");
+	assertEqualRevisionLists(revisionsAllProperties,
+			tmrpAllProperties.revisions, "allproperties");
+	assertEqualRevisionLists(revisionsAllLexemes,
+			tmrpAllLexemes.revisions, "alllexemes");
+
+	assertEquals(revisionsAllItems.size(), edpAllCounter.itemCount);
+	assertEquals(revisionsAllProperties.size(), edpAllCounter.propCount);
+	assertEquals(1, edpCurrentCounter.itemCount);
+	assertEquals(1, edpCurrentCounter.propCount);
+}
+
+import:
+[]
+pom:
+

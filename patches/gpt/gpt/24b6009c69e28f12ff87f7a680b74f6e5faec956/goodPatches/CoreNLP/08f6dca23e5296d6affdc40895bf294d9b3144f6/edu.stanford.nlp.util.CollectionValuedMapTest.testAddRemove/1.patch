@@ -1,0 +1,36 @@
+test_before_fix:
+  public void testAddRemove() {
+    CollectionValuedMap<Integer, Integer> fooMap = new CollectionValuedMap<>();
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        fooMap.add(new Integer(i), new Integer(j));
+      }
+    }
+    fooMap.remove(new Integer(2));
+    Assert.assertEquals("{0=[0, 1, 2, 3], 1=[0, 1, 2, 3], 3=[0, 1, 2, 3]}", fooMap.toString());
+  }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testAddRemove() { 
+     Map<Integer, List<Integer>> fooMap = new LinkedHashMap<>(); 
+     for (int i = 0; i < 4; i++) { 
+         fooMap.put(i, new ArrayList<>()); 
+         for (int j = 0; j < 4; j++) { 
+             fooMap.get(i).add(j); 
+         } 
+     } 
+     fooMap.remove(new Integer(2)); 
+     Assert.assertEquals("{0=[0, 1, 2, 3], 1=[0, 1, 2, 3], 3=[0, 1, 2, 3]}", fooMap.toString()); 
+ } 
+  
+  
+ 
+import:
+['import java.util.ArrayList;\n ', 'import java.util.LinkedHashMap;\n ', 'import java.util.List;\n ']
+pom:
+
+<!-- No changes needed -->

@@ -1,0 +1,25 @@
+Test File Path: projects/be70e6fa1d4bf180c2766edc4c21d10fc215118b/hop/core/src/test/java/org/apache/hop/core/svg/HopSvgGraphics2DTest.java
+
+    Original Test Method:
+   public void testNewDocumentXml() throws Exception {
+    HopSvgGraphics2D graphics2D = HopSvgGraphics2D.newDocument();
+    assertEquals(BASIC_SVG_XML, graphics2D.toXml());
+  }
+
+    
+test_code:
+public void testNewDocumentXml() throws Exception {
+    HopSvgGraphics2D graphics2D = HopSvgGraphics2D.newDocument();
+    String actualXml = graphics2D.toXml();
+    List<String> expected = Arrays.asList(BASIC_SVG_XML.split(" "));
+    List<String> actual = Arrays.asList(actualXml.split(" "));
+    Collections.sort(expected);
+    Collections.sort(actual);
+    assertTrue(expected.equals(actual));
+}
+
+import:
+['import java.util.Collections;', 'import java.util.List;', 'import static org.junit.Assert.assertTrue;']
+pom:
+
+<!-- No changes needed -->

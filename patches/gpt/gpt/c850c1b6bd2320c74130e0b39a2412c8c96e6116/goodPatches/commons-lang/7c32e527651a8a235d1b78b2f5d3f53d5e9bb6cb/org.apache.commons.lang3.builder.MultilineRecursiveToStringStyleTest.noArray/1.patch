@@ -1,0 +1,33 @@
+test_before_fix:
+    public void noArray() {
+        final WithArrays wa = new WithArrays();
+        final String exp = getClassPrefix(wa) + "[" + BR
+                   + "  boolArray=<null>," + BR
+                   + "  charArray=<null>," + BR
+                   + "  intArray=<null>," + BR
+                   + "  doubleArray=<null>," + BR
+                   + "  longArray=<null>," + BR
+                   + "  stringArray=<null>" + BR
+                   + "]";
+        assertEquals(exp, toString(wa));
+    }
+
+test_after_fix:
+
+code:
+public void noArray() { 
+     final WithArrays wa = new WithArrays(); 
+     final Map<String, String> map = new LinkedHashMap<>(); 
+     map.put("boolArray", String.valueOf(wa.boolArray)); 
+     map.put("charArray", String.valueOf(wa.charArray)); 
+     map.put("intArray", String.valueOf(wa.intArray)); 
+     map.put("doubleArray", String.valueOf(wa.doubleArray)); 
+     map.put("longArray", String.valueOf(wa.longArray)); 
+     map.put("stringArray", Arrays.toString(wa.stringArray)); 
+     final String exp = getClassPrefix(wa) + map.toString(); 
+     assertEquals(exp, toString(wa)); 
+ } 
+ 
+import:
+['import java.util.Arrays;\n ', 'import java.util.LinkedHashMap;\n ', 'import java.util.Map;\n ']
+pom:

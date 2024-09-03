@@ -1,0 +1,56 @@
+Test File Path: projects/d3b5aebd2d9bfc8b98539f7ce157775cc5af6e95/classgraph/src/test/java/io/github/classgraph/json/JSONSerializationTest.java
+
+    Original Test Method:
+     public void testJSON() {
+        final H h = new H();
+        h.g = new G();
+
+        final String json0 = JSONSerializer.serializeFromField(h, "g", 0, false);
+
+        final String expected = //
+                "{\"e\":{\"q\":{\"b\":3,\"a\":{\"x\":[3],\"y\":\"x\"},\"arr\":[3,3,3]},\"map\":{\"3\":3},"
+                        + "\"list\":[3,3,3],\"c\":{\"b\":5,\"a\":{\"x\":[5],\"y\":\"x\"},\"arr\":[5,5,5]},"
+                        + "\"z\":42},\"f\":{\"z\":1.5,\"q\":{\"b\":1.5,\"a\":{\"x\":[1.5],\"y\":\"x\"},"
+                        + "\"arr\":[1.5,1.5,1.5]},\"map\":{\"1.5\":1.5},\"list\":[1.5,1.5,1.5],\"wxy\":123}}";
+
+        assertThat(json0).isEqualTo(expected);
+
+        final G obj = JSONDeserializer.deserializeObject(G.class, json0);
+
+        final String json1 = JSONSerializer.serializeObject(obj, 0, false);
+
+        assertThat(json0).isEqualTo(json1);
+    }
+
+    
+test_code:
+public void testJSON() throws JSONException {
+    final H h = new H();
+    h.g = new G();
+
+    final String json0 = JSONSerializer.serializeFromField(h, "g", 0, false);
+
+    final String expected = //
+            "{\"e\":{\"q\":{\"b\":3,\"a\":{\"x\":[3],\"y\":\"x\"},\"arr\":[3,3,3]},\"map\":{\"3\":3},"
+                    + "\"list\":[3,3,3],\"c\":{\"b\":5,\"a\":{\"x\":[5],\"y\":\"x\"},\"arr\":[5,5,5]},"
+                    + "\"z\":42},\"f\":{\"z\":1.5,\"q\":{\"b\":1.5,\"a\":{\"x\":[1.5],\"y\":\"x\"},"
+                    + "\"arr\":[1.5,1.5,1.5]},\"map\":{\"1.5\":1.5},\"list\":[1.5,1.5,1.5],\"wxy\":123}}";
+
+    final G obj = JSONDeserializer.deserializeObject(G.class, json0);
+
+    final String json1 = JSONSerializer.serializeObject(obj, 0, false);
+
+    JSONAssert.assertEquals(expected, json0, JSONCompareMode.STRICT_ORDER);
+    JSONAssert.assertEquals(json0, json1, JSONCompareMode.STRICT_ORDER);
+}
+
+import:
+['import org.json.JSONException;']
+pom:
+
+<dependency>
+    <groupId>org.skyscreamer</groupId>
+    <artifactId>jsonassert</artifactId>
+    <version>1.5.0</version>
+</dependency>
+ 

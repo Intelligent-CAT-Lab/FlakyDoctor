@@ -1,0 +1,66 @@
+Test File Path: projects/d56e61f2cf1368f917965a8c43f292a2a1b28ebc/XChange/xchange-stream-coinbasepro/src/test/java/info/bitrich/xchangestream/coinbasepro/dto/CoinbaseProWebSocketSubscriptionMessageTest.java
+
+    Original Test Method:
+   public void testWebSocketMessageSerializationBatch() throws JsonProcessingException {
+
+    ProductSubscription productSubscription =
+            ProductSubscription.create()
+                    .addOrderbook(CurrencyPair.BTC_USD)
+                    .addTrades(CurrencyPair.BTC_USD)
+                    .addTicker(CurrencyPair.BTC_USD)
+                    .build();
+    CoinbaseProWebSocketSubscriptionMessage message =
+            new CoinbaseProWebSocketSubscriptionMessage("subscribe", productSubscription, CoinbaseProOrderBookMode.Batch, null);
+
+    final ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+
+    String serialized = mapper.writeValueAsString(message);
+
+    Assert.assertEquals(
+            "{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"level2_batch\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]}]}",
+            serialized);
+  }
+
+    
+test_code:
+public void testWebSocketMessageSerializationBatch() throws JsonProcessingException {
+
+    ProductSubscription productSubscription =
+            ProductSubscription.create()
+                    .addOrderbook(CurrencyPair.BTC_USD)
+                    .addTrades(CurrencyPair.BTC_USD)
+                    .addTicker(CurrencyPair.BTC_USD)
+                    .build();
+    CoinbaseProWebSocketSubscriptionMessage message =
+            new CoinbaseProWebSocketSubscriptionMessage("subscribe", productSubscription, CoinbaseProOrderBookMode.Batch, null);
+
+    final ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+
+    String serialized = mapper.writeValueAsString(message);
+
+    JsonNode expected = mapper.readTree("{\"type\":\"subscribe\",\"channels\":[{\"name\":\"matches\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"level2_batch\",\"product_ids\":[\"BTC-USD\"]},{\"name\":\"ticker\",\"product_ids\":[\"BTC-USD\"]}]}");
+    JsonNode actual = mapper.readTree(serialized);
+
+    Assert.assertEquals(expected.get("type"), actual.get("type"));
+
+    List<JsonNode> expectedChannels = Lists.newArrayList(expected.get("channels").elements());
+    List<JsonNode> actualChannels = Lists.newArrayList(actual.get("channels").elements());
+
+    Assert.assertEquals(expectedChannels.size(), actualChannels.size());
+
+    expectedChannels.sort(Comparator.comparing(node -> node.get("name").asText()));
+    actualChannels.sort(Comparator.comparing(node -> node.get("name").asText()));
+
+    for (int i = 0; i < expectedChannels.size(); i++) {
+        Assert.assertEquals(expectedChannels.get(i).get("name"), actualChannels.get(i).get("name"));
+        Assert.assertEquals(expectedChannels.get(i).get("product_ids"), actualChannels.get(i).get("product_ids"));
+    }
+}
+
+import:
+['import java.util.Comparator;']
+pom:
+
+<!-- No changes needed -->

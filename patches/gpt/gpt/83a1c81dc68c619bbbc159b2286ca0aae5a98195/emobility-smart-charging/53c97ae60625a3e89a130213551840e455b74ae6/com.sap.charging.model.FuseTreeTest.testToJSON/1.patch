@@ -1,0 +1,67 @@
+Test File Path: projects/53c97ae60625a3e89a130213551840e455b74ae6/emobility-smart-charging/src/test/java/com/sap/charging/model/FuseTreeTest.java
+
+    Original Test Method:
+ 	public void testToJSON() {
+		Fuse root = new Fuse(0, 32);
+		Fuse f1 = new Fuse(1, 32);
+		root.addChild(f1);
+		
+		ChargingStation cs1 = buildDefaultChargingStation();
+		f1.addChild(cs1);
+		ChargingStation cs2 = buildDefaultChargingStation();
+		f1.addChild(cs2);
+		
+		Fuse f2 = new Fuse(2, 32);
+		root.addChild(f2);
+		
+		FuseTree fuseTree = new FuseTree(root, 20);
+
+		JSONObject json1 = fuseTree.toJSONObject();
+		String jsonString1 = json1.toString();
+		
+		FuseTree clone = FuseTree.fromJSON(json1, new ArrayList<ChargingStation>());
+		String jsonString2 = clone.toJSONObject().toString();
+		
+		assertEquals(jsonString1, jsonString2);
+	}
+
+    
+test_code:
+public void testToJSON() {
+    Fuse root = new Fuse(0, 32);
+    Fuse f1 = new Fuse(1, 32);
+    root.addChild(f1);
+
+    ChargingStation cs1 = buildDefaultChargingStation();
+    f1.addChild(cs1);
+    ChargingStation cs2 = buildDefaultChargingStation();
+    f1.addChild(cs2);
+
+    Fuse f2 = new Fuse(2, 32);
+    root.addChild(f2);
+
+    FuseTree fuseTree = new FuseTree(root, 20);
+
+    JSONObject json1 = fuseTree.toJSONObject();
+    String jsonString1 = json1.toString();
+
+    FuseTree clone = FuseTree.fromJSON(json1, new ArrayList<ChargingStation>());
+
+    JSONObject json2 = clone.toJSONObject();
+    String jsonString2 = json2.toString();
+
+    JsonParser parser = new JsonParser();
+    JsonElement o1 = parser.parse(jsonString1);
+    JsonElement o2 = parser.parse(jsonString2);
+    assertEquals(o1, o2);
+}
+
+import:
+['import com.google.gson.JsonElement;', 'import com.google.gson.JsonParser;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

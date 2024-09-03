@@ -1,0 +1,38 @@
+Test File Path: projects/1b39afdec269266b91fe258dd4abe3bcf91aadcb/aries-cdi/cdi-extender/src/test/java/org/apache/aries/cdi/container/internal/model/MapsTest.java
+
+    Original Test Method:
+ 	public void checkMerge_1() throws Exception {
+		Map<String, ?> merged = Maps.merge(
+			Stream.of(getClass().getField("one").getAnnotations()).collect(Collectors.toList()));
+
+		Assert.assertEquals(
+			Maps.of(
+				"a", Arrays.asList("foo", "bar", "baz"),
+				"cpt3", true,
+				"b", Arrays.asList(1,1,1,2,2),
+				"c", true),
+			merged);
+	}
+
+    
+test_code:
+public void checkMerge_1() throws Exception {
+    List<Annotation> annotations = Arrays.asList(getClass().getField("one").getAnnotations());
+    annotations.sort(Comparator.comparing(Annotation::toString));
+    Map<String, Object> merged = Maps.merge(annotations);
+
+    Map<String, Object> expected = new LinkedHashMap<>();
+    expected.put("a", Arrays.asList("foo", "bar", "baz"));
+    expected.put("cpt3", true);
+    expected.put("b", Arrays.asList(1,1,1,2,2));
+    expected.put("c", true);
+
+    Assert.assertEquals(expected, merged);
+}
+
+import:
+['import java.util.Comparator;', 'import java.util.List;', 'import java.lang.annotation.Annotation;']
+pom:
+
+ <!-- No changes needed -->
+ 

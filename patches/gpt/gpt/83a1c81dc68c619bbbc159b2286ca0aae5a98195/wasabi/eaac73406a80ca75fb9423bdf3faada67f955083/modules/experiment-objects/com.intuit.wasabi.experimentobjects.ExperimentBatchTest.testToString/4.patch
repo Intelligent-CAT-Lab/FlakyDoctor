@@ -1,0 +1,41 @@
+Test File Path: projects/eaac73406a80ca75fb9423bdf3faada67f955083/wasabi/modules/experiment-objects/src/test/java/com/intuit/wasabi/experimentobjects/ExperimentBatchTest.java
+
+    Original Test Method:
+     public void testToString() {
+        String out = "ExperimentBatch labels=" + labels
+                + ", profile=" + profile
+                + ", personalizationParameters=" + personalizationParameters;
+        assertEquals(expBatch.toString(), out);
+
+
+    }
+
+    
+test_code:
+public void testToString() {
+    List<Experiment.Label> sortedLabels = new ArrayList<>(labels);
+    sortedLabels.sort(Comparator.comparing(Experiment.Label::toString));
+    Map<String, Object> sortedProfile = new TreeMap<>(profile);
+    Map<String, Object> sortedPersonalizationParameters = new TreeMap<>(personalizationParameters);
+
+    String out = "ExperimentBatch labels=" + sortedLabels
+            + ", profile=" + sortedProfile
+            + ", personalizationParameters=" + sortedPersonalizationParameters;
+
+    String expBatchStr = expBatch.toString();
+    List<Experiment.Label> expBatchSortedLabels = new ArrayList<>(expBatch.getLabels());
+    expBatchSortedLabels.sort(Comparator.comparing(Experiment.Label::toString));
+    Map<String, Object> expBatchSortedProfile = new TreeMap<>(expBatch.getProfile());
+    Map<String, Object> expBatchSortedPersonalizationParameters = new TreeMap<>(expBatch.getPersonalizationParameters());
+
+    String expBatchOut = "ExperimentBatch labels=" + expBatchSortedLabels
+            + ", profile=" + expBatchSortedProfile
+            + ", personalizationParameters=" + expBatchSortedPersonalizationParameters;
+
+    assertEquals(expBatchOut, out);
+}
+
+import:
+[]
+pom:
+

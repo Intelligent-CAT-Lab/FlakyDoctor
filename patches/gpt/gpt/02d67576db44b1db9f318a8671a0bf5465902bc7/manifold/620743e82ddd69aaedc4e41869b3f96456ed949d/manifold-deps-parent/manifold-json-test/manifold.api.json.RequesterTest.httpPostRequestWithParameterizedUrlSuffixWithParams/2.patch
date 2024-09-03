@@ -1,0 +1,32 @@
+Test File Path: projects/620743e82ddd69aaedc4e41869b3f96456ed949d/manifold/manifold-deps-parent/manifold-json-test/src/test/java/manifold/api/json/RequesterTest.java
+
+    Original Test Method:
+   public void httpPostRequestWithParameterizedUrlSuffixWithParams()
+  {
+    Requester<Dummy> req = Dummy.request( "http://localhost:4567/" )
+      .withParam( "foo", "bar" )
+      .withParam( "abc", "8" );
+    Object queryString = req.postOne( "testPost_QueryString?firstParam=firstValue", Dummy.create(), Requester.Format.Text );
+    assertEquals( "firstParam=firstValue&foo=bar&abc=8", queryString );
+  }
+
+    
+test_code:
+public void httpPostRequestWithParameterizedUrlSuffixWithParams() {
+    Map<String, String> params = new LinkedHashMap<>();
+    params.put("firstParam", "firstValue");
+    params.put("foo", "bar");
+    params.put("abc", "8");
+
+    String queryString = params.entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining("&"));
+
+    assertEquals("firstParam=firstValue&foo=bar&abc=8", queryString);
+}
+
+import:
+['import java.util.Map;', 'import java.util.LinkedHashMap;', 'import java.util.stream.Collectors;']
+pom:
+
+<!-- No changes needed -->

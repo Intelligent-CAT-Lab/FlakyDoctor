@@ -1,0 +1,51 @@
+test_before_fix:
+    public void assertGetDatabaseProductName() throws SQLException {
+        DataSource masterDataSource = mock(DataSource.class);
+        DataSource slaveDataSource1 = mock(DataSource.class);
+        DataSource slaveDataSource2 = mock(DataSource.class);
+        Connection masterConnection = mockConnection("jdbc:h2:mem:test_ds;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL");
+        Connection slaveConnection1 = mockConnection("jdbc:h2:mem:test_ds;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL");
+        Connection slaveConnection2 = mockConnection("jdbc:h2:mem:test_ds;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL");
+        when(masterDataSource.getConnection()).thenReturn(masterConnection);
+        when(slaveDataSource1.getConnection()).thenReturn(slaveConnection1);
+        when(slaveDataSource2.getConnection()).thenReturn(slaveConnection2);
+        Map<String, DataSource> dataSourceMap = new HashMap<>(3, 1);
+        dataSourceMap.put("masterDataSource", masterDataSource);
+        dataSourceMap.put("slaveDataSource1", slaveDataSource1);
+        dataSourceMap.put("slaveDataSource2", slaveDataSource2);
+        assertThat(((MasterSlaveDataSource) MasterSlaveDataSourceFactory.createDataSource(dataSourceMap, 
+                new MasterSlaveRuleConfiguration("ds", "masterDataSource", Arrays.asList("slaveDataSource1", "slaveDataSource2"), new LoadBalanceStrategyConfiguration("ROUND_ROBIN")),
+                new Properties())).getDatabaseType(), instanceOf(H2DatabaseType.class));
+        verify(slaveConnection1).close();
+        verify(slaveConnection2).close();
+    }
+
+test_after_fix:
+
+code:
+public void assertGetDatabaseProductName() throws SQLException { 
+     DataSource masterDataSource = mock(DataSource.class); 
+     DataSource slaveDataSource1 = mock(DataSource.class); 
+     DataSource slaveDataSource2 = mock(DataSource.class); 
+     Connection masterConnection = mockConnection("jdbc:h2:mem:test_ds;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL"); 
+     Connection slaveConnection1 = mockConnection("jdbc:h2:mem:test_ds;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL"); 
+     Connection slaveConnection2 = mockConnection("jdbc:h2:mem:test_ds;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL"); 
+     when(masterDataSource.getConnection()).thenReturn(masterConnection); 
+     when(slaveDataSource1.getConnection()).thenReturn(slaveConnection1); 
+     when(slaveDataSource2.getConnection()).thenReturn(slaveConnection2); 
+     Map<String, DataSource> dataSourceMap = new LinkedHashMap<>(); 
+     dataSourceMap.put("masterDataSource", masterDataSource); 
+     dataSourceMap.put("slaveDataSource1", slaveDataSource1); 
+     dataSourceMap.put("slaveDataSource2", slaveDataSource2); 
+     assertThat(((MasterSlaveDataSource) MasterSlaveDataSourceFactory.createDataSource(dataSourceMap,  
+             new MasterSlaveRuleConfiguration("ds", "masterDataSource", Arrays.asList("slaveDataSource1", "slaveDataSource2"), new LoadBalanceStrategyConfiguration("ROUND_ROBIN")), 
+             new Properties())).getDatabaseType(), instanceOf(H2DatabaseType.class)); 
+     Mockito.verify(slaveConnection1, Mockito.times(1)).close(); 
+     Mockito.verify(slaveConnection2, Mockito.times(1)).close(); 
+ } 
+ 
+import:
+['import org.mockito.Mockito;\n ', 'import java.util.LinkedHashMap;\n ']
+pom:
+
+<!-- No changes needed -->

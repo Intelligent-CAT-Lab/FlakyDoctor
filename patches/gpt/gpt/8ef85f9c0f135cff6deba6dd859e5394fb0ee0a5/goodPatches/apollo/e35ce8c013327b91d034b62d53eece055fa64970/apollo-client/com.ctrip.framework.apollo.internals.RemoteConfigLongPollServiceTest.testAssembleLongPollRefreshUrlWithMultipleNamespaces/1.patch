@@ -1,0 +1,64 @@
+test_before_fix:
+  public void testAssembleLongPollRefreshUrlWithMultipleNamespaces() throws Exception {
+    String someUri = someServerUrl;
+    String someAppId = "someAppId";
+    String someCluster = "someCluster+ &.-_someSign";
+    String someNamespace = "someName";
+    String anotherNamespace = "anotherName";
+    long someNotificationId = 1;
+    long anotherNotificationId = 2;
+    Map<String, Long> notificationsMap =
+        ImmutableMap.of(someNamespace, someNotificationId, anotherNamespace, anotherNotificationId);
+
+    String longPollRefreshUrl =
+        remoteConfigLongPollService
+            .assembleLongPollRefreshUrl(someUri, someAppId, someCluster, null, notificationsMap);
+
+    assertTrue(longPollRefreshUrl.contains(someServerUrl + "/notifications/v2?"));
+    assertTrue(longPollRefreshUrl.contains("appId=" + someAppId));
+    assertTrue(longPollRefreshUrl.contains("cluster=someCluster%2B+%26.-_someSign"));
+    assertTrue(
+        longPollRefreshUrl.contains("notifications=%5B%7B%22namespaceName%22%3A%22" + someNamespace
+            + "%22%2C%22notificationId%22%3A" + someNotificationId
+            + "%7D%2C%7B%22namespaceName%22%3A%22" + anotherNamespace
+            + "%22%2C%22notificationId%22%3A" + anotherNotificationId + "%7D%5D"));
+  }
+
+test_after_fix:
+
+code:
+public void testAssembleLongPollRefreshUrlWithMultipleNamespaces() throws Exception { 
+     String someUri = someServerUrl; 
+     String someAppId = "someAppId"; 
+     String someCluster = "someCluster+ &.-_someSign"; 
+     String someNamespace = "someName"; 
+     String anotherNamespace = "anotherName"; 
+     long someNotificationId = 1; 
+     long anotherNotificationId = 2; 
+     Map<String, Long> notificationsMap = new LinkedHashMap<>(); 
+     notificationsMap.put(someNamespace, someNotificationId); 
+     notificationsMap.put(anotherNamespace, anotherNotificationId); 
+  
+     String longPollRefreshUrl = 
+         remoteConfigLongPollService 
+             .assembleLongPollRefreshUrl(someUri, someAppId, someCluster, null, notificationsMap); 
+  
+     Gson gson = new Gson(); 
+     Type type = new TypeToken<Map<String, Object>>(){}.getType(); 
+     Map<String, Object> resultMap = gson.fromJson(longPollRefreshUrl, type); 
+  
+     assertEquals(someServerUrl + "/notifications/v2?", resultMap.get("url")); 
+     assertEquals(someAppId, resultMap.get("appId")); 
+     assertEquals("someCluster%2B+%26.-_someSign", resultMap.get("cluster")); 
+     assertEquals(notificationsMap, resultMap.get("notifications")); 
+ } 
+ 
+import:
+['import com.google.gson.Gson;\n ', 'import com.google.gson.reflect.TypeToken;\n ', 'import java.util.LinkedHashMap;\n ']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

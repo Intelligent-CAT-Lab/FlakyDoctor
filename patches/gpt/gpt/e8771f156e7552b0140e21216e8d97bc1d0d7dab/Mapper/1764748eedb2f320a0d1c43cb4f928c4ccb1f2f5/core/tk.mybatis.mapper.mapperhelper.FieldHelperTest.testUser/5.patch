@@ -1,0 +1,52 @@
+Test File Path: dexfix_projects/1764748eedb2f320a0d1c43cb4f928c4ccb1f2f5/Mapper/core/src/test/java/tk/mybatis/mapper/mapperhelper/FieldHelperTest.java
+
+    Original Test Method:
+     public void testUser(){
+        List<EntityField> fieldList = FieldHelper.getFields(User.class);
+        Assert.assertEquals(2, fieldList.size());
+        Assert.assertEquals("id", fieldList.get(0).getName());
+        Assert.assertEquals("name", fieldList.get(1).getName());
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+public void testUser(){
+    List<EntityField> fieldList = FieldHelper.getFields(User.class);
+    Map<String, EntityField> fieldMap = new TreeMap<String, EntityField>();
+    for (EntityField field : fieldList) {
+        fieldMap.put(field.getName(), field);
+    }
+    List<EntityField> sortedFieldList = new ArrayList<EntityField>(fieldMap.values());
+
+    Assert.assertEquals(2, sortedFieldList.size());
+    Assert.assertEquals("id", sortedFieldList.get(0).getName());
+    Assert.assertEquals("name", sortedFieldList.get(1).getName());
+}
+
+import:
+['import java.util.TreeMap;\n']
+pom:
+
+
+Patch before Stitching:
+
+test_code:
+public void testUser(){
+    List<EntityField> fieldList = FieldHelper.getFields(User.class);
+    Map<String, EntityField> fieldMap = new TreeMap<String, EntityField>();
+    for (EntityField field : fieldList) {
+        fieldMap.put(field.getName(), field);
+    }
+    List<EntityField> sortedFieldList = new ArrayList<EntityField>(fieldMap.values());
+
+    Assert.assertEquals(2, sortedFieldList.size());
+    Assert.assertEquals("id", sortedFieldList.get(0).getName());
+    Assert.assertEquals("name", sortedFieldList.get(1).getName());
+}
+
+import:
+['import java.util.TreeMap;\n']
+pom:
+

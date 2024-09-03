@@ -1,0 +1,62 @@
+test_before_fix:
+    public void getComponent() throws Exception {
+        assertNull(components.getComponent("notexist"));
+
+        // root component
+        WebxComponent rootComponent = components.getComponent(null);
+
+        assertNull(rootComponent.getName());
+        assertEquals("", rootComponent.getComponentPath());
+        assertSame(components.getParentWebxConfiguration(), rootComponent.getWebxConfiguration());
+        assertSame(components.getParentApplicationContext(), rootComponent.getApplicationContext());
+        assertSame(components, rootComponent.getWebxComponents());
+        assertEquals(components.toString(), rootComponent.toString());
+
+        try {
+            rootComponent.getWebxController();
+            fail();
+        } catch (UnsupportedOperationException e) {
+            assertThat(e, exception("RootComponent.getWebxController()"));
+        }
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void getComponent() throws Exception { 
+     assertNull(components.getComponent("notexist")); 
+  
+     // root component 
+     WebxComponent rootComponent = components.getComponent(null); 
+  
+     assertNull(rootComponent.getName()); 
+     assertEquals("", rootComponent.getComponentPath()); 
+     assertSame(components.getParentWebxConfiguration(), rootComponent.getWebxConfiguration()); 
+     assertSame(components.getParentApplicationContext(), rootComponent.getApplicationContext()); 
+     assertSame(components, rootComponent.getWebxComponents()); 
+  
+     JSONObject componentsJson = JSON.parseObject(components.toString(), Feature.OrderedField); 
+     JSONObject rootComponentJson = JSON.parseObject(rootComponent.toString(), Feature.OrderedField); 
+     assertEquals(componentsJson, rootComponentJson); 
+  
+     try { 
+         rootComponent.getWebxController(); 
+         fail(); 
+     } catch (UnsupportedOperationException e) { 
+         assertThat(e, exception("RootComponent.getWebxController()")); 
+     } 
+ } 
+  
+  
+ 
+import:
+['import com.alibaba.fastjson.JSON;\n ', 'import com.alibaba.fastjson.JSONObject;\n ', 'import com.alibaba.fastjson.parser.Feature;\n ', 'import java.util.LinkedHashMap;\n ']
+pom:
+
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.75</version>
+</dependency>

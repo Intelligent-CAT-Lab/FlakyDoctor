@@ -1,0 +1,23 @@
+test_before_fix:
+	public void jsonp() {
+		TestBean bean = new TestBean("A");
+		String jsonp = JsonMapper.nonEmptyMapper().toJsonP("haha", bean);
+		assertThat(jsonp).isEqualTo("haha({\"name\":\"A\",\"defaultValue\":\"hello\"})");
+	}
+
+test_after_fix:
+
+code:
+public void jsonp() throws JsonProcessingException { 
+     TestBean bean = new TestBean("A"); 
+     String jsonp = JsonMapper.nonEmptyMapper().toJsonP("haha", bean); 
+     Map<String, Object> resultMap = new LinkedHashMap<>(); 
+     resultMap.put("name", "A"); 
+     resultMap.put("defaultValue", "hello"); 
+     String expectedJsonp = "haha(" + new ObjectMapper().writeValueAsString(resultMap) + ")"; 
+     assertThat(jsonp).isEqualTo(expectedJsonp); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.core.JsonProcessingException;\n ', 'import static org.assertj.core.api.Assertions.assertThat;\n ']
+pom:

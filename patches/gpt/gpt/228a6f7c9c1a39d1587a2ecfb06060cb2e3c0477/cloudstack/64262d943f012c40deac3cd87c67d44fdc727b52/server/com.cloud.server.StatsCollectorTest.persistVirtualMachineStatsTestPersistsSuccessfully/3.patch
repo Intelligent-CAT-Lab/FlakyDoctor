@@ -1,0 +1,54 @@
+Test File Path: projects/64262d943f012c40deac3cd87c67d44fdc727b52/cloudstack/server/src/test/java/com/cloud/server/StatsCollectorTest.java
+
+    Original Test Method:
+     public void persistVirtualMachineStatsTestPersistsSuccessfully() {
+        statsCollector.msId = 1L;
+        Date timestamp = new Date();
+        VmStatsEntry statsForCurrentIteration = new VmStatsEntry(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "vm");
+        Mockito.doReturn(new VmStatsVO()).when(vmStatsDaoMock).persist(Mockito.any());
+        String expectedVmStatsStr = "{\"vmId\":2,\"cpuUtilization\":6.0,\"networkReadKBs\":7.0,\"networkWriteKBs\":8.0,\"diskReadIOs\":12.0,\"diskWriteIOs\":13.0,\"diskReadKBs\":10.0"
+                + ",\"diskWriteKBs\":11.0,\"memoryKBs\":3.0,\"intFreeMemoryKBs\":4.0,\"targetMemoryKBs\":5.0,\"numCPUs\":9,\"entityType\":\"vm\"}";
+
+        statsCollector.persistVirtualMachineStats(statsForCurrentIteration, timestamp);
+
+        Mockito.verify(vmStatsDaoMock).persist(vmStatsVOCaptor.capture());
+        VmStatsVO actual = vmStatsVOCaptor.getAllValues().get(0);
+        Assert.assertEquals(Long.valueOf(2L), actual.getVmId());
+        Assert.assertEquals(Long.valueOf(1L), actual.getMgmtServerId());
+        Assert.assertEquals(expectedVmStatsStr, actual.getVmStatsData());
+        Assert.assertEquals(timestamp, actual.getTimestamp());
+    }
+
+    
+test_code:
+public void persistVirtualMachineStatsTestPersistsSuccessfully() {
+    statsCollector.msId = 1L;
+    Date timestamp = new Date();
+    VmStatsEntry statsForCurrentIteration = new VmStatsEntry(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "vm");
+    Mockito.doReturn(new VmStatsVO()).when(vmStatsDaoMock).persist(Mockito.any());
+
+    statsCollector.persistVirtualMachineStats(statsForCurrentIteration, timestamp);
+
+    Mockito.verify(vmStatsDaoMock).persist(vmStatsVOCaptor.capture());
+    VmStatsVO actual = vmStatsVOCaptor.getAllValues().get(0);
+    Assert.assertEquals(Long.valueOf(2L), actual.getVmId());
+    Assert.assertEquals(Long.valueOf(1L), actual.getMgmtServerId());
+    Assert.assertEquals(timestamp, actual.getTimestamp());
+
+    // Use Gson to convert the objects to JSON strings and compare the JsonObjects instead of comparing the strings directly
+    Gson gson = new Gson();
+    JsonObject expectedJson = gson.toJsonTree(statsForCurrentIteration).getAsJsonObject();
+    JsonObject actualJson = gson.fromJson(actual.getVmStatsData(), JsonObject.class);
+    Assert.assertEquals(expectedJson, actualJson);
+}
+
+import:
+['import com.google.gson.Gson;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>
+ 

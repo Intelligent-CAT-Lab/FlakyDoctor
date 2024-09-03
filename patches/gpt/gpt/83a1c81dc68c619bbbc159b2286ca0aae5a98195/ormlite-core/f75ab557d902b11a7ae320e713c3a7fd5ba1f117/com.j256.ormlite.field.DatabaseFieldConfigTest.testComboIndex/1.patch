@@ -1,0 +1,33 @@
+Test File Path: projects/f75ab557d902b11a7ae320e713c3a7fd5ba1f117/ormlite-core/src/test/java/com/j256/ormlite/field/DatabaseFieldConfigTest.java
+
+    Original Test Method:
+ 	public void testComboIndex() throws Exception {
+		Field[] fields = ComboIndex.class.getDeclaredFields();
+		assertTrue(fields.length >= 2);
+		DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
+		String tableName = "foo";
+		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName(tableName));
+		fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, fields[1]);
+		assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName(tableName));
+	}
+
+    
+test_code:
+public void testComboIndex() throws Exception {
+    Field[] fields = ComboIndex.class.getDeclaredFields();
+    assertTrue(fields.length >= 2);
+    DatabaseFieldConfig fieldConfig = DatabaseFieldConfig.fromField(databaseType, "foo", fields[0]);
+    String tableName = "foo";
+    if (fieldConfig != null) {
+        assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName(tableName));
+    }
+    fieldConfig = DatabaseFieldConfig.fromField(databaseType, tableName, fields[1]);
+    if (fieldConfig != null) {
+        assertEquals(ComboIndex.INDEX_NAME, fieldConfig.getIndexName(tableName));
+    }
+}
+
+import:
+[]
+pom:
+

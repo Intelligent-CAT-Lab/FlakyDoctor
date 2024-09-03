@@ -1,0 +1,30 @@
+Test File Path: projects/616ed866460ca909cb30a4eafb786c6040218ae8/dropwizard/dropwizard-jackson/src/test/java/io/dropwizard/jackson/JacksonTest.java
+
+    Original Test Method:
+     public void objectMapperSerializesNullValues() throws IOException {
+        final ObjectMapper mapper = Jackson.newObjectMapper();
+        final Issue1627 pojo = new Issue1627(null, null);
+        final String json = "{\"string\":null,\"uuid\":null}";
+
+        assertThat(mapper.writeValueAsString(pojo)).isEqualTo(json);
+    }
+
+    
+test_code:
+    public void objectMapperSerializesNullValues() throws IOException {
+        final ObjectMapper mapper = Jackson.newObjectMapper();
+        final Issue1627 pojo = new Issue1627(null, null);
+        final String json = "{\"string\":null,\"uuid\":null}";
+
+        JsonNode expected = mapper.readTree(json);
+        JsonNode actual = mapper.readTree(mapper.writeValueAsString(pojo));
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;']
+pom:
+
+ <!-- No changes needed -->
+ 

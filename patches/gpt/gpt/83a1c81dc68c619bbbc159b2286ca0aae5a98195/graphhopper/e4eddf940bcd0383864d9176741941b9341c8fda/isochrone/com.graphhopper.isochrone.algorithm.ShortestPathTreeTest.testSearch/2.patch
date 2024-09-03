@@ -1,0 +1,62 @@
+Test File Path: projects/e4eddf940bcd0383864d9176741941b9341c8fda/graphhopper/isochrone/src/test/java/com/graphhopper/isochrone/algorithm/ShortestPathTreeTest.java
+
+    Original Test Method:
+     public void testSearch() {
+        initDirectedAndDiffSpeed(graph);
+        PMap pMap = new PMap();
+        ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+        // limit to certain seconds
+        instance.setTimeLimit(60);
+        List<Set<Integer>> res = searchFromNode0Into5Buckets(instance);
+        assertEquals("[[0, 4], [6], [1, 7], [5], [2, 3]]", res.toString());
+
+        instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+        instance.setTimeLimit(30);
+        res = searchFromNode0Into5Buckets(instance);
+        assertEquals("[[0], [4], [], [6], [1, 7]]", res.toString());
+    }
+
+    
+test_code:
+public void testSearch() {
+    initDirectedAndDiffSpeed(graph);
+    PMap pMap = new PMap();
+    ShortestPathTree instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+    instance.setTimeLimit(60);
+    List<Set<Integer>> res = searchFromNode0Into5Buckets(instance);
+    List<Set<Integer>> expected = new ArrayList<>();
+    expected.add(new LinkedHashSet<>(Arrays.asList(0, 4)));
+    expected.add(new LinkedHashSet<>(Arrays.asList(6)));
+    expected.add(new LinkedHashSet<>(Arrays.asList(1, 7)));
+    expected.add(new LinkedHashSet<>(Arrays.asList(5)));
+    expected.add(new LinkedHashSet<>(Arrays.asList(2, 3)));
+    for (int i = 0; i < expected.size(); i++) {
+        List<Integer> expectedList = new ArrayList<>(expected.get(i));
+        List<Integer> resList = new ArrayList<>(res.get(i));
+        Collections.sort(expectedList);
+        Collections.sort(resList);
+        assertEquals(expectedList, resList);
+    }
+
+    instance = new ShortestPathTree(graph, new FastestWeighting(carEncoder, pMap), false);
+    instance.setTimeLimit(30);
+    res = searchFromNode0Into5Buckets(instance);
+    expected = new ArrayList<>();
+    expected.add(new LinkedHashSet<>(Arrays.asList(0)));
+    expected.add(new LinkedHashSet<>(Arrays.asList(4)));
+    expected.add(new LinkedHashSet<>());
+    expected.add(new LinkedHashSet<>(Arrays.asList(6)));
+    expected.add(new LinkedHashSet<>(Arrays.asList(1, 7)));
+    for (int i = 0; i < expected.size(); i++) {
+        List<Integer> expectedList = new ArrayList<>(expected.get(i));
+        List<Integer> resList = new ArrayList<>(res.get(i));
+        Collections.sort(expectedList);
+        Collections.sort(resList);
+        assertEquals(expectedList, resList);
+    }
+}
+
+import:
+['import java.util.Collections;']
+pom:
+

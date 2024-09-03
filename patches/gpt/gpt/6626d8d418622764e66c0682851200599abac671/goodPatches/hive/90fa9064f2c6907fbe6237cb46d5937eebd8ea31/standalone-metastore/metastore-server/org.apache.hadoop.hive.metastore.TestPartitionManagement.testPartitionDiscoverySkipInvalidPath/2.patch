@@ -1,0 +1,73 @@
+test_before_fix:
+  public void testPartitionDiscoverySkipInvalidPath() throws TException, IOException, InterruptedException {
+    String dbName = "db8";
+    String tableName = "tbl8";
+    Map<String, Column> colMap = buildAllColumns();
+    List<String> partKeys = Lists.newArrayList("state", "dt");
+    List<String> partKeyTypes = Lists.newArrayList("string", "date");
+    List<List<String>> partVals = Lists.newArrayList(
+      Lists.newArrayList("__HIVE_DEFAULT_PARTITION__", "1990-01-01"),
+      Lists.newArrayList("CA", "1986-04-28"),
+      Lists.newArrayList("MN", "2018-11-31"));
+    createMetadata(DEFAULT_CATALOG_NAME, dbName, tableName, partKeys, partKeyTypes, partVals, colMap, false);
+    Table table = client.getTable(dbName, tableName);
+    List<Partition> partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(3, partitions.size());
+    String tableLocation = table.getSd().getLocation();
+    URI location = URI.create(tableLocation);
+    Path tablePath = new Path(location);
+    FileSystem fs = FileSystem.get(location, conf);
+    Path newPart1 = new Path(tablePath, "state=WA/dt=2018-12-01");
+    Path newPart2 = new Path(tablePath, "state=UT/dt=");
+    fs.mkdirs(newPart1);
+    fs.mkdirs(newPart2);
+    assertEquals(5, fs.listStatus(tablePath).length);
+    table.getParameters().put(PartitionManagementTask.DISCOVER_PARTITIONS_TBLPROPERTY, "true");
+    // empty retention period basically means disabled
+    table.getParameters().put(PartitionManagementTask.PARTITION_RETENTION_PERIOD_TBLPROPERTY, "");
+    client.alter_table(dbName, tableName, table);
+
+    // there is one partition with invalid path which will get skipped
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(4, partitions.size());
+  }
+
+test_after_fix:
+
+code:
+void testPartitionDiscoverySkipInvalidPath() throws TException, IOException, InterruptedException {  
+      String dbName = "db8";  
+      String tableName = "tbl8";  
+      Map<String, Column> colMap = buildAllColumns();  
+      List<String> partKeys = Lists.newArrayList("state", "dt");  
+      List<String> partKeyTypes = Lists.newArrayList("string", "date");  
+      List<List<String>> partVals = Lists.newArrayList(  
+        Lists.newArrayList("__HIVE_DEFAULT_PARTITION__", "1990-01-01"),  
+        Lists.newArrayList("CA", "1986-04-28"),  
+        Lists.newArrayList("MN", "2018-11-31"));  
+      createMetadata(DEFAULT_CATALOG_NAME, dbName, tableName, partKeys, partKeyTypes, partVals, colMap, false);  
+      Table table = client.getTable(dbName, tableName);  
+      List<Partition> partitions = client.listPartitions(dbName, tableName, (short) -1);  
+      assertEquals(3, partitions.size());  
+      String tableLocation = table.getSd().getLocation();  
+      URI location = URI.create(tableLocation);  
+      Path tablePath = new Path(location);  
+      FileSystem fs = FileSystem.get(location, conf);  
+      Path newPart1 = new Path(tablePath, "state=WA/dt=2018-12-01");  
+      Path newPart2 = new Path(tablePath, "state=UT/dt=");  
+      fs.mkdirs(newPart1);  
+      fs.mkdirs(newPart2);  
+      assertEquals(5, fs.listStatus(tablePath).length);  
+      table.getParameters().put(PartitionManagementTask.DISCOVER_PARTITIONS_TBLPROPERTY, "true");  
+      table.getParameters().put(PartitionManagementTask.PARTITION_RETENTION_PERIOD_TBLPROPERTY, "");  
+      client.alter_table(dbName, tableName, table);  
+      runPartitionManagementTask(conf);  
+      partitions = client.listPartitions(dbName, tableName, (short) -1);  
+      List<Partition> sortedPartitions = partitions.stream().sorted(Comparator.comparing(p -> p.getSd().getLocation())).collect(Collectors.toList());  
+      assertEquals(4, sortedPartitions.size());  
+  } 
+ 
+import:
+[]
+pom:

@@ -1,0 +1,57 @@
+Test File Path: od_projects/737f7a7ea67832d7f17517326fb2491d0a086dd7/incubator-dubbo/dubbo-config/dubbo-config-api/src/test/java/org/apache/dubbo/config/cache/CacheTest.java
+od_projects/737f7a7ea67832d7f17517326fb2491d0a086dd7/incubator-dubbo/dubbo-config/dubbo-config-api/src/test/java/org/apache/dubbo/config/AbstractInterfaceConfigTest.java
+
+    Original Polluter Method:
+     public void testLoadRegistries() throws Exception {
+        System.setProperty("dubbo.registry.address", "addr1");
+        InterfaceConfig interfaceConfig = new InterfaceConfig();
+        List<URL> urls = interfaceConfig.loadRegistries(true);
+        TestCase.assertEquals(1, urls.size());
+        URL url = urls.get(0);
+        TestCase.assertEquals("registry", url.getProtocol());
+        TestCase.assertEquals("addr1:9090", url.getAddress());
+        TestCase.assertEquals(RegistryService.class.getName(), url.getPath());
+        TestCase.assertTrue(url.getParameters().containsKey("timestamp"));
+        TestCase.assertTrue(url.getParameters().containsKey("pid"));
+        TestCase.assertTrue(url.getParameters().containsKey("registry"));
+        TestCase.assertTrue(url.getParameters().containsKey("dubbo"));
+    }
+ 
+
+    Original Victim Method:
+     public void testCache() throws Exception {
+        testCache("lru");
+        testCache("threadlocal");
+    }
+ 
+
+    
+victim_test_code:
+public void testCache() throws Exception {
+    System.clearProperty("dubbo.registry.address");
+    testCache("lru");
+    testCache("threadlocal");
+}
+
+polluter_test_code:
+public void testLoadRegistries() throws Exception {
+    System.setProperty("dubbo.registry.address", "addr1");
+    InterfaceConfig interfaceConfig = new InterfaceConfig();
+    List<URL> urls = interfaceConfig.loadRegistries(true);
+    TestCase.assertEquals(1, urls.size());
+    URL url = urls.get(0);
+    TestCase.assertEquals("registry", url.getProtocol());
+    TestCase.assertEquals("addr1:9090", url.getAddress());
+    TestCase.assertEquals(RegistryService.class.getName(), url.getPath());
+    TestCase.assertTrue(url.getParameters().containsKey("timestamp"));
+    TestCase.assertTrue(url.getParameters().containsKey("pid"));
+    TestCase.assertTrue(url.getParameters().containsKey("registry"));
+    TestCase.assertTrue(url.getParameters().containsKey("dubbo"));
+    System.clearProperty("dubbo.registry.address");
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

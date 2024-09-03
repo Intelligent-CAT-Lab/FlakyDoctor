@@ -1,0 +1,59 @@
+Test File Path: projects/3fc2d100bb2081c3da1996508e1f1200cea21d2f/dubbo/dubbo-registry/dubbo-registry-api/src/test/java/org/apache/dubbo/registry/client/metadata/ServiceInstanceMetadataUtilsTest.java
+
+    Original Test Method:
+     public void testMetadataServiceURLParameters() {
+
+        List<URL> urls = Arrays.asList(url, url2);
+
+        String parameter = ServiceInstanceMetadataUtils.getMetadataServiceParameter(urls);
+
+        JSONObject jsonObject = JSON.parseObject(parameter);
+
+        urls.forEach(url -> {
+            JSONObject map = jsonObject.getJSONObject(url.getProtocol());
+            for (Map.Entry<String, String> param : url.getParameters().entrySet()) {
+                String value = map.getString(param.getKey());
+                if (value != null) {
+                    assertEquals(param.getValue(), value);
+                }
+            }
+        });
+
+        assertEquals(VALUE, parameter);
+    }
+
+    
+test_code:
+public void testMetadataServiceURLParameters() {
+
+    List<URL> urls = Arrays.asList(url, url2);
+
+    String parameter = ServiceInstanceMetadataUtils.getMetadataServiceParameter(urls);
+
+    JSONObject jsonObject = JSON.parseObject(parameter);
+
+    urls.forEach(url -> {
+        JSONObject map = jsonObject.getJSONObject(url.getProtocol());
+        LinkedHashMap<String, String> sortedParameters = url.getParameters().entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        for (Map.Entry<String, String> param : sortedParameters.entrySet()) {
+            String value = map.getString(param.getKey());
+            if (value != null) {
+                assertEquals(param.getValue(), value);
+            }
+        }
+    });
+
+    JSONObject expectedJson = JSON.parseObject(VALUE);
+    assertEquals(expectedJson, jsonObject);
+}
+
+import:
+['import java.util.LinkedHashMap;', 'import java.util.stream.Collectors;']
+pom:
+
+ <!-- No changes needed -->
+ 

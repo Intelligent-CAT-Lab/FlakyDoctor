@@ -1,0 +1,36 @@
+Test File Path: projects/e05e9c5e4be580691cc55a59f3256595393203a1/fastjson/src/test/java/com/alibaba/json/bvt/issue_1100/Issue1177_2.java
+
+    Original Test Method:
+     public void test_for_issue() throws Exception {
+        String text = "{\"a\":{\"x\":\"y\"},\"b\":{\"x\":\"y\"}}";
+        Map<String, Model> jsonObject = JSONObject.parseObject(text, new TypeReference<Map<String, Model>>(){});
+        System.out.println(JSON.toJSONString(jsonObject));
+        String jsonpath = "$..x";
+        String value="y2";
+        JSONPath.set(jsonObject, jsonpath, value);
+        assertEquals("{\"a\":{\"x\":\"y2\"},\"b\":{\"x\":\"y2\"}}", JSON.toJSONString(jsonObject));
+
+    }
+
+    
+test_code:
+public void test_for_issue() throws Exception {
+    String text = "{\"a\":{\"x\":\"y\"},\"b\":{\"x\":\"y\"}}";
+    Map<String, Model> jsonObject = JSONObject.parseObject(text, new TypeReference<LinkedHashMap<String, Model>>(){});
+    System.out.println(JSON.toJSONString(jsonObject));
+    String jsonpath = "$..x";
+    String value="y2";
+    JSONPath.set(jsonObject, jsonpath, value);
+    assertEquals("{\"a\":{\"x\":\"y2\"},\"b\":{\"x\":\"y2\"}}", JSON.toJSONString(jsonObject, SerializerFeature.MapSortField));
+}
+
+import:
+['import com.alibaba.fastjson.serializer.SerializerFeature;', 'import java.util.LinkedHashMap;']
+pom:
+
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.75</version>
+</dependency>
+ 

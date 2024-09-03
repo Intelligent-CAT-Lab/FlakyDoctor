@@ -1,0 +1,74 @@
+Test File Path: od_projects/af0003847db9ba822f67d4f1dceb8de3fe63250a/marine-api/src/test/java/net/sf/marineapi/ais/parser/AISMessageFactoryTest.java
+od_projects/af0003847db9ba822f67d4f1dceb8de3fe63250a/marine-api/src/test/java/net/sf/marineapi/nmea/parser/SentenceFactoryTest.java
+
+    Original Polluter Method:
+ 	public void testRegisterParserWithAlternativeBeginChar() {
+
+		try {
+			instance.registerParser("VDM", VDMParser.class);
+			assertTrue(instance.hasParser("VDM"));
+		} catch (Exception e) {
+			fail("parser registering failed");
+		}
+
+		Sentence s = instance.createParser("!AIVDM,1,2,3");
+		assertNotNull(s);
+		assertTrue(s instanceof Sentence);
+		assertTrue(s instanceof SentenceParser);
+		assertTrue(s instanceof VDMParser);
+		instance.unregisterParser(VDMParser.class);
+		assertFalse(instance.hasParser("VDM"));
+	}
+ 
+
+    Original Victim Method:
+     public void testCreateWithIncorrectOrder() {
+        try {
+            amf.create(split2, split1);
+            fail("AISMessageFactory didn't throw on incorrect order");
+        } catch (IllegalArgumentException iae) {
+            assertEquals("Incorrect order of AIS sentences", iae.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception thrown from AISMessageFactory");
+        }
+    }
+ 
+
+    
+victim_test_code:
+public void testCreateWithIncorrectOrder() {
+    try {
+        amf.create(split2, split1);
+        fail("AISMessageFactory didn't throw on incorrect order");
+    } catch (IllegalArgumentException iae) {
+        assertEquals("Incorrect order of AIS sentences", iae.getMessage());
+    } catch (Exception e) {
+        fail("Unexpected exception thrown from AISMessageFactory");
+    }
+}
+
+polluter_test_code:
+public void testRegisterParserWithAlternativeBeginChar() {
+    try {
+        instance.registerParser("VDM", VDMParser.class);
+        assertTrue(instance.hasParser("VDM"));
+    } catch (Exception e) {
+        fail("parser registering failed");
+    }
+
+    Sentence s = instance.createParser("!AIVDM,1,2,3");
+    assertNotNull(s);
+    assertTrue(s instanceof Sentence);
+    assertTrue(s instanceof SentenceParser);
+    assertTrue(s instanceof VDMParser);
+    instance.unregisterParser(VDMParser.class);
+    assertFalse(instance.hasParser("VDM"));
+    instance.reset();
+}
+
+import:
+[]
+pom:
+
+ <!-- No changes needed -->
+ 

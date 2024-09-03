@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'rawResponseHandlerOnErrorWithNoSentCommandsShouldSendMessageToConsole': 'public void rawResponseHandlerOnErrorWithNoSentCommandsShouldSendMessageToConsole() throws Exception {\n    \n\n    // Reset the locale to the default one\n    Localization.initialize("en", "US");\n\n    // Given\n    GrblController instance = new GrblController(mgc);\n    instance.setDistanceModeCode("G90");\n    instance.setUnitsCode("G21");\n    instance.openCommPort(getSettings().getConnectionDriver(), "foo", 2400);\n\n    MessageService messageService = mock(MessageService.class);\n    instance.setMessageService(messageService);\n\n    // When\n    instance.rawResponseHandler("error:1");\n\n    // Then\n    String genericErrorMessage = "An unexpected error was detected: (error:1) G-code words consist of a letter and a value. Letter was not found.\\n";\n    verify(messageService, times(1)).dispatchMessage(MessageType.INFO, genericErrorMessage);\n    verify(messageService, times(1)).dispatchMessage(any(), anyString());\n\n    assertFalse(instance.getActiveCommand().isPresent());\n    \n\n}\n'}}victim
+:import:
+['import com.willwinder.universalgcodesender.i18n.Localization;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['rawResponseHandlerOnErrorWithNoSentCommandsShouldSendMessageToConsole']}polluter
+:code:
+{'fields': {}, 'methods': {'rawResponseHandlerOnErrorWithNoSentCommandsShouldSendMessageToConsole': 'public void rawResponseHandlerOnErrorWithNoSentCommandsShouldSendMessageToConsole() throws Exception {\n    \n\n    // Reset the locale to the default one\n    Localization.initialize("en", "US");\n\n    // Given\n    GrblController instance = new GrblController(mgc);\n    instance.setDistanceModeCode("G90");\n    instance.setUnitsCode("G21");\n    instance.openCommPort(getSettings().getConnectionDriver(), "foo", 2400);\n\n    MessageService messageService = mock(MessageService.class);\n    instance.setMessageService(messageService);\n\n    // When\n    instance.rawResponseHandler("error:1");\n\n    // Then\n    String genericErrorMessage = "An unexpected error was detected: (error:1) G-code words consist of a letter and a value. Letter was not found.\\n";\n    verify(messageService, times(1)).dispatchMessage(MessageType.INFO, genericErrorMessage);\n    verify(messageService, times(1)).dispatchMessage(any(), anyString());\n\n    assertFalse(instance.getActiveCommand().isPresent());\n    \n\n}\n'}}polluter
+:import:
+['import com.willwinder.universalgcodesender.i18n.Localization;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['rawResponseHandlerOnErrorWithNoSentCommandsShouldSendMessageToConsole']}

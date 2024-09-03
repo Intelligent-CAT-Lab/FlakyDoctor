@@ -1,0 +1,51 @@
+Test File Path: dexfix_projects/dff7457cb5ba1557727deddef5b675dd00fbf8a8/optaplanner/optaplanner-core/src/test/java/org/optaplanner/core/impl/domain/solution/descriptor/SolutionDescriptorTest.java
+
+    Original Test Method:
+     public void extendedAbstractSolution() {
+        SolutionDescriptor<TestdataExtendedAbstractSolution> solutionDescriptor
+                = TestdataExtendedAbstractSolution.buildSolutionDescriptor();
+        assertMapContainsKeysExactly(solutionDescriptor.getProblemFactMemberAccessorMap());
+        assertMapContainsKeysExactly(solutionDescriptor.getProblemFactCollectionMemberAccessorMap(),
+                "problemFactList");
+        assertMapContainsKeysExactly(solutionDescriptor.getEntityMemberAccessorMap());
+        assertMapContainsKeysExactly(solutionDescriptor.getEntityCollectionMemberAccessorMap(),
+                "entityList");
+
+        TestdataExtendedAbstractSolution solution = new TestdataExtendedAbstractSolution();
+        solution.setValueList(Arrays.asList(new TestdataValue("v1"), new TestdataValue("v2")));
+        solution.setExtraObject(new TestdataValue("extra"));
+        solution.setEntityList(Arrays.asList(new TestdataEntity("e1"), new TestdataEntity("e2")));
+
+        assertAllCodesOfCollection(solutionDescriptor.getAllFacts(solution), "e1", "e2", "v1", "v2", "extra");
+    }
+
+    
+test_code:
+public void extendedAbstractSolution() {
+    SolutionDescriptor<TestdataExtendedAbstractSolution> solutionDescriptor
+            = TestdataExtendedAbstractSolution.buildSolutionDescriptor();
+    assertMapContainsKeysExactly(solutionDescriptor.getProblemFactMemberAccessorMap());
+    assertMapContainsKeysExactly(solutionDescriptor.getProblemFactCollectionMemberAccessorMap(),
+            "problemFactList");
+    assertMapContainsKeysExactly(solutionDescriptor.getEntityMemberAccessorMap());
+    assertMapContainsKeysExactly(solutionDescriptor.getEntityCollectionMemberAccessorMap(),
+            "entityList");
+
+    TestdataExtendedAbstractSolution solution = new TestdataExtendedAbstractSolution();
+    solution.setValueList(Arrays.asList(new TestdataValue("v1"), new TestdataValue("v2")));
+    solution.setExtraObject(new TestdataValue("extra"));
+    solution.setEntityList(Arrays.asList(new TestdataEntity("e1"), new TestdataEntity("e2")));
+
+    List<String> expectedCodes = Arrays.asList("e1", "e2", "v1", "v2", "extra");
+    List<String> actualCodes = solutionDescriptor.getAllFacts(solution).stream()
+            .map(Object::toString)
+            .collect(Collectors.toList());
+    Collections.sort(expectedCodes);
+    Collections.sort(actualCodes);
+    assertEquals(expectedCodes, actualCodes);
+}
+
+import:
+['import java.util.Collections;', 'import java.util.stream.Collectors;']
+pom:
+

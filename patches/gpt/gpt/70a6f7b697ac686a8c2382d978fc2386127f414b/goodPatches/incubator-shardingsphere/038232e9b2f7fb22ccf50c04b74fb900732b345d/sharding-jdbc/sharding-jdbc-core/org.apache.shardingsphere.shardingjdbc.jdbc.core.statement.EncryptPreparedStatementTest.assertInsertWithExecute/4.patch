@@ -1,0 +1,37 @@
+test_before_fix:
+    public void assertInsertWithExecute() throws SQLException {
+        try (PreparedStatement statement = getEncryptConnection().prepareStatement(INSERT_SQL)) {
+            statement.setObject(1, 2);
+            statement.setObject(2, 'b');
+            statement.execute();
+        }
+        assertResultSet(3, 2, "encryptValue", "assistedEncryptValue");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void assertInsertWithExecute() throws SQLException {  
+     PreparedStatement statement = getEncryptConnection().prepareStatement(INSERT_SQL);  
+     statement.setObject(1, 2);  
+     statement.setObject(2, 'b');  
+     statement.execute();  
+     statement.close();  
+     List<Integer> results = new ArrayList<>(); 
+     ResultSet resultSet = getEncryptConnection().createStatement().executeQuery("SELECT encryptValue, assistedEncryptValue FROM table"); 
+     while (resultSet.next()) { 
+         results.add(resultSet.getInt("encryptValue")); 
+         results.add(resultSet.getInt("assistedEncryptValue")); 
+     } 
+     resultSet.close(); 
+     Collections.sort(results);  
+     assertEquals(Arrays.asList(2, 3), results);  
+ } 
+  
+  
+ 
+import:
+['import java.util.ArrayList;\n ']
+pom:

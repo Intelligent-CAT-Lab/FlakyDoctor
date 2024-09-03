@@ -1,0 +1,48 @@
+Test File Path: projects/4471cdb6bd5fed2509d4c529ae896ffbb07713ae/braintree_java/src/test/java/com/braintreegateway/unittest/RequestBuilderTest.java
+
+    Original Test Method:
+     public void map() {
+        Open builder = new Open();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("color", "green");
+        map.put("insect", "bee");
+        String element = builder.formatMap("examples", map);
+        assertEquals("<examples><color>green</color><insect>bee</insect></examples>", element);
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+public void map() {
+    Open builder = new Open();
+    Map<String, Object> map = new LinkedHashMap<String, Object>();
+    map.put("color", "green");
+    map.put("insect", "bee");
+    String element = builder.formatMap("examples", map);
+    assertEquals("<examples><color>green</color><insect>bee</insect></examples>", element);
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+<!-- No changes needed -->
+
+Patch before Stitching:
+
+test_code:
+public void map() {
+    Open builder = new Open();
+    Map<String, Object> map = new LinkedHashMap<String, Object>();
+    map.put("color", "green");
+    map.put("insect", "bee");
+    String element = builder.formatMap("examples", map);
+    assertEquals("<examples><color>green</color><insect>bee</insect></examples>", element);
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+<!-- No changes needed -->

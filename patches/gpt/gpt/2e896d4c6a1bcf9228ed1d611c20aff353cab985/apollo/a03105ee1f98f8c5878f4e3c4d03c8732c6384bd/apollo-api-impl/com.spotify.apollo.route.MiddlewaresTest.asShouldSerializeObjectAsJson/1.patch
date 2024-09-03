@@ -1,0 +1,49 @@
+Test File Path: projects/a03105ee1f98f8c5878f4e3c4d03c8732c6384bd/apollo/apollo-api-impl/src/test/java/com/spotify/apollo/route/MiddlewaresTest.java
+
+    Original Test Method:
+   public void asShouldSerializeObjectAsJson() throws Exception {
+    class TestData {
+      public String theString = "hi";
+      public int theInteger = 42;
+    }
+
+    serializationFuture.complete(new TestData());
+
+    //noinspection ConstantConditions
+    String json =
+        getResult(Middlewares.autoSerialize(serializationDelegate)).payload().get().utf8();
+    assertThat(json, equalToIgnoringWhiteSpace("{\"theString\":\"hi\",\"theInteger\":42}"));
+  }
+
+    
+test_code:
+ public void asShouldSerializeObjectAsJson() throws Exception {
+    class TestData {
+      public String theString = "hi";
+      public int theInteger = 42;
+    }
+
+    serializationFuture.complete(new TestData());
+
+    //noinspection ConstantConditions
+    String json =
+        getResult(Middlewares.autoSerialize(serializationDelegate)).payload().get().utf8();
+
+    JSONObject expectedJson = new JSONObject();
+    expectedJson.put("theString", "hi");
+    expectedJson.put("theInteger", 42);
+
+    JSONAssert.assertEquals(expectedJson.toString(), json, JSONCompareMode.LENIENT);
+  }
+
+import:
+['import org.json.JSONObject;', 'import org.skyscreamer.jsonassert.JSONAssert;', 'import org.skyscreamer.jsonassert.JSONCompareMode;']
+pom:
+
+ <dependency>
+    <groupId>org.skyscreamer</groupId>
+    <artifactId>jsonassert</artifactId>
+    <version>1.5.0</version>
+    <scope>test</scope>
+ </dependency>
+ 

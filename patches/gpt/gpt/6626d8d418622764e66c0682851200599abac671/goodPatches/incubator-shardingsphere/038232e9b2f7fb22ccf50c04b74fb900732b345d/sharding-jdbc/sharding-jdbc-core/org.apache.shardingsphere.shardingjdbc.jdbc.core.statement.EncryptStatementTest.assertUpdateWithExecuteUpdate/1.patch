@@ -1,0 +1,41 @@
+test_before_fix:
+    public void assertUpdateWithExecuteUpdate() throws SQLException {
+        int result;
+        try (Statement statement = getEncryptConnection().createStatement()) {
+            result = statement.executeUpdate(UPDATE_SQL);
+        }
+        assertThat(result, is(2));
+        assertResultSet(2, 1, "encryptValue", "f");
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void assertUpdateWithExecuteUpdate() throws SQLException { 
+     int result; 
+     try (Statement statement = getEncryptConnection().createStatement()) { 
+         result = statement.executeUpdate(UPDATE_SQL); 
+     } 
+     assertThat(result, is(2)); 
+     assertResultSetInOrder(2, 1, "encryptValue", "f"); 
+ } 
+  
+ private void assertResultSetInOrder(int expectedCount, int column, String columnName, String expectedValue) throws SQLException { 
+     Map<Integer, String> resultMap = new LinkedHashMap<>(); 
+     try (Statement statement = getEncryptConnection().createStatement(); 
+          ResultSet resultSet = statement.executeQuery(UPDATE_SQL)) { 
+         while (resultSet.next()) { 
+             resultMap.put(resultSet.getInt(column), resultSet.getString(columnName)); 
+         } 
+     } 
+     assertThat(resultMap.size(), is(expectedCount)); 
+     assertThat(resultMap.get(column), is(expectedValue)); 
+ } 
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ', 'import java.util.Map;\n ']
+pom:

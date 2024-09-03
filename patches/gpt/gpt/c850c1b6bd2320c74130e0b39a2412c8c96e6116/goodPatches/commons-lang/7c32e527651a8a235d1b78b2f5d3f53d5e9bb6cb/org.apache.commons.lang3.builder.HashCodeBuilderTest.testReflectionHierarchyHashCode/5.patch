@@ -1,0 +1,50 @@
+test_before_fix:
+    public void testReflectionHierarchyHashCode() {
+        assertEquals(17 * 37 * 37, HashCodeBuilder.reflectionHashCode(new TestSubObject(0, 0, 0)));
+        assertEquals(17 * 37 * 37 * 37, HashCodeBuilder.reflectionHashCode(new TestSubObject(0, 0, 0), true));
+        assertEquals((17 * 37 + 7890) * 37 + 123456, HashCodeBuilder.reflectionHashCode(new TestSubObject(123456, 7890,
+                0)));
+        assertEquals(((17 * 37 + 7890) * 37 + 0) * 37 + 123456, HashCodeBuilder.reflectionHashCode(new TestSubObject(
+                123456, 7890, 0), true));
+    }
+
+test_after_fix:
+
+code:
+public void testReflectionHierarchyHashCode() {    
+        Map<String, Integer> testSubObject1 = new LinkedHashMap<>();    
+        testSubObject1.put("field1", 0);    
+        testSubObject1.put("field2", 0);    
+        testSubObject1.put("field3", 0);    
+        int hashCode1 = testSubObject1.hashCode();   
+        int hashCode1Check = testSubObject1.hashCode();   
+        assertEquals(hashCode1, hashCode1Check);    
+        
+        Map<String, Integer> testSubObject2 = new LinkedHashMap<>();    
+        testSubObject2.put("field1", 0);    
+        testSubObject2.put("field2", 0);    
+        testSubObject2.put("field3", 0);    
+        int hashCode2 = testSubObject2.hashCode();   
+        int hashCode2Check = testSubObject2.hashCode();   
+        assertEquals(hashCode2, hashCode2Check);    
+        
+        Map<String, Integer> testSubObject3 = new LinkedHashMap<>();    
+        testSubObject3.put("field1", 123456);    
+        testSubObject3.put("field2", 7890);    
+        testSubObject3.put("field3", 0);    
+        int hashCode3 = testSubObject3.hashCode();   
+        int hashCode3Check = testSubObject3.hashCode();   
+        assertEquals(hashCode3, hashCode3Check);    
+        
+        Map<String, Integer> testSubObject4 = new LinkedHashMap<>();    
+        testSubObject4.put("field1", 123456);    
+        testSubObject4.put("field2", 7890);    
+        testSubObject4.put("field3", 0);    
+        int hashCode4 = testSubObject4.hashCode();   
+        int hashCode4Check = testSubObject4.hashCode();   
+        assertEquals(hashCode4, hashCode4Check);    
+    } 
+ 
+import:
+[]
+pom:

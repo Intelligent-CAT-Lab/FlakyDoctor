@@ -1,0 +1,35 @@
+Test File Path: projects/cd3c6a9dd929820d4fc32457f4861fb5c5893f97/jackson-databind/src/test/java/com/fasterxml/jackson/databind/jsonschema/TestGenerateJsonSchema.java
+
+    Original Test Method:
+     public void testUnwrapping()  throws Exception
+    {
+        JsonSchema jsonSchema = MAPPER.generateJsonSchema(UnwrappingRoot.class);
+        String json = jsonSchema.toString().replaceAll("\"", "'");
+        String EXP = "{'type':'object',"
+                +"'properties':{'age':{'type':'integer'},"
+                +"'name.first':{'type':'string'},'name.last':{'type':'string'}}}";
+        assertEquals(EXP, json);
+    }
+
+    
+test_code:
+public void testUnwrapping() throws Exception {
+    JsonSchema jsonSchema = MAPPER.generateJsonSchema(UnwrappingRoot.class);
+    String json = jsonSchema.toString();
+
+    String EXP = "{\"type\":\"object\","
+            +"\"properties\":{\"age\":{\"type\":\"integer\"},"
+            +"\"name.first\":{\"type\":\"string\"},\"name.last\":{\"type\":\"string\"}}}";
+
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, Object> map1 = mapper.readValue(EXP, new TypeReference<Map<String, Object>>() {});
+    Map<String, Object> map2 = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+
+    assertEquals(map1, map2);
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

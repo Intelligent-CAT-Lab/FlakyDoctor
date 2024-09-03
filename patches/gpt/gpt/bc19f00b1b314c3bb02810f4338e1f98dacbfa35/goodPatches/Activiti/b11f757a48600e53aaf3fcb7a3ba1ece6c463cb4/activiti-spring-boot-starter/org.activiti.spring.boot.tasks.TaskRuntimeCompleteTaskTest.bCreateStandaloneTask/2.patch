@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'bCreateStandaloneTask': 'public void bCreateStandaloneTask() {\n\n    String authenticatedUserId = securityManager.getAuthenticatedUserId();\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("simple task")\n            .withAssignee(authenticatedUserId)\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n            50));\n\n    // Filter the tasks to only include the one created in this test\n    List<Task> filteredTasks = tasks.getContent().stream()\n            .filter(task -> task.getName().equals("simple task"))\n            .collect(Collectors.toList());\n\n    assertThat(filteredTasks).hasSize(1);\n    Task task = filteredTasks.get(0);\n\n    assertThat(task.getAssignee()).isEqualTo(authenticatedUserId);\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n\n    currentTaskId = task.getId();\n}\n'}}victim
+:import:
+['import java.util.List;\n ', 'import java.util.stream.Collectors;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['bCreateStandaloneTask']}polluter
+:code:
+{'fields': {}, 'methods': {'bCreateStandaloneTask': 'public void bCreateStandaloneTask() {\n\n    String authenticatedUserId = securityManager.getAuthenticatedUserId();\n\n    Task standAloneTask = taskRuntime.create(TaskPayloadBuilder.create()\n            .withName("simple task")\n            .withAssignee(authenticatedUserId)\n            .build());\n\n    // the owner should be able to see the created task\n    Page<Task> tasks = taskRuntime.tasks(Pageable.of(0,\n            50));\n\n    // Filter the tasks to only include the one created in this test\n    List<Task> filteredTasks = tasks.getContent().stream()\n            .filter(task -> task.getName().equals("simple task"))\n            .collect(Collectors.toList());\n\n    assertThat(filteredTasks).hasSize(1);\n    Task task = filteredTasks.get(0);\n\n    assertThat(task.getAssignee()).isEqualTo(authenticatedUserId);\n    assertThat(task.getStatus()).isEqualTo(Task.TaskStatus.ASSIGNED);\n\n    currentTaskId = task.getId();\n}\n'}}polluter
+:import:
+['import java.util.List;\n ', 'import java.util.stream.Collectors;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['bCreateStandaloneTask']}

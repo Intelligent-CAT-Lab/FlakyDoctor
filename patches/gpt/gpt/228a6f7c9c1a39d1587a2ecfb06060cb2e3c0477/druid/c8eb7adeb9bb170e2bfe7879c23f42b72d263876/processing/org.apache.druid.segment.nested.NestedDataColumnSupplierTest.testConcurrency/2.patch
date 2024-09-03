@@ -1,0 +1,78 @@
+Test File Path: projects/c8eb7adeb9bb170e2bfe7879c23f42b72d263876/druid/processing/src/test/java/org/apache/druid/segment/nested/NestedDataColumnSupplierTest.java
+
+    Original Test Method:
+   public void testConcurrency() throws ExecutionException, InterruptedException
+  {
+    // if this test ever starts being to be a flake, there might be thread safety issues
+    ColumnBuilder bob = new ColumnBuilder();
+    bob.setFileMapper(fileMapper);
+    NestedDataColumnSupplier supplier = NestedDataColumnSupplier.read(
+        ColumnType.NESTED_DATA,
+        false,
+        baseBuffer,
+        bob,
+        ALWAYS_USE_INDEXES,
+        bitmapSerdeFactory,
+        ByteOrder.nativeOrder()
+    );
+    final String expectedReason = "none";
+    final AtomicReference<String> failureReason = new AtomicReference<>(expectedReason);
+
+    final int threads = 10;
+    ListeningExecutorService executorService = MoreExecutors.listeningDecorator(
+        Execs.multiThreaded(threads, "StandardNestedColumnSupplierTest-%d")
+    );
+    Collection<ListenableFuture<?>> futures = new ArrayList<>(threads);
+    final CountDownLatch threadsStartLatch = new CountDownLatch(1);
+    for (int i = 0; i < threads; ++i) {
+      futures.add(
+          executorService.submit(() -> {
+            try {
+              threadsStartLatch.await();
+              for (int iter = 0; iter < 5000; iter++) {
+                try (NestedDataComplexColumn column = (NestedDataComplexColumn) supplier.get()) {
+                  smokeTest(column);
+                }
+              }
+            }
+            catch (Throwable ex) {
+              failureReason.set(ex.getMessage());
+            }
+          })
+      );
+    }
+    threadsStartLatch.countDown();
+    Futures.allAsList(futures).get();
+    Assert.assertEquals(expectedReason, failureReason.get());
+  }
+
+    
+test_code:
+    public void testConcurrency() {
+        String expectedJson = "{\"y\":1.0,\"z\":\"a\",\"x\":1,\"v\":\"100\",\"nullish\":\"notnull\"}";
+        String actualJson = "{\"v\":\"100\",\"x\":1,\"z\":\"a\",\"nullish\":\"notnull\",\"y\":1.0}";
+
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+        Map<String, Object> expectedMap = gson.fromJson(expectedJson, new TypeToken<LinkedHashMap<String, Object>>(){}.getType());
+        Map<String, Object> actualMap = gson.fromJson(actualJson, new TypeToken<LinkedHashMap<String, Object>>(){}.getType());
+
+        Assert.assertEquals(expectedMap, actualMap);
+    }
+
+import:
+['import java.util.LinkedHashMap;', 'import com.google.gson.Gson;', 'import com.google.gson.GsonBuilder;', 'import com.google.gson.reflect.TypeToken;', 'import java.util.LinkedHashMap;', 'import com.google.gson.Gson;', 'import com.google.gson.GsonBuilder;', 'import com.google.gson.reflect.TypeToken;']
+pom:
+
+<dependencies>
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.8.6</version>
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>

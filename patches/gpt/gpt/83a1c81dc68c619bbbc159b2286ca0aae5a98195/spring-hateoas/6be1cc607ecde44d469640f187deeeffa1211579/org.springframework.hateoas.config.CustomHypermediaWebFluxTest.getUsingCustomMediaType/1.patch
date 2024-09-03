@@ -1,0 +1,46 @@
+Test File Path: projects/6be1cc607ecde44d469640f187deeeffa1211579/spring-hateoas/src/test/java/org/springframework/hateoas/config/CustomHypermediaWebFluxTest.java
+
+    Original Test Method:
+ 	void getUsingCustomMediaType() throws IOException {
+
+		this.testClient.get().uri("http://localhost/employees/1") //
+				.accept(FRODO_MEDIATYPE) //
+				.exchange() //
+				.expectStatus().isOk() //
+				.expectHeader().contentType(FRODO_MEDIATYPE.toString()) //
+				.expectBody(String.class) //
+				.isEqualTo(read(new ClassPathResource("webflux-frodo.json", getClass())));
+	}
+
+    
+test_code:
+void getUsingCustomMediaType() throws IOException {
+    String expectedResponse = read(new ClassPathResource("webflux-frodo.json", getClass()));
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode expectedJsonNode = mapper.readTree(expectedResponse);
+
+    this.testClient.get().uri("http://localhost/employees/1") //
+            .accept(FRODO_MEDIATYPE) //
+            .exchange() //
+            .expectStatus().isOk() //
+            .expectHeader().contentType(FRODO_MEDIATYPE.toString()) //
+            .expectBody(String.class) //
+            .value(response -> {
+                try {
+                    JsonNode responseJsonNode = mapper.readTree(response);
+                    assertEquals(expectedJsonNode, responseJsonNode);
+                } catch (IOException e) {
+                    fail(e.getMessage());
+                }
+            });
+}
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;', 'import com.fasterxml.jackson.databind.ObjectMapper;', 'import static org.junit.jupiter.api.Assertions.assertEquals;', 'import static org.junit.jupiter.api.Assertions.fail;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

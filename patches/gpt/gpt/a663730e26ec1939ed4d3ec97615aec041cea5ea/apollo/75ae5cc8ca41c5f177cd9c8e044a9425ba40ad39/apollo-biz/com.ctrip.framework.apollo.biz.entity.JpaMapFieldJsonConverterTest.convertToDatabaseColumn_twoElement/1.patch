@@ -1,0 +1,29 @@
+Test File Path: projects/75ae5cc8ca41c5f177cd9c8e044a9425ba40ad39/apollo/apollo-biz/src/test/java/com/ctrip/framework/apollo/biz/entity/JpaMapFieldJsonConverterTest.java
+
+    Original Test Method:
+   void convertToDatabaseColumn_twoElement() throws IOException {
+    Map<String, String> map = new HashMap<>(8);
+    map.put("a", "1");
+    map.put("disableCheck", "true");
+
+    String expected = readAllContentOf("json/converter/element.2.json");
+    assertEquals(expected, this.converter.convertToDatabaseColumn(map));
+  }
+
+    
+test_code:
+ void convertToDatabaseColumn_twoElement() throws IOException {
+    Map<String, String> map = new LinkedHashMap<>(8);
+    map.put("a", "1");
+    map.put("disableCheck", "true");
+
+    String expected = readAllContentOf("json/converter/element.2.json");
+    assertEquals(expected, this.converter.convertToDatabaseColumn(map));
+  }
+
+import:
+['import java.util.LinkedHashMap;']
+pom:
+
+ <!-- No changes needed -->
+ 

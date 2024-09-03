@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testIsReadyToStreamFile': 'public void testIsReadyToStreamFile() throws Exception {\n    // Reset the localization settings\n    Localization.initialize("en", "US");\n\n    System.out.println("isReadyToStreamFile");\n    GrblController instance = new GrblController(mgc);\n\n    boolean asserted;\n\n    // Test 1. Grbl has not yet responded.\n    try {\n        asserted = false;\n        instance.openCommPort(getSettings().getConnectionDriver(), "blah", 1234);\n        instance.isReadyToStreamFile();\n    } catch (Exception e) {\n        asserted = true;\n        assertEquals("Grbl has not finished booting.", e.getMessage());\n    }\n    assertTrue(asserted);\n\n    // Test 2. No streaming if comm isn\'t open.\n    instance.closeCommPort();\n\n    // Test 3. Grbl ready, ready for send.\n    instance.openCommPort(getSettings().getConnectionDriver(), "blah", 1234);\n    instance.rawResponseHandler("Grbl 0.8c");\n    Boolean result = instance.isReadyToStreamFile();\n    assertEquals(true, result);\n\n    // Test 4. Can\'t send during active command.\n    instance.queueStream(new SimpleGcodeStreamReader(instance.createCommand("G0X0")));\n    try {\n        mgc.areActiveCommands = true;\n        asserted = false;\n        instance.isReadyToStreamFile();\n    } catch (Exception e) {\n        asserted = true;\n        assertEquals("Cannot stream while there are active commands: ", e.getMessage());\n    }\n    assertTrue(asserted);\n}\n'}}victim
+:import:
+['import com.willwinder.universalgcodesender.i18n.Localization;\n ']victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testIsReadyToStreamFile']}polluter
+:code:
+{'fields': {}, 'methods': {'testIsReadyToStreamFile': 'public void testIsReadyToStreamFile() throws Exception {\n    // Reset the localization settings\n    Localization.initialize("en", "US");\n\n    System.out.println("isReadyToStreamFile");\n    GrblController instance = new GrblController(mgc);\n\n    boolean asserted;\n\n    // Test 1. Grbl has not yet responded.\n    try {\n        asserted = false;\n        instance.openCommPort(getSettings().getConnectionDriver(), "blah", 1234);\n        instance.isReadyToStreamFile();\n    } catch (Exception e) {\n        asserted = true;\n        assertEquals("Grbl has not finished booting.", e.getMessage());\n    }\n    assertTrue(asserted);\n\n    // Test 2. No streaming if comm isn\'t open.\n    instance.closeCommPort();\n\n    // Test 3. Grbl ready, ready for send.\n    instance.openCommPort(getSettings().getConnectionDriver(), "blah", 1234);\n    instance.rawResponseHandler("Grbl 0.8c");\n    Boolean result = instance.isReadyToStreamFile();\n    assertEquals(true, result);\n\n    // Test 4. Can\'t send during active command.\n    instance.queueStream(new SimpleGcodeStreamReader(instance.createCommand("G0X0")));\n    try {\n        mgc.areActiveCommands = true;\n        asserted = false;\n        instance.isReadyToStreamFile();\n    } catch (Exception e) {\n        asserted = true;\n        assertEquals("Cannot stream while there are active commands: ", e.getMessage());\n    }\n    assertTrue(asserted);\n}\n'}}polluter
+:import:
+['import com.willwinder.universalgcodesender.i18n.Localization;\n ']polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testIsReadyToStreamFile']}

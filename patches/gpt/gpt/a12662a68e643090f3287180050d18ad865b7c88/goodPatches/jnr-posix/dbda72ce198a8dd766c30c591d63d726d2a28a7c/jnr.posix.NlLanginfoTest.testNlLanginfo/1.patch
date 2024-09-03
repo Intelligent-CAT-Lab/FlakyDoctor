@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testSetenvOverwrite': 'public void testSetenvOverwrite() throws Throwable {\n    if (!Platform.IS_WINDOWS) {\n        final String originalPath = posix.getenv("PATH");\n        int result = posix.setenv("PATH", "new value", 1);\n\n        assertEquals(0, result);\n        assertNotEquals(originalPath, posix.getenv("PATH"));\n\n        \n\n        // Reset the "PATH" environment variable to its original value\n        posix.setenv("PATH", originalPath, 1);\n        \n\n    }\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testSetenvOverwrite']}polluter
+:code:
+{'fields': {}, 'methods': {'testSetenvOverwrite': 'public void testSetenvOverwrite() throws Throwable {\n    if (!Platform.IS_WINDOWS) {\n        final String originalPath = posix.getenv("PATH");\n        int result = posix.setenv("PATH", "new value", 1);\n\n        assertEquals(0, result);\n        assertNotEquals(originalPath, posix.getenv("PATH"));\n\n        \n\n        // Reset the "PATH" environment variable to its original value\n        posix.setenv("PATH", originalPath, 1);\n        \n\n    }\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testSetenvOverwrite']}

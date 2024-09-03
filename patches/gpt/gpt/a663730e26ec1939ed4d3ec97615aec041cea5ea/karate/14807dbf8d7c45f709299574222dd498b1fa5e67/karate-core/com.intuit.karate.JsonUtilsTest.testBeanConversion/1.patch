@@ -1,0 +1,34 @@
+Test File Path: projects/14807dbf8d7c45f709299574222dd498b1fa5e67/karate/karate-core/src/test/java/com/intuit/karate/JsonUtilsTest.java
+
+    Original Test Method:
+     void testBeanConversion() {
+        SimplePojo pojo = new SimplePojo();
+        String s = JsonUtils.toJson(pojo);
+        assertEquals("{\"bar\":0,\"foo\":null}", s);
+        Map<String, Object> map = Json.of(pojo).asMap();
+        Match.that(map).isEqualTo("{ foo: null, bar: 0 }");
+    }
+
+    
+test_code:
+void testBeanConversion() {
+    SimplePojo pojo = new SimplePojo();
+    String s = JsonUtils.toJson(pojo);
+    Map<String, Object> map = Json.of(pojo).asMap();
+    Match.that(map).isEqualTo("{ foo: null, bar: 0 }");
+
+    JsonParser parser = new JsonParser();
+    JsonElement expected = parser.parse("{\"bar\":0,\"foo\":null}");
+    JsonElement result = parser.parse(s);
+    assertEquals(expected, result);
+}
+
+import:
+['import com.google.gson.JsonParser;', 'import com.google.gson.JsonElement;']
+pom:
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.6</version>
+</dependency>

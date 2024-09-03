@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testHandleUsernameTokenPrincipal': 'public void testHandleUsernameTokenPrincipal() throws Exception {\n    UserDetailsService userDetailsService = createMock(UserDetailsService.class);\n    callbackHandler.setUserDetailsService(userDetailsService);\n\n    expect(userDetailsService.loadUserByUsername("Ernie")).andReturn(user).anyTimes();\n\n    replay(userDetailsService);\n\n    callbackHandler.handleUsernameTokenPrincipal(callback);\n    SecurityContext context = SecurityContextHolder.getContext();\n    Assert.assertNotNull("SecurityContext must not be null", context);\n    Authentication authentication = context.getAuthentication();\n    Assert.assertNotNull("Authentication must not be null", authentication);\n    Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();\n    Assert.assertTrue("GrantedAuthority[] must not be null or empty",\n            (authorities != null && authorities.size() > 0));\n    Assert.assertEquals("Unexpected authority", grantedAuthority, authorities.iterator().next());\n\n    verify(userDetailsService);\n\n    \n\n    SecurityContextHolder.clearContext();\n    \n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testHandleUsernameTokenPrincipal']}polluter
+:code:
+{'fields': {}, 'methods': {'testHandleUsernameTokenPrincipal': 'public void testHandleUsernameTokenPrincipal() throws Exception {\n    UserDetailsService userDetailsService = createMock(UserDetailsService.class);\n    callbackHandler.setUserDetailsService(userDetailsService);\n\n    expect(userDetailsService.loadUserByUsername("Ernie")).andReturn(user).anyTimes();\n\n    replay(userDetailsService);\n\n    callbackHandler.handleUsernameTokenPrincipal(callback);\n    SecurityContext context = SecurityContextHolder.getContext();\n    Assert.assertNotNull("SecurityContext must not be null", context);\n    Authentication authentication = context.getAuthentication();\n    Assert.assertNotNull("Authentication must not be null", authentication);\n    Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();\n    Assert.assertTrue("GrantedAuthority[] must not be null or empty",\n            (authorities != null && authorities.size() > 0));\n    Assert.assertEquals("Unexpected authority", grantedAuthority, authorities.iterator().next());\n\n    verify(userDetailsService);\n\n    \n\n    SecurityContextHolder.clearContext();\n    \n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testHandleUsernameTokenPrincipal']}

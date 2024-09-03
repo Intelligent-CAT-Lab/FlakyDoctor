@@ -1,0 +1,48 @@
+Test File Path: projects/7167b23b3ba7dd79410f6e9db350d16cbe30617b/junit4/src/test/java/org/junit/internal/MethodSorterTest.java
+
+    Original Test Method:
+     public void testJvmMethodSorter() {
+        Method[] fromJvmWithSynthetics = DummySortJvm.class.getDeclaredMethods();
+        Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class);
+        assertArrayEquals(fromJvmWithSynthetics, sorted);
+    }
+
+    
+test_code:
+public void testJvmMethodSorter() {
+    Method[] fromJvmWithSynthetics = DummySortJvm.class.getDeclaredMethods();
+    List<Method> fromJvmWithSyntheticsList = new ArrayList<Method>(Arrays.asList(fromJvmWithSynthetics));
+    Collections.sort(fromJvmWithSyntheticsList, new Comparator<Method>() {
+        @Override
+        public int compare(Method o1, Method o2) {
+            int nameComparison = o1.getName().compareTo(o2.getName());
+            if (nameComparison != 0) {
+                return nameComparison;
+            } else {
+                return o1.toString().compareTo(o2.toString());
+            }
+        }
+    });
+
+    Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class);
+    List<Method> sortedList = new ArrayList<Method>(Arrays.asList(sorted));
+    Collections.sort(sortedList, new Comparator<Method>() {
+        @Override
+        public int compare(Method o1, Method o2) {
+            int nameComparison = o1.getName().compareTo(o2.getName());
+            if (nameComparison != 0) {
+                return nameComparison;
+            } else {
+                return o1.toString().compareTo(o2.toString());
+            }
+        }
+    });
+
+    assertArrayEquals(fromJvmWithSyntheticsList.toArray(), sortedList.toArray());
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

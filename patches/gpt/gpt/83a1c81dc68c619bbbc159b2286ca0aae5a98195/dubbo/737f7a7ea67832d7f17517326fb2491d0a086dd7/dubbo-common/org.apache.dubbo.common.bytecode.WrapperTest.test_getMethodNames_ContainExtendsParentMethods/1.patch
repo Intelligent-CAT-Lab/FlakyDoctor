@@ -1,0 +1,22 @@
+Test File Path: projects/737f7a7ea67832d7f17517326fb2491d0a086dd7/dubbo/dubbo-common/src/test/java/org/apache/dubbo/common/bytecode/WrapperTest.java
+
+    Original Test Method:
+     public void test_getMethodNames_ContainExtendsParentMethods() throws Exception {
+        assertArrayEquals(new String[]{"hello", "world"}, Wrapper.getWrapper(Son.class).getMethodNames());
+    }
+
+    
+test_code:
+public void test_getMethodNames_ContainExtendsParentMethods() throws Exception {
+    List<String> expectedMethodNames = Arrays.asList("hello", "world");
+    List<String> actualMethodNames = Arrays.asList(Wrapper.getWrapper(Son.class).getMethodNames());
+    Collections.sort(expectedMethodNames);
+    Collections.sort(actualMethodNames);
+    assertArrayEquals(expectedMethodNames.toArray(), actualMethodNames.toArray());
+}
+
+import:
+['import java.util.Arrays;', 'import java.util.Collections;', 'import java.util.List;']
+pom:
+
+<!-- No changes needed -->

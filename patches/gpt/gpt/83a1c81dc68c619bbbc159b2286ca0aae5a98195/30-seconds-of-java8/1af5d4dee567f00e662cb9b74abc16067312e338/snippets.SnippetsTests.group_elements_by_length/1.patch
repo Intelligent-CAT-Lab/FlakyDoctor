@@ -1,0 +1,28 @@
+Test File Path: projects/1af5d4dee567f00e662cb9b74abc16067312e338/30-seconds-of-java8/src/test/java/snippets/SnippetsTests.java
+
+    Original Test Method:
+     public void group_elements_by_length() throws Exception {
+        Map<Integer, List<String>> groups = Snippets.groupBy(new String[]{"one", "two", "three"}, String::length);
+        assertThat(groups)
+                .containsExactly(
+                        new SimpleEntry<>(3, Arrays.asList("one", "two")),
+                        new SimpleEntry<>(5, Collections.singletonList("three"))
+                );
+    }
+
+    
+test_code:
+public void group_elements_by_length() throws Exception {
+    Map<Integer, List<String>> groups = Snippets.groupBy(new String[]{"one", "two", "three"}, String::length);
+    assertThat(groups)
+            .containsOnly(
+                    new SimpleEntry<>(3, Arrays.asList("one", "two")),
+                    new SimpleEntry<>(5, Collections.singletonList("three"))
+            );
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

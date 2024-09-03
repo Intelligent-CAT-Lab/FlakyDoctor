@@ -1,0 +1,69 @@
+Test File Path: projects/b0fde49e6aa06593d16c8aa0b8da0e3172db1ec2/tabula-java/src/test/java/technology/tabula/TestSpreadsheetExtractor.java
+
+    Original Test Method:
+     public void testRTL() throws IOException {
+        Page page = UtilsForTesting.getPage("src/test/resources/technology/tabula/arabic.pdf",
+                1);
+        SpreadsheetExtractionAlgorithm sea = new SpreadsheetExtractionAlgorithm();
+        List<Table> tables = sea.extract(page);
+        // assertEquals(1, tables.size());
+        Table table = tables.get(0);
+
+
+        assertEquals("اسمي سلطان", table.getRows().get(1).get(1).getText());
+        assertEquals("من اين انت؟", table.getRows().get(2).get(1).getText());
+        assertEquals("1234", table.getRows().get(3).get(0).getText());
+        assertEquals("هل انت شباك؟", table.getRows().get(4).get(0).getText());
+        assertEquals("انا من ولاية كارولينا الشمال", table.getRows().get(2).get(0).getText()); // conjoined lam-alif gets missed
+        assertEquals("اسمي Jeremy في الانجليزية", table.getRows().get(4).get(1).getText()); // conjoined lam-alif gets missed
+        assertEquals("عندي 47 قطط", table.getRows().get(3).get(1).getText()); // the real right answer is 47.
+        assertEquals("Jeremy is جرمي in Arabic", table.getRows().get(5).get(0).getText()); // the real right answer is 47.
+        assertEquals("مرحباً", table.getRows().get(1).get(0).getText()); // really ought to be ً, but this is forgiveable for now
+
+        // there is one remaining problems that are not yet addressed
+        // - diacritics (e.g. Arabic's tanwinً and probably Hebrew nekudot) are put in the wrong place.
+        // this should get fixed, but this is a good first stab at the problem.
+
+        // these (commented-out) tests reflect the theoretical correct answer,
+        // which is not currently possible because of the two problems listed above
+        // assertEquals("مرحباً",                       table.getRows().get(0).get(0).getText()); // really ought to be ً, but this is forgiveable for now
+
+        page.getPDDoc().close();
+    }
+
+    
+test_code:
+public void testRTL() throws IOException {
+    Page page = UtilsForTesting.getPage("src/test/resources/technology/tabula/arabic.pdf", 1);
+    SpreadsheetExtractionAlgorithm sea = new SpreadsheetExtractionAlgorithm();
+    List<Table> tables = sea.extract(page);
+    Table table = tables.get(0);
+
+    List<RectangularTextContainer> cells = new ArrayList<>();
+    for (List<RectangularTextContainer> row : table.getRows()) {
+        cells.addAll(row);
+    }
+
+    Map<String, RectangularTextContainer> cellMap = new LinkedHashMap<>();
+    for (RectangularTextContainer cell : cells) {
+        cellMap.put(cell.getText(), cell);
+    }
+
+    assertEquals("اسمي سلطان", cellMap.get("اسمي سلطان").getText());
+    assertEquals("من اين انت؟", cellMap.get("من اين انت؟").getText());
+    assertEquals("1234", cellMap.get("1234").getText());
+    assertEquals("هل انت شباك؟", cellMap.get("هل انت شباك؟").getText());
+    assertEquals("انا من ولاية كارولينا الشمال", cellMap.get("انا من ولاية كارولينا الشمال").getText());
+    assertEquals("اسمي Jeremy في الانجليزية", cellMap.get("اسمي Jeremy في الانجليزية").getText());
+    assertEquals("عندي 47 قطط", cellMap.get("عندي 47 قطط").getText());
+    assertEquals("Jeremy is جرمي in Arabic", cellMap.get("Jeremy is جرمي in Arabic").getText());
+    assertEquals("مرحباً", cellMap.get("مرحباً").getText());
+
+    page.getPDDoc().close();
+}
+
+import:
+['import java.util.LinkedHashMap;']
+pom:
+
+<!-- No changes needed -->

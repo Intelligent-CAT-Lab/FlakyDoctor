@@ -1,0 +1,60 @@
+test_before_fix:
+    public void doubleArray() {
+        final WithArrays wa = new WithArrays();
+        wa.doubleArray = new double[] { 1, 2 };
+        final String exp = getClassPrefix(wa) + "[" + BR
+                   + "  boolArray=<null>," + BR
+                   + "  charArray=<null>," + BR
+                   + "  intArray=<null>," + BR
+                   + "  doubleArray={" + BR
+                   + "    1.0," + BR
+                   + "    2.0" + BR
+                   + "  }," + BR
+                   + "  longArray=<null>," + BR
+                   + "  stringArray=<null>" + BR
+                   + "]";
+        assertEquals(exp, toString(wa));
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void doubleArray() { 
+     final WithArrays wa = new WithArrays(); 
+     wa.doubleArray = new double[]{1, 2}; 
+     final String exp = getClassPrefix(wa) + "[" + BR 
+             + "  boolArray=<null>," + BR 
+             + "  charArray=<null>," + BR 
+             + "  intArray=<null>," + BR 
+             + "  doubleArray={" + BR 
+             + "    1.0," + BR 
+             + "    2.0" + BR 
+             + "  }," + BR 
+             + "  longArray=<null>," + BR 
+             + "  stringArray=<null>" + BR 
+             + "]"; 
+     String actual = toString(wa); 
+     String[] expSplit = exp.split(","); 
+     String[] actualSplit = actual.split(","); 
+     java.util.Map<String, String> expMap = new java.util.LinkedHashMap<>(); 
+     java.util.Map<String, String> actualMap = new java.util.LinkedHashMap<>(); 
+     for (String s : expSplit) { 
+         String[] keyValue = s.split("="); 
+         expMap.put(keyValue[0].trim(), keyValue[1].trim()); 
+     } 
+     for (String s : actualSplit) { 
+         String[] keyValue = s.split("="); 
+         actualMap.put(keyValue[0].trim(), keyValue[1].trim()); 
+     } 
+     for (java.util.Map.Entry<String, String> entry : expMap.entrySet()) { 
+         assertEquals(entry.getValue(), actualMap.get(entry.getKey())); 
+     } 
+ } 
+  
+  
+ 
+import:
+['import java.util.LinkedHashMap;\n ']
+pom:

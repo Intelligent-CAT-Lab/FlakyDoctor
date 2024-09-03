@@ -1,0 +1,29 @@
+test_before_fix:
+    private static void testStandalone(Class<? extends Command> clazz) throws Exception {
+        Command c = clazz.newInstance();
+        String synopsis = getStandaloneSynopsis(c);
+        Assert.assertEquals(clazz.getName() + ". EXPECTED [" + ((TestCommand) c).getSynopsis()
+                + "]. FOUND [" + synopsis + "]", ((TestCommand) c).getSynopsis(), synopsis);
+    }
+
+test_after_fix:
+
+code:
+void testStandalone(Class<? extends Command> clazz) throws Exception { 
+     Command c = clazz.newInstance(); 
+     String synopsis = getStandaloneSynopsis(c); 
+     String expectedSynopsis = ((TestCommand) c).getSynopsis(); 
+     String[] expectedSynopsisParts = expectedSynopsis.split(" "); 
+     String[] synopsisParts = synopsis.split(" "); 
+     Arrays.sort(expectedSynopsisParts); 
+     Arrays.sort(synopsisParts); 
+     expectedSynopsis = String.join(" ", expectedSynopsisParts); 
+     synopsis = String.join(" ", synopsisParts); 
+     Assert.assertEquals(clazz.getName() + ". EXPECTED [" + expectedSynopsis 
+             + "]. FOUND [" + synopsis + "]", expectedSynopsis, synopsis); 
+ } 
+ 
+import:
+['import java.util.Arrays;\n ']
+pom:
+

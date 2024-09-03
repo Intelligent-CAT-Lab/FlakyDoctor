@@ -1,0 +1,126 @@
+Test File Path: dexfix_projects/23c9b5ac50d04d28a34a87c78eb2d3331c06b74b/flink/flink-table/flink-table-runtime-blink/src/test/java/org/apache/flink/table/runtime/operators/join/ProcTimeBoundedStreamJoinTest.java
+
+    Original Test Method:
+ 	public void testProcTimeInnerJoinWithCommonBounds() throws Exception {
+		ProcTimeBoundedStreamJoin joinProcessFunc = new ProcTimeBoundedStreamJoin(
+				FlinkJoinType.INNER, -10, 20, rowType, rowType, generatedFunction);
+		KeyedTwoInputStreamOperatorTestHarness<BaseRow, BaseRow, BaseRow, BaseRow> testHarness = createTestHarness(
+				joinProcessFunc);
+		testHarness.open();
+		testHarness.setProcessingTime(1);
+		testHarness.processElement1(record(1L, "1a1"));
+		assertEquals(1, testHarness.numProcessingTimeTimers());
+
+		testHarness.setProcessingTime(2);
+		testHarness.processElement1(record(2L, "2a2"));
+		// timers for key = 1 and key = 2
+		assertEquals(2, testHarness.numProcessingTimeTimers());
+
+		testHarness.setProcessingTime(3);
+		testHarness.processElement1(record(1L, "1a3"));
+		assertEquals(4, testHarness.numKeyedStateEntries());
+		// The number of timers won't increase.
+		assertEquals(2, testHarness.numProcessingTimeTimers());
+
+		testHarness.processElement2(record(1L, "1b3"));
+
+		testHarness.setProcessingTime(4);
+		testHarness.processElement2(record(2L, "2b4"));
+		// The number of states should be doubled.
+		assertEquals(8, testHarness.numKeyedStateEntries());
+		assertEquals(4, testHarness.numProcessingTimeTimers());
+
+		// Test for -10 boundary (13 - 10 = 3).
+		// The left row (key = 1) with timestamp = 1 will be eagerly removed here.
+		testHarness.setProcessingTime(13);
+		testHarness.processElement2(record(1L, "1b13"));
+
+		// Test for +20 boundary (13 + 20 = 33).
+		testHarness.setProcessingTime(33);
+		assertEquals(4, testHarness.numKeyedStateEntries());
+		assertEquals(2, testHarness.numProcessingTimeTimers());
+
+		testHarness.processElement1(record(1L, "1a33"));
+		testHarness.processElement1(record(2L, "2a33"));
+		// The left row (key = 2) with timestamp = 2 will be eagerly removed here.
+		testHarness.processElement2(record(2L, "2b33"));
+
+		List<Object> expectedOutput = new ArrayList<>();
+		expectedOutput.add(record(1L, "1a1", 1L, "1b3"));
+		expectedOutput.add(record(1L, "1a3", 1L, "1b3"));
+		expectedOutput.add(record(2L, "2a2", 2L, "2b4"));
+		expectedOutput.add(record(1L, "1a3", 1L, "1b13"));
+		expectedOutput.add(record(1L, "1a33", 1L, "1b13"));
+		expectedOutput.add(record(2L, "2a33", 2L, "2b33"));
+
+		assertor.assertOutputEquals("output wrong.", expectedOutput, testHarness.getOutput());
+		testHarness.close();
+	}
+
+    
+test_code:
+public void testProcTimeInnerJoinWithCommonBounds() throws Exception {
+	ProcTimeBoundedStreamJoin joinProcessFunc = new ProcTimeBoundedStreamJoin(
+			FlinkJoinType.INNER, -10, 20, rowType, rowType, generatedFunction);
+	KeyedTwoInputStreamOperatorTestHarness<BaseRow, BaseRow, BaseRow, BaseRow> testHarness = createTestHarness(
+			joinProcessFunc);
+	testHarness.open();
+	testHarness.setProcessingTime(1);
+	testHarness.processElement1(record(1L, "1a1"));
+	assertEquals(1, testHarness.numProcessingTimeTimers());
+
+	testHarness.setProcessingTime(2);
+	testHarness.processElement1(record(2L, "2a2"));
+	// timers for key = 1 and key = 2
+	assertEquals(2, testHarness.numProcessingTimeTimers());
+
+	testHarness.setProcessingTime(3);
+	testHarness.processElement1(record(1L, "1a3"));
+	assertEquals(4, testHarness.numKeyedStateEntries());
+	// The number of timers won't increase.
+	assertEquals(2, testHarness.numProcessingTimeTimers());
+
+	testHarness.processElement2(record(1L, "1b3"));
+
+	testHarness.setProcessingTime(4);
+	testHarness.processElement2(record(2L, "2b4"));
+	// The number of states should be doubled.
+	assertEquals(8, testHarness.numKeyedStateEntries());
+	assertEquals(4, testHarness.numProcessingTimeTimers());
+
+	// Test for -10 boundary (13 - 10 = 3).
+	// The left row (key = 1) with timestamp = 1 will be eagerly removed here.
+	testHarness.setProcessingTime(13);
+	testHarness.processElement2(record(1L, "1b13"));
+
+	// Test for +20 boundary (13 + 20 = 33).
+	testHarness.setProcessingTime(33);
+	assertEquals(4, testHarness.numKeyedStateEntries());
+	assertEquals(2, testHarness.numProcessingTimeTimers());
+
+	testHarness.processElement1(record(1L, "1a33"));
+	testHarness.processElement1(record(2L, "2a33"));
+	// The left row (key = 2) with timestamp = 2 will be eagerly removed here.
+	testHarness.processElement2(record(2L, "2b33"));
+
+	List<Object> expectedOutput = new ArrayList<>();
+	expectedOutput.add(record(1L, "1a1", 1L, "1b3"));
+	expectedOutput.add(record(1L, "1a3", 1L, "1b3"));
+	expectedOutput.add(record(2L, "2a2", 2L, "2b4"));
+	expectedOutput.add(record(1L, "1a3", 1L, "1b13"));
+	expectedOutput.add(record(1L, "1a33", 1L, "1b13"));
+	expectedOutput.add(record(2L, "2a33", 2L, "2b33"));
+
+	List<Object> actualOutput = new ArrayList<>(testHarness.getOutput());
+	Collections.sort(actualOutput, Comparator.comparing(Object::toString));
+	Collections.sort(expectedOutput, Comparator.comparing(Object::toString));
+
+	assertor.assertOutputEquals("output wrong.", expectedOutput, actualOutput);
+	testHarness.close();
+}
+
+import:
+['import java.util.Collections;', 'import java.util.Comparator;']
+pom:
+
+<!-- No changes needed -->

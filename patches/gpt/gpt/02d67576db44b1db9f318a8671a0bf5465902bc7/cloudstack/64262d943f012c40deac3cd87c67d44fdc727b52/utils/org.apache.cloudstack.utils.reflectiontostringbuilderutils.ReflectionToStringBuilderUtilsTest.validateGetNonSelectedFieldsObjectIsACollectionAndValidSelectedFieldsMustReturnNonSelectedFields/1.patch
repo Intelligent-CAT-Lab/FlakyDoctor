@@ -1,0 +1,31 @@
+Test File Path: projects/64262d943f012c40deac3cd87c67d44fdc727b52/cloudstack/utils/src/test/java/org/apache/cloudstack/utils/reflectiontostringbuilderutils/ReflectionToStringBuilderUtilsTest.java
+
+    Original Test Method:
+     public void validateGetNonSelectedFieldsObjectIsACollectionAndValidSelectedFieldsMustReturnNonSelectedFields(){
+        String fieldToRemove = classToReflectRemovedField;
+        String[] expectedResult = classToReflectFieldsNamesArray;
+
+        String[] result = ReflectionToStringBuilderUtils.getNonSelectedFields(Arrays.asList("test1", "test2"), fieldToRemove);
+        Assert.assertArrayEquals(expectedResult, result);
+    }
+
+    
+test_code:
+ public void validateGetNonSelectedFieldsObjectIsACollectionAndValidSelectedFieldsMustReturnNonSelectedFields(){
+        String fieldToRemove = classToReflectRemovedField;
+        String[] expectedResult = classToReflectFieldsNamesArray;
+
+        String[] result = ReflectionToStringBuilderUtils.getNonSelectedFields(Arrays.asList("test1", "test2"), fieldToRemove);
+
+        Arrays.sort(expectedResult);
+        Arrays.sort(result);
+
+        Assert.assertArrayEquals(expectedResult, result);
+    }
+
+import:
+[]
+pom:
+
+ <!-- No changes required in pom.xml -->
+ 

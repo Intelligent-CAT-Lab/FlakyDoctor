@@ -1,0 +1,95 @@
+Test File Path: projects/ce75254b8ec18422c48c40fe61354135d08b200d/hertzbeat/collector/src/test/java/org/dromara/hertzbeat/collector/util/CollectUtilTest.java
+
+    Original Test Method:
+     void replaceSmilingPlaceholder() {
+        Metrics metrics = Metrics.builder().name("^_^name^_^").build();
+        JsonElement jsonElement = new Gson().toJsonTree(metrics);
+        HashMap<String, Configmap> configmap = new HashMap<>();
+        Configmap config = Configmap.builder().key("name").value("张三").build();
+        configmap.put("name", config);
+        JsonElement res = CollectUtil.replaceSmilingPlaceholder(jsonElement, configmap);
+        Metrics metricsTarget = Metrics.builder().name("张三").build();
+        JsonElement jsonElement2 = new Gson().toJsonTree(metricsTarget);
+        assertEquals(jsonElement2.toString(), res.toString());
+
+
+        List<Metrics> metricsList = new ArrayList<>();
+        metricsList.add(metrics);
+        metricsList.add(metrics);
+        JsonElement jsonArray = new Gson().toJsonTree(metricsList);
+        JsonElement res2 = CollectUtil.replaceSmilingPlaceholder(jsonArray, configmap);
+
+        List<Metrics> metricsListTarget = new ArrayList<>();
+        metricsListTarget.add(metricsTarget);
+        metricsListTarget.add(metricsTarget);
+        JsonElement jsonArrayTarget = new Gson().toJsonTree(metricsListTarget);
+        assertEquals(jsonArrayTarget.toString(), res2.toString());
+    }
+
+    
+Patch after Stitching:
+
+test_code:
+void replaceSmilingPlaceholder() {
+    Metrics metrics = Metrics.builder().name("^_^name^_^").build();
+    JsonElement jsonElement = new Gson().toJsonTree(metrics);
+    LinkedHashMap<String, Configmap> configmap = new LinkedHashMap<>();
+    Configmap config = Configmap.builder().key("name").value("张三").build();
+    configmap.put("name", config);
+    JsonElement res = CollectUtil.replaceSmilingPlaceholder(jsonElement, configmap);
+    Metrics metricsTarget = Metrics.builder().name("张三").build();
+    JsonElement jsonElement2 = new Gson().toJsonTree(metricsTarget);
+    assertEquals(jsonElement2, res);
+
+    List<Metrics> metricsList = new ArrayList<>();
+    metricsList.add(metrics);
+    metricsList.add(metrics);
+    JsonElement jsonArray = new Gson().toJsonTree(metricsList);
+    JsonElement res2 = CollectUtil.replaceSmilingPlaceholder(jsonArray, configmap);
+
+    List<Metrics> metricsListTarget = new ArrayList<>();
+    metricsListTarget.add(metricsTarget);
+    metricsListTarget.add(metricsTarget);
+    JsonElement jsonArrayTarget = new Gson().toJsonTree(metricsListTarget);
+    assertEquals(jsonArrayTarget, res2);
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+ <!-- No changes needed -->
+ 
+Patch before Stitching:
+
+test_code:
+void replaceSmilingPlaceholder() {
+    Metrics metrics = Metrics.builder().name("^_^name^_^").build();
+    JsonElement jsonElement = new Gson().toJsonTree(metrics);
+    LinkedHashMap<String, Configmap> configmap = new LinkedHashMap<>();
+    Configmap config = Configmap.builder().key("name").value("张三").build();
+    configmap.put("name", config);
+    JsonElement res = CollectUtil.replaceSmilingPlaceholder(jsonElement, configmap);
+    Metrics metricsTarget = Metrics.builder().name("张三").build();
+    JsonElement jsonElement2 = new Gson().toJsonTree(metricsTarget);
+    assertEquals(jsonElement2, res);
+
+    List<Metrics> metricsList = new ArrayList<>();
+    metricsList.add(metrics);
+    metricsList.add(metrics);
+    JsonElement jsonArray = new Gson().toJsonTree(metricsList);
+    JsonElement res2 = CollectUtil.replaceSmilingPlaceholder(jsonArray, configmap);
+
+    List<Metrics> metricsListTarget = new ArrayList<>();
+    metricsListTarget.add(metricsTarget);
+    metricsListTarget.add(metricsTarget);
+    JsonElement jsonArrayTarget = new Gson().toJsonTree(metricsListTarget);
+    assertEquals(jsonArrayTarget, res2);
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+ <!-- No changes needed -->
+ 

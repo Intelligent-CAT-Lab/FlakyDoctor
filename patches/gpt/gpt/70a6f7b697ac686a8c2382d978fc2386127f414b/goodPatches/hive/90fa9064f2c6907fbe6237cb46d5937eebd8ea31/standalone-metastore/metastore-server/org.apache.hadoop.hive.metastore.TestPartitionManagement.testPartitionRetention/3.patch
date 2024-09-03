@@ -1,0 +1,87 @@
+test_before_fix:
+  public void testPartitionRetention() throws TException, IOException, InterruptedException {
+    String dbName = "db7";
+    String tableName = "tbl7";
+    Map<String, Column> colMap = buildAllColumns();
+    List<String> partKeys = Lists.newArrayList("state", "dt");
+    List<String> partKeyTypes = Lists.newArrayList("string", "date");
+    List<List<String>> partVals = Lists.newArrayList(
+      Lists.newArrayList("__HIVE_DEFAULT_PARTITION__", "1990-01-01"),
+      Lists.newArrayList("CA", "1986-04-28"),
+      Lists.newArrayList("MN", "2018-11-31"));
+    createMetadata(DEFAULT_CATALOG_NAME, dbName, tableName, partKeys, partKeyTypes, partVals, colMap, false);
+    Table table = client.getTable(dbName, tableName);
+    List<Partition> partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(3, partitions.size());
+    String tableLocation = table.getSd().getLocation();
+    URI location = URI.create(tableLocation);
+    Path tablePath = new Path(location);
+    FileSystem fs = FileSystem.get(location, conf);
+    Path newPart1 = new Path(tablePath, "state=WA/dt=2018-12-01");
+    Path newPart2 = new Path(tablePath, "state=UT/dt=2018-12-02");
+    fs.mkdirs(newPart1);
+    fs.mkdirs(newPart2);
+    assertEquals(5, fs.listStatus(tablePath).length);
+    table.getParameters().put(PartitionManagementTask.DISCOVER_PARTITIONS_TBLPROPERTY, "true");
+    table.getParameters().put(PartitionManagementTask.PARTITION_RETENTION_PERIOD_TBLPROPERTY, "20000ms");
+    client.alter_table(dbName, tableName, table);
+
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(5, partitions.size());
+
+    // after 30s all partitions should have been gone
+    Thread.sleep(30 * 1000);
+    runPartitionManagementTask(conf);
+    partitions = client.listPartitions(dbName, tableName, (short) -1);
+    assertEquals(0, partitions.size());
+  }
+
+test_after_fix:
+
+code:
+void testPartitionRetention() throws TException, IOException, InterruptedException { 
+     String dbName = "db7"; 
+     String tableName = "tbl7"; 
+     Map<String, Column> colMap = buildAllColumns(); 
+     List<String> partKeys = Lists.newArrayList("state", "dt"); 
+     List<String> partKeyTypes = Lists.newArrayList("string", "date"); 
+     List<List<String>> partVals = Lists.newArrayList( 
+             Lists.newArrayList("__HIVE_DEFAULT_PARTITION__", "1990-01-01"), 
+             Lists.newArrayList("CA", "1986-04-28"), 
+             Lists.newArrayList("MN", "2018-11-31")); 
+     createMetadata(DEFAULT_CATALOG_NAME, dbName, tableName, partKeys, partKeyTypes, partVals, colMap, false); 
+     Table table = client.getTable(dbName, tableName); 
+     List<Partition> partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     assertEquals(3, partitions.size()); 
+     String tableLocation = table.getSd().getLocation(); 
+     URI location = URI.create(tableLocation); 
+     Path tablePath = new Path(location); 
+     FileSystem fs = FileSystem.get(location, conf); 
+     Path newPart1 = new Path(tablePath, "state=WA/dt=2018-12-01"); 
+     Path newPart2 = new Path(tablePath, "state=UT/dt=2018-12-02"); 
+     fs.mkdirs(newPart1); 
+     fs.mkdirs(newPart2); 
+     List<FileStatus> fileStatuses = Arrays.asList(fs.listStatus(tablePath)); 
+     fileStatuses.sort(Comparator.comparing(FileStatus::getPath)); 
+     assertEquals(5, fileStatuses.size()); 
+     table.getParameters().put(PartitionManagementTask.DISCOVER_PARTITIONS_TBLPROPERTY, "true"); 
+     table.getParameters().put(PartitionManagementTask.PARTITION_RETENTION_PERIOD_TBLPROPERTY, "20000ms"); 
+     client.alter_table(dbName, tableName, table); 
+  
+     runPartitionManagementTask(conf); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions.sort(Comparator.comparing(o -> o.getValues().toString())); 
+     assertEquals(5, partitions.size()); 
+  
+     // after 30s all partitions should have been gone 
+     Thread.sleep(30 * 1000); 
+     runPartitionManagementTask(conf); 
+     partitions = client.listPartitions(dbName, tableName, (short) -1); 
+     partitions.sort(Comparator.comparing(o -> o.getValues().toString())); 
+     assertEquals(0, partitions.size()); 
+ } 
+ 
+import:
+[]
+pom:

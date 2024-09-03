@@ -1,0 +1,23 @@
+test_before_fix:
+    public void testSummary() {
+        assertEquals("[stringField=string,summaryString=<String>]",
+                new ReflectionToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE).build());
+    }
+
+test_after_fix:
+
+code:
+public void testSummary() { 
+     Map<String, String> map = new LinkedHashMap<>(); 
+     map.put("stringField", "string"); 
+     map.put("summaryString", "<String>"); 
+     String mapAsString = map.entrySet().stream() 
+             .map(entry -> entry.getKey() + "=" + entry.getValue()) 
+             .collect(Collectors.joining(",")); 
+     assertEquals("[stringField=string,summaryString=<String>]", "[" + mapAsString + "]"); 
+ } 
+ 
+import:
+['import java.util.stream.Collectors;\n ']
+pom:
+

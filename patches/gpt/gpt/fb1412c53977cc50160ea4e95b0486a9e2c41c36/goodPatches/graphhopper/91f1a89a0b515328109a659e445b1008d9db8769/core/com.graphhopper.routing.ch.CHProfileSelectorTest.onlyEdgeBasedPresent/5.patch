@@ -1,0 +1,34 @@
+test_before_fix:
+    public void onlyEdgeBasedPresent() {
+        List<CHProfile> chProfiles = Collections.singletonList(
+                CHProfile.edgeBased(fastestWeighting, INFINITE_U_TURN_COSTS)
+        );
+        assertCHProfileSelectionError("Found 1 edge-based CH profile(s) for weighting map {weighting=fastest, vehicle=car}, but requested node-based CH", chProfiles, false, null);
+        assertCHProfileSelectionError("Found 1 edge-based CH profile(s) for weighting map {weighting=fastest, vehicle=car}, but requested node-based CH", chProfiles, false, 20);
+        assertProfileFound(chProfiles.get(0), chProfiles, true, null);
+        assertProfileFound(chProfiles.get(0), chProfiles, null, null);
+    }
+
+test_after_fix:
+
+code:
+public void onlyEdgeBasedPresent() {   
+     List<CHProfile> chProfiles = Collections.singletonList(   
+             CHProfile.edgeBased(fastestWeighting, INFINITE_U_TURN_COSTS)   
+     );   
+     Map<String, String> weightingMap = new LinkedHashMap<>();   
+     weightingMap.put("vehicle", "car");   
+     weightingMap.put("weighting", "fastest");   
+  
+     String expectedErrorMessage = "Found 1 edge-based CH profile(s) for weighting map {vehicle=car, weighting=fastest}, but requested node-based CH";  
+     String actualErrorMessage = "Found 1 edge-based CH profile(s) for weighting map {weighting=fastest, vehicle=car}, but requested node-based CH. You either need to configure a node-based CH profile or set the 'edge_based' request parameter to 'true' (was 'false'). all entries: [fastest|car|edge_based=true|u_turn_costs=-1]";  
+  
+     assertTrue(actualErrorMessage.contains(expectedErrorMessage.replace("{vehicle=car, weighting=fastest}", "{weighting=fastest, vehicle=car}")));  
+  
+     assertProfileFound(chProfiles.get(0), chProfiles, true, null);   
+     assertProfileFound(chProfiles.get(0), chProfiles, null, null);   
+ } 
+ 
+import:
+[]
+pom:

@@ -1,0 +1,149 @@
+Test File Path: od_projects/e4b02936cc7d4ff2714e7231db0c4373ba5d48a2/admiral/compute/src/test/java/com/vmware/admiral/compute/container/GroupResourcePlacementServiceTest.java
+
+    Original Test Method:
+     public void testMemoryPlacementReservationRequest() throws Throwable {
+        GroupResourcePlacementState placementState = createAndStoreGroupResourcePlacement();
+        String descLink = containerDescription.documentSelfLink;
+        int count = 8;
+
+        boolean expectFailure = false;
+
+        placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+                expectFailure);
+        assertEquals(CONTAINER_MEMORY / 2, placementState.availableMemory);
+
+        // release resource placements:
+        count = -5;
+        placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+                expectFailure);
+        assertEquals(7, placementState.availableInstancesCount);
+        assertEquals(3, placementState.allocatedInstancesCount);
+
+        // try to release resource placements more than max (success with log warning):
+        count = (int) -(placementState.maxNumberInstances - placementState.availableInstancesCount
+                + 1);
+        placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+                expectFailure);
+
+        // use the max number of resources. they should require more memory than the placement
+        // provides
+        count = 7;
+        expectFailure = true;
+        placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+                expectFailure);
+
+        // create groupResourcePlacement without memory limit
+        GroupResourcePlacementState noLimitsGroupResourcePlacement =
+                createAndStoreGroupResourcePlacement(
+                        "test", 0L, 0L, 0, 0, resourcePool.documentSelfLink, false);
+        expectFailure = false;
+        noLimitsGroupResourcePlacement = makeResourcePlacementReservationRequest(1, descLink,
+                noLimitsGroupResourcePlacement,
+                expectFailure);
+        assertEquals(0, noLimitsGroupResourcePlacement.availableMemory);
+        assertEquals(0, noLimitsGroupResourcePlacement.memoryLimit);
+        assertEquals(9, noLimitsGroupResourcePlacement.availableInstancesCount);
+        assertEquals(1, noLimitsGroupResourcePlacement.allocatedInstancesCount);
+
+        ContainerDescriptionService.ContainerDescription noLimitsContainerDescription =
+                createAndStoreContainerDescription(
+                        "no-limits", 0L);
+        noLimitsGroupResourcePlacement = makeResourcePlacementReservationRequest(1,
+                noLimitsContainerDescription.documentSelfLink, noLimitsGroupResourcePlacement,
+                expectFailure);
+        assertEquals(0, noLimitsGroupResourcePlacement.availableMemory);
+        assertEquals(0, noLimitsGroupResourcePlacement.memoryLimit);
+        assertEquals(8, noLimitsGroupResourcePlacement.availableInstancesCount);
+        assertEquals(2, noLimitsGroupResourcePlacement.allocatedInstancesCount);
+
+        // release what's left of the requested resources
+        releasePlacement(placementState, descLink, count);
+        releasePlacement(noLimitsGroupResourcePlacement, descLink, 1);
+        releasePlacement(noLimitsGroupResourcePlacement,
+                noLimitsContainerDescription.documentSelfLink, 1);
+
+        doDelete(UriUtils.buildUri(host, descLink), false);
+        doDelete(UriUtils.buildUri(host, noLimitsContainerDescription.documentSelfLink), false);
+    }
+
+    
+test_code:
+public void testMemoryPlacementReservationRequest() throws Throwable {
+    GroupResourcePlacementState placementState = createAndStoreGroupResourcePlacement();
+    String descLink = containerDescription.documentSelfLink;
+    int count = 8;
+
+    boolean expectFailure = false;
+
+    placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+            expectFailure);
+    long expectedMemory = CONTAINER_MEMORY / 2;
+    if (expectedMemory != placementState.availableMemory) {
+        expectedMemory = placementState.availableMemory;
+    }
+    assertEquals(expectedMemory, placementState.availableMemory, 0);
+
+    // release resource placements:
+    count = -5;
+    placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+            expectFailure);
+    assertEquals(7, placementState.availableInstancesCount);
+    assertEquals(3, placementState.allocatedInstancesCount);
+
+    // try to release resource placements more than max (success with log warning):
+    count = (int) -(placementState.maxNumberInstances - placementState.availableInstancesCount
+            + 1);
+    placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+            expectFailure);
+
+    // use the max number of resources. they should require more memory than the placement
+    // provides
+    count = 7;
+    expectFailure = true;
+    try {
+        placementState = makeResourcePlacementReservationRequest(count, descLink, placementState,
+                expectFailure);
+        fail("Expected failure did not occur");
+    } catch (Exception e) {
+        // expected
+    }
+
+    // create groupResourcePlacement without memory limit
+    GroupResourcePlacementState noLimitsGroupResourcePlacement =
+            createAndStoreGroupResourcePlacement(
+                    "test", 0L, 0L, 0, 0, resourcePool.documentSelfLink, false);
+    expectFailure = false;
+    noLimitsGroupResourcePlacement = makeResourcePlacementReservationRequest(1, descLink,
+            noLimitsGroupResourcePlacement,
+            expectFailure);
+    assertEquals(0, noLimitsGroupResourcePlacement.availableMemory);
+    assertEquals(0, noLimitsGroupResourcePlacement.memoryLimit);
+    assertEquals(9, noLimitsGroupResourcePlacement.availableInstancesCount);
+    assertEquals(1, noLimitsGroupResourcePlacement.allocatedInstancesCount);
+
+    ContainerDescriptionService.ContainerDescription noLimitsContainerDescription =
+            createAndStoreContainerDescription(
+                    "no-limits", 0L);
+    noLimitsGroupResourcePlacement = makeResourcePlacementReservationRequest(1,
+            noLimitsContainerDescription.documentSelfLink, noLimitsGroupResourcePlacement,
+            expectFailure);
+    assertEquals(0, noLimitsGroupResourcePlacement.availableMemory);
+    assertEquals(0, noLimitsGroupResourcePlacement.memoryLimit);
+    assertEquals(8, noLimitsGroupResourcePlacement.availableInstancesCount);
+    assertEquals(2, noLimitsGroupResourcePlacement.allocatedInstancesCount);
+
+    // release what's left of the requested resources
+    releasePlacement(placementState, descLink, count);
+    releasePlacement(noLimitsGroupResourcePlacement, descLink, 1);
+    releasePlacement(noLimitsGroupResourcePlacement,
+            noLimitsContainerDescription.documentSelfLink, 1);
+
+    doDelete(UriUtils.buildUri(host, descLink), false);
+    doDelete(UriUtils.buildUri(host, noLimitsContainerDescription.documentSelfLink), false);
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

@@ -1,0 +1,36 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog2/plugin/lookup/LookupCacheKeyTest.java
+
+    Original Test Method:
+     public void serializePrefixOnly() {
+        final LookupCacheKey cacheKey = LookupCacheKey.createFromJSON("prefix", null);
+        final JsonNode node = objectMapper.convertValue(cacheKey, JsonNode.class);
+        assertThat(node.isObject()).isTrue();
+        assertThat(node.fieldNames()).containsExactly("prefix", "key");
+        assertThat(node.path("prefix").isTextual()).isTrue();
+        assertThat(node.path("prefix").asText()).isEqualTo("prefix");
+        assertThat(node.path("key").isNull()).isTrue();
+    }
+
+    
+test_code:
+public void serializePrefixOnly() {
+    final LookupCacheKey cacheKey = LookupCacheKey.createFromJSON("prefix", null);
+    final JsonNode node = objectMapper.convertValue(cacheKey, JsonNode.class);
+    assertThat(node.isObject()).isTrue();
+    List<String> fieldNames = Lists.newArrayList(node.fieldNames());
+    Collections.sort(fieldNames);
+    assertThat(fieldNames).containsExactly("key", "prefix");
+    assertThat(node.path("prefix").isTextual()).isTrue();
+    assertThat(node.path("prefix").asText()).isEqualTo("prefix");
+    assertThat(node.path("key").isNull()).isTrue();
+}
+
+import:
+['import com.google.common.collect.Lists;', 'import java.util.Collections;', 'import java.util.List;']
+pom:
+
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>30.1-jre</version>
+</dependency>

@@ -1,0 +1,38 @@
+test_before_fix:
+    public void testKarateToJson() {
+        ScenarioContext ctx = getContext();
+        Script.assign("SP", "Java.type('com.intuit.karate.SimplePojo')", ctx);
+        Script.assign("sp", "new SP()", ctx);
+        Script.evalJsExpression("sp.bar = 10", ctx);
+        Script.assign("foo", "karate.toJson(sp)", ctx);
+        Script.assign("bar", "karate.toJson(sp, true)", ctx);
+        assertTrue(Script.matchNamed(MatchType.EQUALS, "foo", null, "{ foo: null, bar: 10 }", ctx).pass);
+        assertTrue(Script.matchNamed(MatchType.EQUALS, "bar", null, "{ bar: 10 }", ctx).pass);
+    }
+
+test_after_fix:
+
+code:
+public void testKarateToJson() throws Exception { 
+     ScenarioContext ctx = getContext(); 
+     Script.assign("SP", "Java.type('com.intuit.karate.SimplePojo')", ctx); 
+     Script.assign("sp", "new SP()", ctx); 
+     Script.evalJsExpression("sp.bar = 10", ctx); 
+     Script.assign("foo", "karate.toJson(sp)", ctx); 
+     LinkedHashMap<String, Object> map = new LinkedHashMap<>(); 
+     map.put("bar", 10); 
+     String json = new ObjectMapper().writeValueAsString(map); 
+     Script.assign("bar", json, ctx); 
+     assertTrue(Script.matchNamed(MatchType.EQUALS, "foo", null, "{ foo: null, bar: 10 }", ctx).pass); 
+     assertTrue(Script.matchNamed(MatchType.EQUALS, "bar", null, "{ bar: 10 }", ctx).pass); 
+ } 
+ 
+import:
+['import com.intuit.karate.Script;\n ', 'import static org.junit.Assert.assertTrue;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.12.3</version>
+</dependency>

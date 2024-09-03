@@ -1,0 +1,42 @@
+Test File Path: projects/ca465ec9243c7ed981528379e351bddeae8d5c83/Gaffer/core/common-util/src/test/java/uk/gov/gchq/gaffer/commonutil/OneOrMoreTest.java
+
+    Original Test Method:
+     public void shouldAddAllItemsWithDeduplicate() {
+        // Given
+        final boolean deduplicate = true;
+        final OneOrMore<Integer> collection = new OneOrMore<>(deduplicate);
+
+        final Set<Integer> expectedItems = new HashSet<>();
+        IntStream.rangeClosed(1, 200).forEach(expectedItems::add);
+
+        // When
+        collection.addAll(expectedItems);
+        collection.addAll(expectedItems);
+
+        // Then
+        assertThat(collection).containsExactlyElementsOf(expectedItems);
+    }
+
+    
+test_code:
+    public void shouldAddAllItemsWithDeduplicate() {
+        // Given
+        final boolean deduplicate = true;
+        final OneOrMore<Integer> collection = new OneOrMore<>(deduplicate);
+
+        final Set<Integer> expectedItems = new LinkedHashSet<>();
+        IntStream.rangeClosed(1, 200).forEach(expectedItems::add);
+
+        // When
+        collection.addAll(expectedItems);
+        collection.addAll(expectedItems);
+
+        // Then
+        assertThat(collection).containsExactlyInAnyOrderElementsOf(expectedItems);
+    }
+
+import:
+['import java.util.LinkedHashSet;']
+pom:
+
+ 

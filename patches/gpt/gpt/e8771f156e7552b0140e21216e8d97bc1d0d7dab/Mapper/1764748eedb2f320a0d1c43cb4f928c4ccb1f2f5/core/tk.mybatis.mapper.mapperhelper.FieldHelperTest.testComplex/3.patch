@@ -1,0 +1,29 @@
+Test File Path: dexfix_projects/1764748eedb2f320a0d1c43cb4f928c4ccb1f2f5/Mapper/core/src/test/java/tk/mybatis/mapper/mapperhelper/FieldHelperTest.java
+
+    Original Test Method:
+     public void testComplex(){
+        List<EntityField> fieldList = FieldHelper.getFields(Admin.class);
+        Assert.assertEquals(2, fieldList.size());
+        Assert.assertEquals("admin", fieldList.get(0).getName());
+        Assert.assertEquals("user", fieldList.get(1).getName());
+    }
+
+    
+test_code:
+public void testComplex(){
+    List<EntityField> fieldList = new ArrayList<EntityField>(FieldHelper.getFields(Admin.class));
+    Map<String, EntityField> fieldMap = new LinkedHashMap<String, EntityField>();
+    for (EntityField field : fieldList) {
+        fieldMap.put(field.getName(), field);
+    }
+
+    Assert.assertEquals(2, fieldMap.size());
+    Assert.assertEquals("admin", fieldMap.get("admin").getName());
+    Assert.assertEquals("user", fieldMap.get("user").getName());
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

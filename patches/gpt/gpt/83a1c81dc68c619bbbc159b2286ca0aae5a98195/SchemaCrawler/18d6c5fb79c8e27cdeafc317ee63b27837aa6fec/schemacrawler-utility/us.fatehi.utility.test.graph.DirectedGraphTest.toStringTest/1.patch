@@ -1,0 +1,27 @@
+Test File Path: projects/18d6c5fb79c8e27cdeafc317ee63b27837aa6fec/SchemaCrawler/schemacrawler-utility/src/test/java/us/fatehi/utility/test/graph/DirectedGraphTest.java
+
+    Original Test Method:
+   public void toStringTest() throws Exception {
+    final DirectedGraph<String> graph = makeGraph();
+
+    assertThat(
+        graph.toString(),
+        is("digraph {\n  A;\n  B;\n  C;\n  D;\n  E;\n  A -> B;\n  B -> C;\n  A -> D;\n}\n"));
+  }
+
+    
+test_code:
+public void toStringTest() throws Exception {
+    final DirectedGraph<String> graph = makeGraph();
+    String[] expected = new String[]{"digraph {", "  A;", "  B;", "  C;", "  D;", "  E;", "  A -> B;", "  B -> C;", "  A -> D;", "}"};
+    List<String> expectedList = Arrays.asList(expected);
+    List<String> actualList = Arrays.asList(graph.toString().split("\n"));
+    Collections.sort(expectedList);
+    Collections.sort(actualList);
+    assertThat(actualList, is(expectedList));
+}
+
+import:
+['import java.util.List;', 'import java.util.Collections;']
+pom:
+

@@ -1,0 +1,28 @@
+Test File Path: projects/e77a0bbe0d39a852a52a8d81c20f3fab4f98773d/nacos/api/src/test/java/com/alibaba/nacos/api/config/ability/ServerRemoteAbilityTest.java
+
+    Original Test Method:
+     public void testSerialize() throws JsonProcessingException {
+        serverAbilities = new ServerRemoteAbility();
+        String json = mapper.writeValueAsString(serverAbilities);
+        assertEquals("{\"supportRemoteConnection\":false,\"grpcReportEnabled\":true}", json);
+    }
+
+    
+test_code:
+public void testSerialize() throws JsonProcessingException {
+    serverAbilities = new ServerRemoteAbility();
+    String json = mapper.writeValueAsString(serverAbilities);
+    JsonNode jsonNodeExpected = mapper.readTree("{\"supportRemoteConnection\":false,\"grpcReportEnabled\":true}");
+    JsonNode jsonNodeActual = mapper.readTree(json);
+    assertEquals(jsonNodeExpected, jsonNodeActual);
+}
+
+import:
+['import com.fasterxml.jackson.databind.JsonNode;']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.9.8</version>
+</dependency>

@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'testClearRpcContext': 'public void testClearRpcContext() {\n    \n\n    // Clear the RpcContext at the start of the test\n    RpcContext.getContext().clearAttachments();\n    \n\n\n    resetInvokerToException();\n    ForkingClusterInvoker<ForkingClusterInvokerTest> invoker = new ForkingClusterInvoker<ForkingClusterInvokerTest>(\n            dic);\n\n    String attachKey = "attach";\n    String attachValue = "value";\n\n    RpcContext.getContext().setAttachment(attachKey, attachValue);\n\n    Map<String, String> attachments = RpcContext.getContext().getAttachments();\n    Assert.assertTrue("set attachment failed!", attachments != null && attachments.size() == 1);\n    try {\n        invoker.invoke(invocation);\n        Assert.fail();\n    } catch (RpcException expected) {\n        Assert.assertTrue("Succeeded to forking invoke provider !", expected.getMessage().contains("Failed to forking invoke provider"));\n        assertFalse(expected.getCause() instanceof RpcException);\n    }\n    Map<String, String> afterInvoke = RpcContext.getContext().getAttachments();\n    Assert.assertTrue("clear attachment failed!", afterInvoke != null && afterInvoke.size() == 0);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['testClearRpcContext']}polluter
+:code:
+{'fields': {}, 'methods': {'testClearRpcContext': 'public void testClearRpcContext() {\n    \n\n    // Clear the RpcContext at the start of the test\n    RpcContext.getContext().clearAttachments();\n    \n\n\n    resetInvokerToException();\n    ForkingClusterInvoker<ForkingClusterInvokerTest> invoker = new ForkingClusterInvoker<ForkingClusterInvokerTest>(\n            dic);\n\n    String attachKey = "attach";\n    String attachValue = "value";\n\n    RpcContext.getContext().setAttachment(attachKey, attachValue);\n\n    Map<String, String> attachments = RpcContext.getContext().getAttachments();\n    Assert.assertTrue("set attachment failed!", attachments != null && attachments.size() == 1);\n    try {\n        invoker.invoke(invocation);\n        Assert.fail();\n    } catch (RpcException expected) {\n        Assert.assertTrue("Succeeded to forking invoke provider !", expected.getMessage().contains("Failed to forking invoke provider"));\n        assertFalse(expected.getCause() instanceof RpcException);\n    }\n    Map<String, String> afterInvoke = RpcContext.getContext().getAttachments();\n    Assert.assertTrue("clear attachment failed!", afterInvoke != null && afterInvoke.size() == 0);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['testClearRpcContext']}

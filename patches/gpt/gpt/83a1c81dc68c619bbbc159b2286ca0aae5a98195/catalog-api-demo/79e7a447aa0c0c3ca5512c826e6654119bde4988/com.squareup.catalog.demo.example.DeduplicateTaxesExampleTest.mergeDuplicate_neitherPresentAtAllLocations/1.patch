@@ -1,0 +1,37 @@
+Test File Path: projects/79e7a447aa0c0c3ca5512c826e6654119bde4988/catalog-api-demo/src/test/java/com/squareup/catalog/demo/example/DeduplicateTaxesExampleTest.java
+
+    Original Test Method:
+   public void mergeDuplicate_neitherPresentAtAllLocations() {
+    CatalogObject master = createCatalogObjectPresentAtLocations("L1", "L2");
+    CatalogObject dup = createCatalogObjectPresentAtLocations("L2", "L3");
+
+    DuplicateTaxInfo taxInfo = new DuplicateTaxInfo(master);
+    taxInfo.mergeDuplicate(dup, logger);
+
+    CatalogObject result = taxInfo.getMasterTax();
+    assertThat(result.getPresentAtAllLocations()).isFalse();
+    assertThat(result.getPresentAtLocationIds()).containsExactly("L1", "L2", "L3");
+    assertThat(result.getAbsentAtLocationIds()).isNullOrEmpty();
+  }
+
+    
+test_code:
+ public void mergeDuplicate_neitherPresentAtAllLocations() {
+    CatalogObject master = createCatalogObjectPresentAtLocations("L1", "L2");
+    CatalogObject dup = createCatalogObjectPresentAtLocations("L2", "L3");
+
+    DuplicateTaxInfo taxInfo = new DuplicateTaxInfo(master);
+    taxInfo.mergeDuplicate(dup, logger);
+
+    CatalogObject result = taxInfo.getMasterTax();
+    assertThat(result.getPresentAtAllLocations()).isFalse();
+    assertThat(result.getPresentAtLocationIds()).containsOnly("L1", "L2", "L3");
+    assertThat(result.getAbsentAtLocationIds()).isNullOrEmpty();
+  }
+
+import:
+[]
+pom:
+
+ <!-- No changes needed -->
+ 

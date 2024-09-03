@@ -1,0 +1,39 @@
+test_before_fix:
+    public void testEquals2Annotations()
+    {
+        BeanCacheKey a = new BeanCacheKey(true, String.class, null, it -> null, a12);
+        BeanCacheKey b = new BeanCacheKey(true, String.class, null, it -> null, a12);
+        Assert.assertEquals(a, b);
+        Assert.assertEquals(a.hashCode(), b.hashCode());
+    }
+
+test_after_fix:
+
+code:
+ 
+  
+ public void testEquals2Annotations()  
+ {  
+     Annotation a12 = new Annotation() { 
+         @Override 
+         public Class<? extends Annotation> annotationType() { 
+             return this.getClass(); 
+         } 
+     }; 
+     List<Annotation> qualifiers = new ArrayList<>();  
+     qualifiers.add(a12);  
+     qualifiers.sort(Comparator.comparing(Annotation::toString));  
+  
+     BeanCacheKey a = new BeanCacheKey(true, String.class, null, it -> null, qualifiers.toArray(new Annotation[0]));  
+     BeanCacheKey b = new BeanCacheKey(true, String.class, null, it -> null, qualifiers.toArray(new Annotation[0]));  
+     Assert.assertEquals(a, b);  
+     Assert.assertEquals(a.hashCode(), b.hashCode());  
+ } 
+  
+  
+ 
+import:
+[]
+pom:
+
+<!-- No changes needed -->

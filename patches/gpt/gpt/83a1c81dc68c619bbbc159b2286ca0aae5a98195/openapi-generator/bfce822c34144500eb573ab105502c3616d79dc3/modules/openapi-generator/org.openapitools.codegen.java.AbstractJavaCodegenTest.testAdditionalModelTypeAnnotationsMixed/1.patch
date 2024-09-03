@@ -1,0 +1,44 @@
+Test File Path: projects/bfce822c34144500eb573ab105502c3616d79dc3/openapi-generator/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/AbstractJavaCodegenTest.java
+
+    Original Test Method:
+     public void testAdditionalModelTypeAnnotationsMixed() throws Exception {
+        OpenAPI openAPI = TestUtils.createOpenAPI();
+
+        final AbstractJavaCodegen codegen = new P_AbstractJavaCodegen();
+        codegen.additionalProperties().put(AbstractJavaCodegen.ADDITIONAL_MODEL_TYPE_ANNOTATIONS, " \t @Foo;\r\n@Bar  ;\n @Foobar  ");
+        
+        codegen.processOpts();
+        codegen.preprocessOpenAPI(openAPI);
+        
+        final List<String> additionalModelTypeAnnotations = new ArrayList<String>();
+        additionalModelTypeAnnotations.add("@Foo");
+        additionalModelTypeAnnotations.add("@Bar");
+        additionalModelTypeAnnotations.add("@Foobar");
+
+        Assert.assertEquals(codegen.getAdditionalModelTypeAnnotations(), additionalModelTypeAnnotations);
+    }
+
+    
+test_code:
+public void testAdditionalModelTypeAnnotationsMixed() throws Exception {
+    OpenAPI openAPI = TestUtils.createOpenAPI();
+
+    final AbstractJavaCodegen codegen = new P_AbstractJavaCodegen();
+    codegen.additionalProperties().put(AbstractJavaCodegen.ADDITIONAL_MODEL_TYPE_ANNOTATIONS, " \t @Foo;\r\n@Bar  ;\n @Foobar  ");
+    
+    codegen.processOpts();
+    codegen.preprocessOpenAPI(openAPI);
+    
+    final Set<String> additionalModelTypeAnnotations = new LinkedHashSet<String>();
+    additionalModelTypeAnnotations.add("@Foo");
+    additionalModelTypeAnnotations.add("@Bar");
+    additionalModelTypeAnnotations.add("@Foobar");
+
+    Assert.assertEquals(new LinkedHashSet<>(codegen.getAdditionalModelTypeAnnotations()), additionalModelTypeAnnotations);
+}
+
+import:
+['import java.util.LinkedHashSet;', 'import java.util.Set;']
+pom:
+
+ 

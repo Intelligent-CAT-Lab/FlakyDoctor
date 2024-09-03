@@ -1,0 +1,84 @@
+test_before_fix:
+    public void testFormatDidNotChange() throws Exception {
+        String previousConfig = getConfig();
+        assertThat(previousConfig).isNotNull();
+        assertThat(previousConfig).isNotEmpty();
+
+        LibraryConfiguration lib = new LibraryConfiguration(
+                "foo",
+                new HttpRetriever("http://example.com/", credentials.getId(), true)
+        );
+        globalLibraries.getLibraries().clear();
+        globalLibraries.getLibraries().add(lib);
+        j.configRoundtrip();
+        String currentConfig = getConfig();
+
+        String message = "Your config format changed. If it is intentional and necessary:\n";
+        message += " - update this test with new test data that reflects your new data format\n";
+        message += " - create test to make sure that new code can cope with old data format" +
+                " (testConfigurationRoundtripXXX)";
+        message += "\n\n";
+        message += "Old config:\n" + previousConfig;
+        message += "\n\n";
+        message += "New config:\n" + currentConfig;
+        message += "\n\n";
+
+        assertThat(previousConfig).withFailMessage(message).isXmlEqualTo(currentConfig);
+    }
+
+test_after_fix:
+
+code:
+public void testFormatDidNotChange() throws Exception {    
+        String previousConfig = getConfig();    
+        assertThat(previousConfig).isNotNull();    
+        assertThat(previousConfig).isNotEmpty();    
+        
+        LibraryConfiguration lib = new LibraryConfiguration(    
+                "foo",    
+                new HttpRetriever("http://example.com/", credentials.getId(), true)    
+        );    
+        globalLibraries.getLibraries().clear();    
+        globalLibraries.getLibraries().add(lib);    
+        j.configRoundtrip();    
+        String currentConfig = getConfig();    
+        
+        String message = "Your config format changed. If it is intentional and necessary:\n";    
+        message += " - update this test with new test data that reflects your new data format\n";    
+        message += " - create test to make sure that new code can cope with old data format" +    
+                " (testConfigurationRoundtripXXX)";    
+        message += "\n\n";    
+        message += "Old config:\n" + previousConfig;    
+        message += "\n\n";    
+        message += "New config:\n" + currentConfig;    
+        message += "\n\n";    
+        
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();    
+        DocumentBuilder db = dbf.newDocumentBuilder();    
+        Document doc1 = db.parse(new InputSource(new StringReader(previousConfig)));    
+        Document doc2 = db.parse(new InputSource(new StringReader(currentConfig)));    
+         
+        TransformerFactory tf = TransformerFactory.newInstance();   
+        Transformer transformer = tf.newTransformer();   
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");   
+        StringWriter writer1 = new StringWriter();   
+        transformer.transform(new DOMSource(doc1), new StreamResult(writer1));   
+        String output1 = writer1.getBuffer().toString().replaceAll("\n|\r", "");   
+      
+        StringWriter writer2 = new StringWriter();   
+        transformer.transform(new DOMSource(doc2), new StreamResult(writer2));   
+        String output2 = writer2.getBuffer().toString().replaceAll("\n|\r", "");   
+    
+        List<String> output1List = Arrays.asList(output1.split(" "));  
+        List<String> output2List = Arrays.asList(output2.split(" "));  
+        Collections.sort(output1List);  
+        Collections.sort(output2List);  
+        output1 = String.join(" ", output1List);  
+        output2 = String.join(" ", output2List);  
+      
+        assertThat(output1.equals(output2)).withFailMessage(message).isTrue();    
+    } 
+ 
+import:
+[]
+pom:

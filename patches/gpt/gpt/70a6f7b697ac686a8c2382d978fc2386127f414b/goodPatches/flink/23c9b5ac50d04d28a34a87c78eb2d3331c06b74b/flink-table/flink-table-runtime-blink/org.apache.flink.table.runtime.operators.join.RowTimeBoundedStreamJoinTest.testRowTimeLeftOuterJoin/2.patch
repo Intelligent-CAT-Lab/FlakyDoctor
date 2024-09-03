@@ -1,0 +1,136 @@
+test_before_fix:
+	public void testRowTimeLeftOuterJoin() throws Exception {
+		RowTimeBoundedStreamJoin joinProcessFunc = new RowTimeBoundedStreamJoin(
+				FlinkJoinType.LEFT, -5, 9, 0, rowType, rowType, generatedFunction, 0, 0);
+
+		KeyedTwoInputStreamOperatorTestHarness<BaseRow, BaseRow, BaseRow, BaseRow> testHarness = createTestHarness(
+				joinProcessFunc);
+
+		testHarness.open();
+
+		testHarness.processElement1(record(1L, "k1"));
+		testHarness.processElement2(record(1L, "k2"));
+		assertEquals(2, testHarness.numEventTimeTimers());
+		assertEquals(4, testHarness.numKeyedStateEntries());
+
+		// The left row with timestamp = 1 will be padded and removed (14=1+5+1+((5+9)/2)).
+		testHarness.processWatermark1(new Watermark(14));
+		testHarness.processWatermark2(new Watermark(14));
+		assertEquals(1, testHarness.numEventTimeTimers());
+		assertEquals(2, testHarness.numKeyedStateEntries());
+
+		// The right row with timestamp = 1 will be removed (18=1+9+1+((5+9)/2)).
+		testHarness.processWatermark1(new Watermark(18));
+		testHarness.processWatermark2(new Watermark(18));
+		assertEquals(0, testHarness.numEventTimeTimers());
+		assertEquals(0, testHarness.numKeyedStateEntries());
+
+		testHarness.processElement1(record(2L, "k1"));
+		testHarness.processElement2(record(2L, "k2"));
+		// The late rows with timestamp = 2 will not be cached, but a null padding result for the left
+		// row will be emitted.
+		assertEquals(0, testHarness.numKeyedStateEntries());
+		assertEquals(0, testHarness.numEventTimeTimers());
+
+		// Make sure the common (inner) join can be performed.
+		testHarness.processElement1(record(19L, "k1"));
+		testHarness.processElement1(record(20L, "k1"));
+		testHarness.processElement2(record(26L, "k1"));
+		testHarness.processElement2(record(25L, "k1"));
+		testHarness.processElement1(record(21L, "k1"));
+		testHarness.processElement2(record(39L, "k2"));
+		testHarness.processElement2(record(40L, "k2"));
+		testHarness.processElement1(record(50L, "k2"));
+		testHarness.processElement1(record(49L, "k2"));
+		testHarness.processElement2(record(41L, "k2"));
+		testHarness.processWatermark1(new Watermark(100));
+		testHarness.processWatermark2(new Watermark(100));
+
+		List<Object> expectedOutput = new ArrayList<>();
+		// The timestamp 14 is set with the triggered timer.
+		expectedOutput.add(record(1L, "k1", null, null));
+		expectedOutput.add(new Watermark(5));
+		expectedOutput.add(new Watermark(9));
+		expectedOutput.add(record(2L, "k1", null, null));
+		expectedOutput.add(record(20L, "k1", 25L, "k1"));
+		expectedOutput.add(record(21L, "k1", 25L, "k1"));
+		expectedOutput.add(record(21L, "k1", 26L, "k1"));
+		expectedOutput.add(record(49L, "k2", 40L, "k2"));
+		expectedOutput.add(record(49L, "k2", 41L, "k2"));
+		expectedOutput.add(record(50L, "k2", 41L, "k2"));
+		// The timestamp 32 is set with the triggered timer.
+		expectedOutput.add(record(19L, "k1", null, null));
+		expectedOutput.add(new Watermark(91));
+
+		assertor.assertOutputEquals("output wrong.", expectedOutput, testHarness.getOutput());
+		testHarness.close();
+	}
+
+test_after_fix:
+
+code:
+public void testRowTimeLeftOuterJoin() throws Exception {  
+  	RowTimeBoundedStreamJoin joinProcessFunc = new RowTimeBoundedStreamJoin(  
+  			FlinkJoinType.LEFT, -5, 9, 0, rowType, rowType, generatedFunction, 0, 0);  
+    
+  	KeyedTwoInputStreamOperatorTestHarness<BaseRow, BaseRow, BaseRow, BaseRow> testHarness = createTestHarness(  
+  			joinProcessFunc);  
+    
+  	testHarness.open();  
+    
+  	testHarness.processElement1(record(1L, "k1"));  
+  	testHarness.processElement2(record(1L, "k2"));  
+  	assertEquals(2, testHarness.numEventTimeTimers());  
+  	assertEquals(4, testHarness.numKeyedStateEntries());  
+    
+  	testHarness.processWatermark1(new Watermark(14));  
+  	testHarness.processWatermark2(new Watermark(14));  
+  	assertEquals(1, testHarness.numEventTimeTimers());  
+  	assertEquals(2, testHarness.numKeyedStateEntries());  
+    
+  	testHarness.processWatermark1(new Watermark(18));  
+  	testHarness.processWatermark2(new Watermark(18));  
+  	assertEquals(0, testHarness.numEventTimeTimers());  
+  	assertEquals(0, testHarness.numKeyedStateEntries());  
+    
+  	testHarness.processElement1(record(2L, "k1"));  
+  	testHarness.processElement2(record(2L, "k2"));  
+  	assertEquals(0, testHarness.numKeyedStateEntries());  
+  	assertEquals(0, testHarness.numEventTimeTimers());  
+    
+  	testHarness.processElement1(record(19L, "k1"));  
+  	testHarness.processElement1(record(20L, "k1"));  
+  	testHarness.processElement2(record(26L, "k1"));  
+  	testHarness.processElement2(record(25L, "k1"));  
+  	testHarness.processElement1(record(21L, "k1"));  
+  	testHarness.processElement2(record(39L, "k2"));  
+  	testHarness.processElement2(record(40L, "k2"));  
+  	testHarness.processElement1(record(50L, "k2"));  
+  	testHarness.processElement1(record(49L, "k2"));  
+  	testHarness.processElement2(record(41L, "k2"));  
+  	testHarness.processWatermark1(new Watermark(100));  
+  	testHarness.processWatermark2(new Watermark(100));  
+    
+  	List<Object> expectedOutput = new ArrayList<>();  
+  	expectedOutput.add(record(1L, "k1", null, null));  
+  	expectedOutput.add(new Watermark(5));  
+  	expectedOutput.add(new Watermark(9));  
+  	expectedOutput.add(record(2L, "k1", null, null));  
+  	expectedOutput.add(record(20L, "k1", 25L, "k1"));  
+  	expectedOutput.add(record(21L, "k1", 25L, "k1"));  
+  	expectedOutput.add(record(21L, "k1", 26L, "k1"));  
+  	expectedOutput.add(record(49L, "k2", 40L, "k2"));  
+  	expectedOutput.add(record(49L, "k2", 41L, "k2"));  
+  	expectedOutput.add(record(50L, "k2", 41L, "k2"));  
+  	expectedOutput.add(record(19L, "k1", null, null));  
+  	expectedOutput.add(new Watermark(91));  
+    
+  	LinkedHashSet<Object> actualOutput = new LinkedHashSet<>(testHarness.getOutput());  
+    
+  	assertor.assertOutputEquals("output wrong.", expectedOutput, actualOutput.stream().collect(Collectors.toList()));  
+  	testHarness.close();  
+  } 
+ 
+import:
+['import java.util.stream.Collectors;\n ']
+pom:

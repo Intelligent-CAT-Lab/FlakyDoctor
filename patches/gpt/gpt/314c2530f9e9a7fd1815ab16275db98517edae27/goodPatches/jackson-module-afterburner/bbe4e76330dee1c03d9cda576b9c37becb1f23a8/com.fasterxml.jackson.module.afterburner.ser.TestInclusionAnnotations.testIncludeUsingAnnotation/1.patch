@@ -1,0 +1,48 @@
+test_before_fix:
+    public void testIncludeUsingAnnotation() throws Exception
+    {
+        ObjectMapper mapper = mapperWithModule();
+
+        String json = mapper.writeValueAsString(new IntWrapper(3));
+        assertEquals("{\"value\":3}", json);
+        json = mapper.writeValueAsString(new IntWrapper(null));
+        assertEquals("{}", json);
+
+        json = mapper.writeValueAsString(new AnyWrapper(new IntWrapper(null)));
+        assertEquals("{\"name\":\"Foo\",\"wrapped\":{}}", json);
+        json = mapper.writeValueAsString(new AnyWrapper(null));
+        assertEquals("{\"name\":\"Foo\"}", json);
+    }
+
+test_after_fix:
+
+code:
+public void testIncludeUsingAnnotation() throws Exception 
+ { 
+     ObjectMapper mapper = mapperWithModule(); 
+  
+     String json = mapper.writeValueAsString(new IntWrapper(3)); 
+     assertEquals("{\"value\":3}", json); 
+     json = mapper.writeValueAsString(new IntWrapper(null)); 
+     assertEquals("{}", json); 
+  
+     json = mapper.writeValueAsString(new AnyWrapper(new IntWrapper(null))); 
+     JsonNode jsonNode = mapper.readTree(json); 
+     assertEquals("Foo", jsonNode.get("name").asText()); 
+     assertTrue(jsonNode.get("wrapped").isObject()); 
+  
+     json = mapper.writeValueAsString(new AnyWrapper(null)); 
+     jsonNode = mapper.readTree(json); 
+     assertEquals("Foo", jsonNode.get("name").asText()); 
+     assertNull(jsonNode.get("wrapped")); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ']
+pom:
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.9.8</version>
+</dependency>

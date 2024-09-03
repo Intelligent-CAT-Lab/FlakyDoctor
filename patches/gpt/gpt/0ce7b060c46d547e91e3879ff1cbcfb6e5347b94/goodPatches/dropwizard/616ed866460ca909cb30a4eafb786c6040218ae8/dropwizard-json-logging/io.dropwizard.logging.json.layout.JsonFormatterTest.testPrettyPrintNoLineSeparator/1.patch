@@ -1,0 +1,27 @@
+test_before_fix:
+    public void testPrettyPrintNoLineSeparator() {
+        JsonFormatter formatter = new JsonFormatter(objectMapper, true, false);
+        assertThat(formatter.toJson(map)).isEqualTo(String.format("{%n" +
+                "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" +
+                "  \"name\" : \"Jim\"%n" +
+                "}"));
+    }
+
+test_after_fix:
+
+code:
+public void testPrettyPrintNoLineSeparator() { 
+     JsonFormatter formatter = new JsonFormatter(objectMapper, true, false); 
+     Map<String, Object> orderedMap = new LinkedHashMap<>(); 
+     orderedMap.put("hobbies", Arrays.asList("Reading", "Biking", "Snorkeling")); 
+     orderedMap.put("name", "Jim"); 
+     assertThat(formatter.toJson(orderedMap)).isEqualTo(String.format("{%n" + 
+             "  \"hobbies\" : [ \"Reading\", \"Biking\", \"Snorkeling\" ],%n" + 
+             "  \"name\" : \"Jim\"%n" + 
+             "}")); 
+ } 
+ 
+import:
+['import java.util.LinkedHashMap;\n ']
+pom:
+

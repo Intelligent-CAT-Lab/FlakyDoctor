@@ -1,0 +1,87 @@
+Test File Path: projects/4d771248e26802e1986c6b7ed930106be5f76b1f/kafka-connect-elasticsearch/src/test/java/io/confluent/connect/elasticsearch/ElasticsearchWriterTest.java
+
+    Original Test Method:
+   public void testMap() throws Exception {
+    Schema structSchema = SchemaBuilder.struct().name("struct")
+        .field("map", SchemaBuilder.map(Schema.INT32_SCHEMA, Schema.STRING_SCHEMA).build())
+        .build();
+
+    Map<Integer, String> map = new HashMap<>();
+    map.put(1, "One");
+    map.put(2, "Two");
+
+    Struct struct = new Struct(structSchema);
+    struct.put("map", map);
+
+    Collection<SinkRecord> records = new ArrayList<>();
+    SinkRecord sinkRecord =
+        new SinkRecord(TOPIC, PARTITION, Schema.STRING_SCHEMA, key, structSchema, struct, 0);
+    records.add(sinkRecord);
+
+    ElasticsearchWriter writer = initWriter(client);
+    writeDataAndRefresh(writer, records);
+    verifySearchResults(records);
+  }
+
+    
+Patch after Stitching:
+
+test_code:
+public void testMap() throws Exception {
+    Schema structSchema = SchemaBuilder.struct().name("struct")
+        .field("map", SchemaBuilder.map(Schema.INT32_SCHEMA, Schema.STRING_SCHEMA).build())
+        .build();
+
+    Map<Integer, String> map = new LinkedHashMap<>();
+    map.put(1, "One");
+    map.put(2, "Two");
+
+    Struct struct = new Struct(structSchema);
+    struct.put("map", map);
+
+    Collection<SinkRecord> records = new ArrayList<>();
+    SinkRecord sinkRecord =
+        new SinkRecord(TOPIC, PARTITION, Schema.STRING_SCHEMA, key, structSchema, struct, 0);
+    records.add(sinkRecord);
+
+    ElasticsearchWriter writer = initWriter(client);
+    writeDataAndRefresh(writer, records);
+    verifySearchResults(records);
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+<!-- No changes needed -->
+
+Patch before Stitching:
+
+test_code:
+public void testMap() throws Exception {
+    Schema structSchema = SchemaBuilder.struct().name("struct")
+        .field("map", SchemaBuilder.map(Schema.INT32_SCHEMA, Schema.STRING_SCHEMA).build())
+        .build();
+
+    Map<Integer, String> map = new LinkedHashMap<>();
+    map.put(1, "One");
+    map.put(2, "Two");
+
+    Struct struct = new Struct(structSchema);
+    struct.put("map", map);
+
+    Collection<SinkRecord> records = new ArrayList<>();
+    SinkRecord sinkRecord =
+        new SinkRecord(TOPIC, PARTITION, Schema.STRING_SCHEMA, key, structSchema, struct, 0);
+    records.add(sinkRecord);
+
+    ElasticsearchWriter writer = initWriter(client);
+    writeDataAndRefresh(writer, records);
+    verifySearchResults(records);
+}
+
+import:
+['import java.util.LinkedHashMap;\n']
+pom:
+
+<!-- No changes needed -->

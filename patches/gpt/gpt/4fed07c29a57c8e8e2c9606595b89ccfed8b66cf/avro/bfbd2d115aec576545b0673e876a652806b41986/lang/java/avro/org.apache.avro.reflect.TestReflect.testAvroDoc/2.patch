@@ -1,0 +1,42 @@
+Test File Path: projects/bfbd2d115aec576545b0673e876a652806b41986/avro/lang/java/avro/src/test/java/org/apache/avro/reflect/TestReflect.java
+
+    Original Test Method:
+   public void testAvroDoc() {
+    check(DocTest.class,
+        "{\"type\":\"record\",\"name\":\"DocTest\",\"namespace\":\"org.apache.avro.reflect.TestReflect\","
+            + "\"doc\":\"DocTest class docs\","
+            + "\"fields\":[{\"name\":\"foo\",\"type\":\"int\",\"doc\":\"Some Documentation\"},"
+            + "{\"name\":\"enums\",\"type\":{\"type\":\"enum\",\"name\":\"DocTestEnum\","
+            + "\"symbols\":[\"ENUM_1\",\"ENUM_2\"]},\"doc\":\"Some other Documentation\"},"
+            + "{\"name\":\"defaultTest\",\"type\":{\"type\":\"record\",\"name\":\"DefaultTest\","
+            + "\"fields\":[{\"name\":\"foo\",\"type\":\"int\",\"default\":1}]},\"doc\":\"And again\"}]}");
+  }
+
+    
+test_code:
+public void testAvroDoc() {
+    String schemaJson = "{\"type\":\"record\",\"name\":\"DocTest\",\"namespace\":\"org.apache.avro.reflect.TestReflect\","
+            + "\"doc\":\"DocTest class docs\","
+            + "\"fields\":[{\"name\":\"foo\",\"type\":\"int\",\"doc\":\"Some Documentation\"},"
+            + "{\"name\":\"enums\",\"type\":{\"type\":\"enum\",\"name\":\"DocTestEnum\","
+            + "\"symbols\":[\"ENUM_1\",\"ENUM_2\"]},\"doc\":\"Some other Documentation\"},"
+            + "{\"name\":\"defaultTest\",\"type\":{\"type\":\"record\",\"name\":\"DefaultTest\","
+            + "\"fields\":[{\"name\":\"foo\",\"type\":\"int\",\"default\":1}]},\"doc\":\"And again\"}]}";
+
+    Schema expectedSchema = new Schema.Parser().parse(schemaJson);
+    Schema actualSchema = ReflectData.get().getSchema(DocTest.class);
+
+    List<Field> expectedFields = new ArrayList<>(expectedSchema.getFields());
+    List<Field> actualFields = new ArrayList<>(actualSchema.getFields());
+
+    Collections.sort(expectedFields, Comparator.comparing(Field::name));
+    Collections.sort(actualFields, Comparator.comparing(Field::name));
+
+    assertEquals(expectedFields, actualFields);
+}
+
+import:
+['import java.util.ArrayList;', 'import java.util.Collections;', 'import java.util.Comparator;', 'import java.util.List;']
+pom:
+
+<!-- No changes needed -->

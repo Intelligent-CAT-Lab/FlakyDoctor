@@ -1,0 +1,194 @@
+Test File Path: projects/08f6dca23e5296d6affdc40895bf294d9b3144f6/CoreNLP/test/src/edu/stanford/nlp/semgraph/semgrex/SemgrexTest.java
+
+    Original Test Method:
+   public void testNotEquals() {
+    SemanticGraph graph = SemanticGraph.valueOf("[ate subj>Bill obj>[muffins compound>blueberry]]");
+
+    SemgrexPattern pattern = SemgrexPattern.compile("{} >> {}=a >> {}=b : {}=a !== {}=b");
+    SemgrexMatcher matcher = pattern.matcher(graph);
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("Bill", matcher.getNode("a").toString());
+    assertEquals("muffins", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("Bill", matcher.getNode("a").toString());
+    assertEquals("blueberry", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("muffins", matcher.getNode("a").toString());
+    assertEquals("Bill", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("muffins", matcher.getNode("a").toString());
+    assertEquals("blueberry", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("blueberry", matcher.getNode("a").toString());
+    assertEquals("Bill", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("blueberry", matcher.getNode("a").toString());
+    assertEquals("muffins", matcher.getNode("b").toString());
+
+    assertFalse(matcher.find());
+
+    // same as the first test, essentially, but with a more compact expression
+    pattern = SemgrexPattern.compile("{} >> {}=a >> ({}=b !== {}=a)");
+    matcher = pattern.matcher(graph);
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("Bill", matcher.getNode("a").toString());
+    assertEquals("muffins", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("Bill", matcher.getNode("a").toString());
+    assertEquals("blueberry", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("muffins", matcher.getNode("a").toString());
+    assertEquals("Bill", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("muffins", matcher.getNode("a").toString());
+    assertEquals("blueberry", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("blueberry", matcher.getNode("a").toString());
+    assertEquals("Bill", matcher.getNode("b").toString());
+
+    assertTrue(matcher.find());
+    assertEquals(2, matcher.getNodeNames().size());
+    assertEquals("ate", matcher.getMatch().toString());
+    assertEquals("blueberry", matcher.getNode("a").toString());
+    assertEquals("muffins", matcher.getNode("b").toString());
+
+    assertFalse(matcher.find());
+  }
+
+    
+Patch after Stitching:
+
+test_code:
+public void testNotEquals() {
+    SemanticGraph graph = SemanticGraph.valueOf("[ate subj>Bill obj>[muffins compound>blueberry]]");
+
+    SemgrexPattern pattern = SemgrexPattern.compile("{} >> {}=a >> {}=b : {}=a !== {}=b");
+    SemgrexMatcher matcher = pattern.matcher(graph);
+
+    Map<String, Set<String>> expectedResults = new LinkedHashMap<>();
+    expectedResults.put("Bill", new LinkedHashSet<>(Arrays.asList("muffins", "blueberry")));
+    expectedResults.put("muffins", new LinkedHashSet<>(Arrays.asList("Bill", "blueberry")));
+    expectedResults.put("blueberry", new LinkedHashSet<>(Arrays.asList("Bill", "muffins")));
+
+    while (matcher.find()) {
+        String a = matcher.getNode("a").toString();
+        String b = matcher.getNode("b").toString();
+        assertTrue(expectedResults.containsKey(a));
+        assertTrue(expectedResults.get(a).contains(b));
+        expectedResults.get(a).remove(b);
+        if(expectedResults.get(a).isEmpty()){
+            expectedResults.remove(a);
+        }
+    }
+
+    assertTrue(expectedResults.isEmpty());
+
+    pattern = SemgrexPattern.compile("{} >> {}=a >> ({}=b !== {}=a)");
+    matcher = pattern.matcher(graph);
+
+    expectedResults.put("Bill", new LinkedHashSet<>(Arrays.asList("muffins", "blueberry")));
+    expectedResults.put("muffins", new LinkedHashSet<>(Arrays.asList("Bill", "blueberry")));
+    expectedResults.put("blueberry", new LinkedHashSet<>(Arrays.asList("Bill", "muffins")));
+
+    while (matcher.find()) {
+        String a = matcher.getNode("a").toString();
+        String b = matcher.getNode("b").toString();
+        assertTrue(expectedResults.containsKey(a));
+        assertTrue(expectedResults.get(a).contains(b));
+        expectedResults.get(a).remove(b);
+        if(expectedResults.get(a).isEmpty()){
+            expectedResults.remove(a);
+        }
+    }
+
+    assertTrue(expectedResults.isEmpty());
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+
+
+Patch before Stitching:
+
+test_code:
+public void testNotEquals() {
+    SemanticGraph graph = SemanticGraph.valueOf("[ate subj>Bill obj>[muffins compound>blueberry]]");
+
+    SemgrexPattern pattern = SemgrexPattern.compile("{} >> {}=a >> {}=b : {}=a !== {}=b");
+    SemgrexMatcher matcher = pattern.matcher(graph);
+
+    Map<String, Set<String>> expectedResults = new LinkedHashMap<>();
+    expectedResults.put("Bill", new LinkedHashSet<>(Arrays.asList("muffins", "blueberry")));
+    expectedResults.put("muffins", new LinkedHashSet<>(Arrays.asList("Bill", "blueberry")));
+    expectedResults.put("blueberry", new LinkedHashSet<>(Arrays.asList("Bill", "muffins")));
+
+    while (matcher.find()) {
+        String a = matcher.getNode("a").toString();
+        String b = matcher.getNode("b").toString();
+        assertTrue(expectedResults.containsKey(a));
+        assertTrue(expectedResults.get(a).contains(b));
+        expectedResults.get(a).remove(b);
+        if(expectedResults.get(a).isEmpty()){
+            expectedResults.remove(a);
+        }
+    }
+
+    assertTrue(expectedResults.isEmpty());
+
+    pattern = SemgrexPattern.compile("{} >> {}=a >> ({}=b !== {}=a)");
+    matcher = pattern.matcher(graph);
+
+    expectedResults.put("Bill", new LinkedHashSet<>(Arrays.asList("muffins", "blueberry")));
+    expectedResults.put("muffins", new LinkedHashSet<>(Arrays.asList("Bill", "blueberry")));
+    expectedResults.put("blueberry", new LinkedHashSet<>(Arrays.asList("Bill", "muffins")));
+
+    while (matcher.find()) {
+        String a = matcher.getNode("a").toString();
+        String b = matcher.getNode("b").toString();
+        assertTrue(expectedResults.containsKey(a));
+        assertTrue(expectedResults.get(a).contains(b));
+        expectedResults.get(a).remove(b);
+        if(expectedResults.get(a).isEmpty()){
+            expectedResults.remove(a);
+        }
+    }
+
+    assertTrue(expectedResults.isEmpty());
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+

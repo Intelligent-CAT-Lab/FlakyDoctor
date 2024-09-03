@@ -1,0 +1,23 @@
+test_before_fix:
+    public void serializeEnum() throws IOException {
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(TestEnum.A))).isEqualTo("{\"@type\":\"string\",\"@value\":\"A\"}");
+        assertThat(objectMapper.writeValueAsString(ValueReference.of(TestEnum.B))).isEqualTo("{\"@type\":\"string\",\"@value\":\"B\"}");
+    }
+
+test_after_fix:
+
+code:
+public void serializeEnum() throws IOException { 
+     JsonNode nodeA = objectMapper.readTree(objectMapper.writeValueAsString(ValueReference.of(TestEnum.A))); 
+     JsonNode nodeB = objectMapper.readTree(objectMapper.writeValueAsString(ValueReference.of(TestEnum.B))); 
+     assertThat(nodeA.get("@type").asText()).isEqualTo("string"); 
+     assertThat(nodeA.get("@value").asText()).isEqualTo("A"); 
+     assertThat(nodeB.get("@type").asText()).isEqualTo("string"); 
+     assertThat(nodeB.get("@value").asText()).isEqualTo("B"); 
+ } 
+ 
+import:
+['import com.fasterxml.jackson.databind.JsonNode;\n ']
+pom:
+
+<!-- No changes needed -->

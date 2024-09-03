@@ -1,0 +1,28 @@
+Test File Path: od_projects/27a9efc3ced000f46e0f46263614e08896058290/Chronicle-Wire/src/test/java/net/openhft/chronicle/wire/TextWireTest.java
+
+    Original Test Method:
+     public void testSingleQuote() {
+        NestedA a = Marshallable.fromString("!NestedA {\n" +
+                "  b: !NestedB,\n" +
+                "  value: 12345\n" +
+                "}");
+        assertNotNull(a);
+    }
+
+    
+test_code:
+public void testSingleQuote() {
+    ClassAliasPool.CLASS_ALIASES.addAlias(NestedA.class);
+    ClassAliasPool.CLASS_ALIASES.addAlias(NestedB.class);
+    NestedA a = Marshallable.fromString("!NestedA {\n" +
+            "  b: !NestedB,\n" +
+            "  value: 12345\n" +
+            "}");
+    assertNotNull(a);
+}
+
+import:
+[]
+pom:
+
+<!-- No changes needed -->

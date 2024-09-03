@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'createDefaultDirectoryManagerPath': 'public void createDefaultDirectoryManagerPath() throws IOException {\n    \n\n    DirectoryManagerFactory.setDirectoryManagerClass(DirectoryManagerImpl.class);\n    \n\n    Path path = Paths.get(System.getProperty("user.dir"));\n    DirectoryManager dm = DirectoryManagerFactory.createDirectoryManager(\n            path, true);\n    assertTrue(dm instanceof DirectoryManagerImpl);\n    DirectoryManagerImpl dmi = (DirectoryManagerImpl) dm;\n    assertTrue(dmi.readOnly);\n    assertEquals(path, dmi.directory);\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['createDefaultDirectoryManagerPath']}polluter
+:code:
+{'fields': {}, 'methods': {'createDefaultDirectoryManagerPath': 'public void createDefaultDirectoryManagerPath() throws IOException {\n    \n\n    DirectoryManagerFactory.setDirectoryManagerClass(DirectoryManagerImpl.class);\n    \n\n    Path path = Paths.get(System.getProperty("user.dir"));\n    DirectoryManager dm = DirectoryManagerFactory.createDirectoryManager(\n            path, true);\n    assertTrue(dm instanceof DirectoryManagerImpl);\n    DirectoryManagerImpl dmi = (DirectoryManagerImpl) dm;\n    assertTrue(dmi.readOnly);\n    assertEquals(path, dmi.directory);\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['createDefaultDirectoryManagerPath']}

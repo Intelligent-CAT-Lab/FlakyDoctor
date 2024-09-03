@@ -1,0 +1,37 @@
+Test File Path: od_projects/051d583fd89a8ecd509d182a1883335119f1a8bf/Sentinel/sentinel-adapter/sentinel-reactor-adapter/src/test/java/com/alibaba/csp/sentinel/adapter/reactor/MonoSentinelOperatorIntegrationTest.java
+
+    Original Test Method:
+     public void testEmitSingleLongTimeRt() {
+        String resourceName = createResourceName("testEmitSingleLongTimeRt");
+        StepVerifier.create(Mono.just(2)
+            .delayElement(Duration.ofMillis(1000))
+            .map(e -> e * 2)
+            .transform(new SentinelReactorTransformer<>(resourceName)))
+            .expectNext(4)
+            .verifyComplete();
+
+        ClusterNode cn = ClusterBuilderSlot.getClusterNode(resourceName);
+        assertNotNull(cn);
+        assertEquals(1000, cn.avgRt(), 20);
+    }
+
+    
+test_code:
+public void testEmitSingleLongTimeRt() {
+    String resourceName = createResourceName("testEmitSingleLongTimeRt");
+    StepVerifier.create(Mono.just(2)
+        .delayElement(Duration.ofMillis(1000))
+        .map(e -> e * 2)
+        .transform(new SentinelReactorTransformer<>(resourceName)))
+        .expectNext(4)
+        .verifyComplete();
+
+    ClusterNode cn = ClusterBuilderSlot.getClusterNode(resourceName);
+    assertNotNull(cn);
+    assertTrue(Math.abs(1000 - cn.avgRt()) <= 50);
+}
+
+import:
+[]
+pom:
+

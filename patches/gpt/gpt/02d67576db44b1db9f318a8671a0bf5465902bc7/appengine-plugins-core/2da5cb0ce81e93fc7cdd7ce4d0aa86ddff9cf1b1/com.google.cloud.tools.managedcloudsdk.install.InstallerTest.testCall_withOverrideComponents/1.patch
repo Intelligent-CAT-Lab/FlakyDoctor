@@ -1,0 +1,73 @@
+Test File Path: projects/2da5cb0ce81e93fc7cdd7ce4d0aa86ddff9cf1b1/appengine-plugins-core/src/test/java/com/google/cloud/tools/managedcloudsdk/install/InstallerTest.java
+
+    Original Test Method:
+   public void testCall_withOverrideComponents() throws Exception {
+    Set<String> overrides = new HashSet<>(Arrays.asList("mycomponent", "myothercomponent"));
+
+    new Installer(
+            fakeSdkRoot,
+            mockInstallScriptProvider,
+            true,
+            overrides,
+            mockProgressListener,
+            mockConsoleListener,
+            mockCommandRunner)
+        .install();
+
+    Mockito.verify(mockCommandRunner)
+        .run(expectedCommand(true, overrides), sdkParentDirectory, fakeEnv, mockConsoleListener);
+    Mockito.verifyNoMoreInteractions(mockCommandRunner);
+  }
+
+    
+Patch after Stitching:
+
+test_code:
+public void testCall_withOverrideComponents() throws Exception {
+    List<String> overrides = new ArrayList<>(Arrays.asList("mycomponent", "myothercomponent"));
+
+    new Installer(
+            fakeSdkRoot,
+            mockInstallScriptProvider,
+            true,
+            new LinkedHashSet<>(overrides),
+            mockProgressListener,
+            mockConsoleListener,
+            mockCommandRunner)
+        .install();
+
+    Mockito.verify(mockCommandRunner)
+        .run(expectedCommand(true, new LinkedHashSet<>(overrides)), sdkParentDirectory, fakeEnv, mockConsoleListener);
+    Mockito.verifyNoMoreInteractions(mockCommandRunner);
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+
+
+Patch before Stitching:
+
+test_code:
+public void testCall_withOverrideComponents() throws Exception {
+    List<String> overrides = new ArrayList<>(Arrays.asList("mycomponent", "myothercomponent"));
+
+    new Installer(
+            fakeSdkRoot,
+            mockInstallScriptProvider,
+            true,
+            new LinkedHashSet<>(overrides),
+            mockProgressListener,
+            mockConsoleListener,
+            mockCommandRunner)
+        .install();
+
+    Mockito.verify(mockCommandRunner)
+        .run(expectedCommand(true, new LinkedHashSet<>(overrides)), sdkParentDirectory, fakeEnv, mockConsoleListener);
+    Mockito.verifyNoMoreInteractions(mockCommandRunner);
+}
+
+import:
+['import java.util.LinkedHashSet;\n']
+pom:
+

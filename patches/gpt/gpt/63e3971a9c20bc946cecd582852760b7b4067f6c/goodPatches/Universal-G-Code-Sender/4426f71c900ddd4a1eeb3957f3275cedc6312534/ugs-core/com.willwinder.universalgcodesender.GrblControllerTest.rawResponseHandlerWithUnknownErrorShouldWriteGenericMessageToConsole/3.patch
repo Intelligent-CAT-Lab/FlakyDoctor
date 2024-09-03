@@ -1,0 +1,17 @@
+victim
+:code:
+{'fields': {}, 'methods': {'loadLocalizationThatDoesExistShouldLoad': 'public void loadLocalizationThatDoesExistShouldLoad() {\n    Localization.initialize("sv", "SE");\n    assertEquals("Beskrivning", Localization.getString(DESCRIPTION_KEY));\n    assertEquals("sv", Locale.getDefault().getLanguage());\n    assertEquals("SE", Locale.getDefault().getCountry());\n\n    \n\n    // Reset the localization back to English\n    Localization.initialize("en", "US");\n    \n\n}\n'}}victim
+:import:
+[]victim
+:pom:
+victim
+:toreplace:
+{'field_names': [], 'method_names': ['loadLocalizationThatDoesExistShouldLoad']}polluter
+:code:
+{'fields': {}, 'methods': {'loadLocalizationThatDoesExistShouldLoad': 'public void loadLocalizationThatDoesExistShouldLoad() {\n    Localization.initialize("sv", "SE");\n    assertEquals("Beskrivning", Localization.getString(DESCRIPTION_KEY));\n    assertEquals("sv", Locale.getDefault().getLanguage());\n    assertEquals("SE", Locale.getDefault().getCountry());\n\n    \n\n    // Reset the localization back to English\n    Localization.initialize("en", "US");\n    \n\n}\n'}}polluter
+:import:
+[]polluter
+:pom:
+polluter
+:toreplace:
+{'field_names': [], 'method_names': ['loadLocalizationThatDoesExistShouldLoad']}

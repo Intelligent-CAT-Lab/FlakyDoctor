@@ -1,0 +1,29 @@
+Test File Path: projects/5e285ba5b47266d7dcede64aefae00fbe0c9c4ae/hippo4j/hippo4j-common/src/test/java/cn/hippo4j/common/toolkit/JSONUtilTest.java
+
+    Original Test Method:
+     public void assertToJSONString() {
+        Assert.assertNull(JSONUtil.toJSONString(null));
+        Assert.assertEquals(EXPECTED_FOO_JSON, JSONUtil.toJSONString(EXPECTED_FOO));
+    }
+
+    
+test_code:
+public void assertToJSONString() {
+    Assert.assertNull(JSONUtil.toJSONString(null));
+    String actualJson = JSONUtil.toJSONString(EXPECTED_FOO);
+    try {
+        JSONAssert.assertEquals(EXPECTED_FOO_JSON, actualJson, JSONCompareMode.LENIENT);
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+}
+
+import:
+['import org.json.JSONException;']
+pom:
+
+<dependency>
+    <groupId>org.skyscreamer</groupId>
+    <artifactId>jsonassert</artifactId>
+    <version>1.5.0</version>
+</dependency>

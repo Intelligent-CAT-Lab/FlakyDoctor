@@ -1,0 +1,50 @@
+Test File Path: dexfix_projects/87d63f677759336987fbb21fd9c688235618e7bb/graylog2-server/graylog2-server/src/test/java/org/graylog/plugins/views/search/views/ViewRequirementsTest.java
+
+    Original Test Method:
+     public void mergesResultsFromMultipleChecks() {
+        final Map<String, PluginMetadataSummary> result = new ViewRequirements(
+                ImmutableSet.of(
+                        view -> Collections.singletonMap("aioverlord", plugin),
+                        view -> Collections.emptyMap(),
+                        view -> Collections.singletonMap("parameters", new EnterpriseMetadataSummary())
+                ),
+                view
+        );
+
+        assertThat(result).containsExactly(
+                Maps.immutableEntry("aioverlord", plugin),
+                Maps.immutableEntry("parameters", new EnterpriseMetadataSummary())
+        );
+    }
+
+    
+test_code:
+public void mergesResultsFromMultipleChecks() {
+    final Map<String, PluginMetadataSummary> result = new LinkedHashMap<>(
+            new ViewRequirements(
+                    ImmutableSet.of(
+                            view -> Collections.singletonMap("aioverlord", plugin),
+                            view -> Collections.emptyMap(),
+                            view -> Collections.singletonMap("parameters", new EnterpriseMetadataSummary())
+                    ),
+                    view
+            )
+    );
+
+    Map.Entry<String, PluginMetadataSummary> entry1 = Maps.immutableEntry("aioverlord", plugin);
+    Map.Entry<String, PluginMetadataSummary> entry2 = Maps.immutableEntry("parameters", new EnterpriseMetadataSummary());
+
+    List<Map.Entry<String, PluginMetadataSummary>> expected = Arrays.asList(entry1, entry2);
+    List<Map.Entry<String, PluginMetadataSummary>> actual = new ArrayList<>(result.entrySet());
+
+    Collections.sort(expected, Comparator.comparing(Map.Entry::getKey));
+    Collections.sort(actual, Comparator.comparing(Map.Entry::getKey));
+
+    assertThat(actual).containsExactlyElementsOf(expected);
+}
+
+import:
+['import java.util.*;']
+pom:
+
+<!-- No changes needed -->

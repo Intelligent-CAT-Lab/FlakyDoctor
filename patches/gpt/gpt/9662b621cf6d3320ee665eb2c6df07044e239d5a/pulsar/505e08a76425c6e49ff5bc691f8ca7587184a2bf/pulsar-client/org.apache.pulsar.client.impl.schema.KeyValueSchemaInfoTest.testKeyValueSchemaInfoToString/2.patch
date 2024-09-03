@@ -1,0 +1,50 @@
+Test File Path: projects/505e08a76425c6e49ff5bc691f8ca7587184a2bf/pulsar/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/KeyValueSchemaInfoTest.java
+
+    Original Test Method:
+     public void testKeyValueSchemaInfoToString() {
+        String havePrimitiveType = DefaultImplementation
+                .convertKeyValueSchemaInfoDataToString(KeyValueSchemaInfo
+                        .decodeKeyValueSchemaInfo(Schema.KeyValue(Schema.AVRO(Foo.class), Schema.STRING)
+                                .getSchemaInfo()));
+        assertEquals(havePrimitiveType, KEY_VALUE_SCHEMA_INFO_INCLUDE_PRIMITIVE);
+
+        String notHavePrimitiveType = DefaultImplementation
+                .convertKeyValueSchemaInfoDataToString(KeyValueSchemaInfo
+                        .decodeKeyValueSchemaInfo(Schema.KeyValue(Schema.AVRO(Foo.class),
+                                Schema.AVRO(Foo.class)).getSchemaInfo()));
+        assertEquals(notHavePrimitiveType, KEY_VALUE_SCHEMA_INFO_NOT_INCLUDE_PRIMITIVE);
+    }
+
+    
+test_code:
+public void testKeyValueSchemaInfoToString() throws JSONException {
+    String havePrimitiveType = DefaultImplementation
+            .convertKeyValueSchemaInfoDataToString(KeyValueSchemaInfo
+                    .decodeKeyValueSchemaInfo(Schema.KeyValue(Schema.AVRO(Foo.class), Schema.STRING)
+                            .getSchemaInfo()));
+    String expectedHavePrimitiveType = KEY_VALUE_SCHEMA_INFO_INCLUDE_PRIMITIVE;
+    JSONAssert.assertEquals(expectedHavePrimitiveType, havePrimitiveType, JSONCompareMode.LENIENT);
+
+    String notHavePrimitiveType = DefaultImplementation
+            .convertKeyValueSchemaInfoDataToString(KeyValueSchemaInfo
+                    .decodeKeyValueSchemaInfo(Schema.KeyValue(Schema.AVRO(Foo.class),
+                            Schema.AVRO(Foo.class)).getSchemaInfo()));
+    String expectedNotHavePrimitiveType = KEY_VALUE_SCHEMA_INFO_NOT_INCLUDE_PRIMITIVE;
+    JSONAssert.assertEquals(expectedNotHavePrimitiveType, notHavePrimitiveType, JSONCompareMode.LENIENT);
+}
+
+import:
+['import org.json.JSONException;']
+pom:
+
+<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20210307</version>
+</dependency>
+<dependency>
+    <groupId>org.skyscreamer</groupId>
+    <artifactId>jsonassert</artifactId>
+    <version>1.5.0</version>
+</dependency>
+ 

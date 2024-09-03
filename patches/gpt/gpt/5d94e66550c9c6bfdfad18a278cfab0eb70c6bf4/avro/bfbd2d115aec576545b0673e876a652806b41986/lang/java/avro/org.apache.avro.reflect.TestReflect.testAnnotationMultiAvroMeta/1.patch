@@ -1,0 +1,27 @@
+Test File Path: projects/bfbd2d115aec576545b0673e876a652806b41986/avro/lang/java/avro/src/test/java/org/apache/avro/reflect/TestReflect.java
+
+    Original Test Method:
+   public void testAnnotationMultiAvroMeta() {
+    check(RAvroMultiMeta.class,
+        "{\"type\":\"record\",\"name\":\"RAvroMultiMeta\",\"namespace\":"
+            + "\"org.apache.avro.reflect.TestReflect\",\"fields\":["
+            + "{\"name\":\"a\",\"type\":\"int\",\"K\":\"V\",\"L\":\"W\"}]" + ",\"X\":\"Y\",\"A\":\"B\"}");
+  }
+
+    
+test_code:
+ public void testAnnotationMultiAvroMeta() {
+    org.apache.avro.Schema schema = ReflectData.get().getSchema(RAvroMultiMeta.class);
+    org.apache.avro.Schema.Parser parser = new org.apache.avro.Schema.Parser();
+    org.apache.avro.Schema expectedSchema = parser.parse("{\"type\":\"record\",\"name\":\"RAvroMultiMeta\",\"namespace\":"
+            + "\"org.apache.avro.reflect.TestReflect\",\"fields\":["
+            + "{\"name\":\"a\",\"type\":\"int\",\"K\":\"V\",\"L\":\"W\"}]" + ",\"X\":\"Y\",\"A\":\"B\"}");
+    assertEquals(expectedSchema, schema);
+  }
+
+import:
+['import org.apache.avro.Schema;', 'import org.apache.avro.reflect.ReflectData;', 'import static org.junit.Assert.assertEquals;']
+pom:
+
+ <!-- No changes needed -->
+ 

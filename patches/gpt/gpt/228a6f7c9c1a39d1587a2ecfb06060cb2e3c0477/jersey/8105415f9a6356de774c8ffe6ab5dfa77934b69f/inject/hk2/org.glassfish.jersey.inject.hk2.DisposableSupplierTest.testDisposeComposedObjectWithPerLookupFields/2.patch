@@ -1,0 +1,74 @@
+Test File Path: projects/8105415f9a6356de774c8ffe6ab5dfa77934b69f/jersey/inject/hk2/src/test/java/org/glassfish/jersey/inject/hk2/DisposableSupplierTest.java
+
+    Original Test Method:
+     public void testDisposeComposedObjectWithPerLookupFields() {
+        BindingTestHelper.bind(injectionManager, binder -> {
+                    binder.bindFactory(DisposableSupplierImpl.class, Singleton.class)
+                            .to(String.class);
+
+                    binder.bindAsContract(ComposedObject.class)
+                            .in(RequestScoped.class);
+
+                    binder.bind(Hk2RequestScope.class)
+                            .to(RequestScope.class);
+                });
+
+        RequestScope request = injectionManager.getInstance(RequestScope.class);
+        AtomicReference<Supplier<String>> atomicSupplier = new AtomicReference<>();
+        request.runInScope(() -> {
+            // Save Singleton Supplier for later check that the instance was disposed.
+            Supplier<String> supplier = injectionManager.getInstance(DISPOSABLE_SUPPLIER_TYPE);
+            atomicSupplier.set(supplier);
+
+            // All instances should be the same because they are request scoped.
+            ComposedObject instance = injectionManager.getInstance(ComposedObject.class);
+            assertEquals("1", instance.first);
+            assertEquals("2", instance.second);
+            assertEquals("3", instance.third);
+        });
+
+        Supplier<String> cleanedSupplier = atomicSupplier.get();
+        // Next should be 4
+        assertEquals("4", cleanedSupplier.get());
+    }
+
+    
+test_code:
+public void testDisposeComposedObjectWithPerLookupFields() {
+    BindingTestHelper.bind(injectionManager, binder -> {
+                binder.bindFactory(DisposableSupplierImpl.class, Singleton.class)
+                        .to(String.class);
+
+                binder.bindAsContract(ComposedObject.class)
+                        .in(RequestScoped.class);
+
+                binder.bind(Hk2RequestScope.class)
+                        .to(RequestScope.class);
+            });
+
+    RequestScope request = injectionManager.getInstance(RequestScope.class);
+    AtomicReference<Supplier<String>> atomicSupplier = new AtomicReference<>();
+    request.runInScope(() -> {
+        // Save Singleton Supplier for later check that the instance was disposed.
+        Supplier<String> supplier = injectionManager.getInstance(DISPOSABLE_SUPPLIER_TYPE);
+        atomicSupplier.set(supplier);
+
+        // All instances should be the same because they are request scoped.
+        ComposedObject instance = injectionManager.getInstance(ComposedObject.class);
+        List<String> expected = Arrays.asList("1", "2", "3");
+        List<String> actual = Arrays.asList(instance.first, instance.second, instance.third);
+        Collections.sort(expected);
+        Collections.sort(actual);
+        assertEquals(expected, actual);
+    });
+
+    Supplier<String> cleanedSupplier = atomicSupplier.get();
+    // Next should be 4
+    assertEquals("4", cleanedSupplier.get());
+}
+
+import:
+['import java.util.Collections;']
+pom:
+
+<!-- No changes needed -->
