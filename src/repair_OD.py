@@ -179,7 +179,7 @@ def main(pr_csv, clone_dir, test_file_info, model, nondex_times,result_csv,resul
                         # exit(0)
                     elif test_result == "test_pass":
                         info["jdk"] = jdk
-                        info["test_logs"][0] = nondex_output
+                        info["test_logs"][0] = surefire_output
                         info["test_results"][0] = test_result
                         info["build_results"][0] = build_result
                         info["if_flaky"] = "False"
@@ -214,7 +214,7 @@ def main(pr_csv, clone_dir, test_file_info, model, nondex_times,result_csv,resul
                             # exit(0)
                         elif test_result == "test_pass":
                             info["jdk"] = jdk
-                            info["test_logs"][0] = nondex_output
+                            info["test_logs"][0] = surefire_output
                             info["test_results"][0] = test_result
                             info["build_results"][0] = build_result
                             info["if_flaky"] = "False"
@@ -222,53 +222,6 @@ def main(pr_csv, clone_dir, test_file_info, model, nondex_times,result_csv,resul
                 #             break
                 # if test_done:
                 #     break
-
-                    """
-                                try:
-                                    result_dict = repair_ID_tests(info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer)
-                                except Exception as e:
-                                    info["Exceptions"] = str(e)
-                                test_done = True
-                            elif test_result == "test_pass":
-                                info["jdk"] = jdk
-                                info["test_logs"][0] = nondex_output
-                                info["test_results"][0] = test_result
-                                info["build_results"][0] = build_result
-                                info["if_flaky"] = "False"
-                            elif test_result == "build_failure" or test_result == "compilation_error":
-                                jdk = "11"
-                                nondex_output = run_test_with_nondex(project_dir,module, test, jdk, "3")
-                                # print(nondex_output)
-                                build_result = analyze_surefire_build_result(nondex_output)
-                                test_result = analyze_surefire_test_result(nondex_output)
-                                if test_result == "test_failure":
-                                    idx += 1
-                                    test_result = analyze_surefire_test_result(nondex_output)
-                                    info["jdk"] = jdk
-                                    info["test_logs"][0] = nondex_output
-                                    info["test_results"][0] = test_result
-                                    info["build_results"][0] = build_result
-                                    err_msg_list, err_code_list = parse_err_msg(nondex_output, test, test_class, test_class_content)
-                                    info["err_msg"][0] = err_msg_list
-                                    info["err_code"][0] = err_code_list
-                                    info["if_flaky"] = "True"
-                                    test_info[tag] = info
-                                    try:
-                                        result_dict = repair_ID_tests(info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer)
-                                    except Exception as e:
-                                        info["Exceptions"] = str(e)
-                                    test_done = True
-                                else:
-                                    info["jdk"] = jdk
-                                    info["test_logs"][0] = nondex_output
-                                    info["test_results"][0] = test_result
-                                    info["build_results"][0] = build_result
-                                    info["if_flaky"] = "False"
-                        if test_done:
-                            break
-                    if test_done:
-                        break
-                    """
 
                 if not victim_file_path_found or not polluter_file_path_found:  
                     info["Exceptions"][0] = "method_code_location_failure"
