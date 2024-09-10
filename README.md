@@ -1,11 +1,6 @@
-# FlakyDoctor
+# FlakyDoctor <img padding="10" align="right" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_evaluated_functional_v1_1.png" alt="ACM Artifacts Evaluated - functional v1.1" width="40" height="40"/> <img padding="10" align="left" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_available_v1_1.png" alt="ACM Artifacts Available v1.1" width="40" height="40"/> 
 
-<img padding="10" align="right" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_evaluated_functional_v1_1.png" alt="ACM Artifacts Evaluated - functional v1.1" width="114" height="113"/>
-<img padding="10" align="right" src="https://www.acm.org/binaries/content/gallery/acm/publications/artifact-review-v1_1-badges/artifacts_available_v1_1.png" alt="ACM Artifacts Available v1.1" width="114" height="113"/> 
-
-
-This repo contains the source code and results of FlakyDoctor, a neuro-symbolic approach to fixing Implementation-Dependent (ID) and Order-Dependent (OD) tests.
-
+This repo contains the source code and results of FlakyDoctor, a neuro-symbolic approach to fixing Implementation-Dependent (ID) and Order-Dependent (OD) tests.                                 
 ## 🌟 File structures
 File structures in this repository are as follows, please refer to `README.md` in each directory for more details: 
 - [datasets](datasets/): Datasets of flaky tests in the evaluation.
